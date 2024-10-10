@@ -3,10 +3,19 @@
 @tailwind utilities;
 
 
+/* Typography */
+.headline-1{
+  @apply text-5xl leading-tight font-semibold lg:text-[55px] lg:leading-[1.15] max-w-max;
+  background: -webkit-linear-gradient(0deg, #fafafa, #a1a1a1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* Utilities */
 .m-icon {
   font-family: 'Material Symbols Rounded';
-  @apply w-[1em] h-[1em] overflow-hidden;
+  @apply w-[1em] h-[1em] overflow-hidden p-0 m-0;
 }
 
 
@@ -16,6 +25,14 @@
 
 .btn-secondary{
   @apply bg-zinc-50 text-zinc-900 active:bg-zinc-50/50 
+}
+
+.container{
+  @apply px-4 mx-auto lg:px-8 xl:max-w-6xl
+}
+
+.img-cover{
+  @apply w-full h-full object-cover
 }
 
 /* Base CSS*/

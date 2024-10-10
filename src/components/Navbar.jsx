@@ -7,15 +7,9 @@ function Navbar( {navOpen} ) {
     const activeBox = useRef()
 
     const initActiveBox = () =>{
-        console.log(lastActiveLink.current);
-        console.log(activeBox.current);
-
         activeBox.current.style.top = lastActiveLink.current.offsetTop+ 'px';
-
         activeBox.current.style.left = lastActiveLink.current.offsetLeft+ 'px';
-
         activeBox.current.style.width = lastActiveLink.current.offsetWidth+ 'px';
-
         activeBox.current.style.height = lastActiveLink.current.offsetHeight+ 'px';
     }
 
@@ -29,11 +23,8 @@ function Navbar( {navOpen} ) {
         lastActiveLink.current = e.target;
 
         activeBox.current.style.top = e.target.offsetTop+ 'px';
-
         activeBox.current.style.left = e.target.offsetLeft+ 'px';
-
         activeBox.current.style.width = e.target.offsetWidth+ 'px';
-
         activeBox.current.style.height = e.target.offsetHeight+ 'px';
     
     }
