@@ -5,10 +5,13 @@ import tailwindScrollbar from 'tailwind-scrollbar';
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx,html}", // or whatever paths match your project
   ],
   theme: {
     extend: {
+      gridAutoColumns: {
+        '2fr': 'minmax(250, 1fr)',
+      },
       fontFamily: {
         'sans': ['Inter', 'sans-serif']
       }

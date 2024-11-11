@@ -35,7 +35,7 @@ function About() {
                             </div>
                         ))
                     }
-                    <img src='../../public/images/logo.svg' alt='logo' width={30} height={30} className='ml-auto md:w-[40px] md:h-[40px]'/>
+                    <img src='../../images/logo.svg' alt='logo' width={30} height={30} className='ml-auto md:w-[40px] md:h-[40px]'/>
                 </div>
             </div>
         </div>
