@@ -17,10 +17,14 @@
   @apply text-3xl lg:text-4xl lg:leading-tight font-semibold
 }
 
+.title-1{
+  @apply text-[22px] font-normal
+}
+
 /* Utilities */
 .m-icon {
   font-family: 'Material Symbols Rounded';
-  @apply w-[1em] h-[1em] overflow-hidden p-0 m-0;
+  @apply w-[1em] h-[1em] overflow-hidden p-0 m-0 leading-tight;
 }
 
 
@@ -42,7 +46,7 @@
 
 
 .section{
-  @apply pt-20 lg:pt-32
+  @apply pt-[4rem] lg:pt-[6rem]
 }
 
 /* Base CSS*/
