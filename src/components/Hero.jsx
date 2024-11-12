@@ -7,7 +7,7 @@ const Hero = () => {
 
             <div className="container lg:grid lg:grid-cols-2 items-center lg:gap-10">
                 <div>
-                    <div className="flex items-start gap-3 flex-col">
+                    <div className="reveal-up flex items-start gap-3 flex-col">
                         {/* <figure className="">
                         <img src="" width={40} height={40} alt="Omar Elbayoumi Portrait" className="img-cover"/>
                     </figure> */}
@@ -31,7 +31,7 @@ const Hero = () => {
                     </div>
                 </div>
 
-                <div className="hidden lg:block">
+                <div className="reveal-up lg:block">
                     <figure className="w-full max-w-[480px] ml-auto bg-gradient-to-t from-sky-400 via-40% via-emerald-500 to-85% rounded-full overflow-hidden">
                         <img className="w-full" src="/images/omar-bayoumi.png" width={656} height={800} alt="Omar Elbayoumi" />
                     </figure>

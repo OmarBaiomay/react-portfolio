@@ -62,12 +62,12 @@ const Footer = () => {
 
                 <div className="grid grid-cols-2 gap-4 lg:pl-20">
                     <div className=''>
-                        <p className="mb-2">Sitemap</p>
+                        <p className="mb-2 reveal-up">Sitemap</p>
                         <ul>
                         {
                             sitemap.map(({label, href}, key) =>(
                                 <li key={key}>
-                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200' >
+                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200 reveal-up' >
                                         {label}
                                     </a>
                                 </li>
@@ -77,12 +77,12 @@ const Footer = () => {
                     </div>
 
                     <div className=''>
-                        <p className="mb-2">Social Links</p>
+                        <p className="mb-2 reveal-up">Social Links</p>
                         <ul>
                         {
                             socials.map(({label, href}, key) =>(
                                 <li key={key}>
-                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200' target='_blank'>
+                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200 reveal-up' target='_blank'>
                                         {label}
                                     </a>
                                 </li>
@@ -94,10 +94,10 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center justify-between pt-10 mb-8 ">
-                <a href="" className=''>
+                <a href="" className='reveal-up'>
                     <img src="/images/logo.svg" width={40} height={40} alt="Logo"/>
                 </a>
-                <p className='text-zinc-500 text-sm '>
+                <p className='text-zinc-500 text-sm reveal-up'>
                     &copy; {new Date().getFullYear()} <span className='text-emerald-500'>B-Code | Omar Elbayoumi</span>
                 </p>
             </div>

@@ -36,10 +36,10 @@ const Contact = () => {
     <section id='contact' className="section">
         <div className="container lg:grid lg:grid-cols-2 lg:items-stretch">
             <div className='mb-12 lg:mb-0 lg:flex lg:flex-col'>
-                <h2 className="headline-2 lg:max-w-[12ch]">
+                <h2 className="headline-2 lg:max-w-[12ch] reveal-up">
                     Contact me for Collaboration
                 </h2>
-                <p className='text-zinc-400 mt-3 mb-8 max-w-[50ch] lg:max-w-[30ch]'>
+                <p className='text-zinc-400 mt-3 mb-8 max-w-[50ch] lg:max-w-[30ch] reveal-up'>
                     Reach out today to discuss your project needs and start collaborating on something amazing!
                 </p>
                 <div className='flex items-center gap-2 mt-auto lg:mt-0'>
@@ -55,29 +55,29 @@ const Contact = () => {
 
             <form action="https://getform.io/f/byvvyvla" className='xl:pl-10 2xl:pl-20 ' method='POST'>
                 <div className="md:grid md:items-center md:grid-cols-2 md:gap-2">
-                    <div className="mb-4">
+                    <div className="mb-4 reveal-up">
                         <label htmlFor="name" className=''>
                             Name
                         </label>
-                        <input type="text" name="name" id="name" autoComplete='name' required placeholder='Your Name...' className='text-field '/>
+                        <input type="text" name="name" id="name" autoComplete='name' required placeholder='Your Name...' className='text-field reveal-up'/>
                     </div>
 
-                    <div className="mb-4">
+                    <div className="mb-4 reveal-up">
                         <label htmlFor="email" className=''>
                             Email
                         </label>
-                        <input type="text" name="email" id="email" autoComplete='email' required placeholder='email@example.com' className='text-field '/>
+                        <input type="text" name="email" id="email" autoComplete='email' required placeholder='email@example.com' className='text-field reveal-up'/>
                     </div>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-4 reveal-up">
                         <label htmlFor="message" className=''>
                             Message
                         </label>
-                        <textarea name="message" id="message" autoComplete='message' required placeholder='Your Message Here...' className='text-field resize-y min-h-32 max-h-80'/>
+                        <textarea name="message" id="message" autoComplete='message' required placeholder='Your Message Here...' className='text-field resize-y min-h-32 max-h-80 reveal-up'/>
                     </div>
 
-                <button type="submit" className='btn rounded-xl bg-emerald-600 hover:bg-emerald-400 transition-colors [&]:max-w-full w-full text-center justify-center'>Send</button>
+                <button type="submit" className='btn rounded-xl bg-emerald-600 hover:bg-emerald-400 transition-colors [&]:max-w-full w-full text-center justify-center reveal-up'>Send</button>
             </form>
         </div>
     </section>

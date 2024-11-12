@@ -49,6 +49,10 @@
   @apply pt-[4rem] lg:pt-[6rem]
 }
 
+.reveal-up{
+  @apply translate-y-20 opacity-0
+}
+
 /* Base CSS*/
 
 html{

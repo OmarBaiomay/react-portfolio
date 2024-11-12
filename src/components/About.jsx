@@ -18,7 +18,7 @@ function About() {
   return (
     <section className='section' id='about'>
         <div className='container'>
-            <div className='bg-zinc-800/50 p-7 rounded-2xl md:p-12 '>
+            <div className='bg-zinc-800/50 p-7 rounded-2xl md:p-12 reveal-up'>
                 <p className='text-zinc-300 mb-4 md:mb-8 md:text-xl'>
                 I'm a versatile <bold> React Developer</bold> and <bold>Odoo Developer</bold> with a passion for creating dynamic, user-friendly web applications and streamlining business processes. I build responsive, efficient front-end solutions using React while also customizing and optimizing Odoo ERP systems to fit unique business needs. From crafting clean, intuitive interfaces to automating workflows and integrating platforms, I enjoy turning complex challenges into valuable, impactful solutions. Let's collaborate to bring your ideas to life!
                 </p>
