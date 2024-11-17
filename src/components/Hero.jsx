@@ -24,9 +24,9 @@ const Hero = () => {
                         </h2>
 
                         <div className="flex justify-center items-center gap-3">
-                            <Button label="Download CV" icon="download"/>
+                            <Button href="/files/Omar_Bayoumi_CV.pdf" label="Download CV" icon="download" download={true}/>
 
-                            <Button label="Hire Me" icon="" isPrimary={false}/>
+                            <Button label="Hire Me" icon="" isPrimary={false} href="#contact"/>
                         </div>
                     </div>
                 </div>
