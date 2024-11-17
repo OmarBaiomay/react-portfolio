@@ -20,7 +20,7 @@ function About() {
         <div className='container'>
             <div className='bg-zinc-800/50 p-7 rounded-2xl md:p-12 reveal-up'>
                 <p className='text-zinc-300 mb-4 md:mb-8 md:text-xl'>
-                I'm a versatile <bold> React Developer</bold> and <bold>Odoo Developer</bold> with a passion for creating dynamic, user-friendly web applications and streamlining business processes. I build responsive, efficient front-end solutions using React while also customizing and optimizing Odoo ERP systems to fit unique business needs. From crafting clean, intuitive interfaces to automating workflows and integrating platforms, I enjoy turning complex challenges into valuable, impactful solutions. Let's collaborate to bring your ideas to life!
+                I'm a skilled React Developer with a passion for building dynamic, user-friendly web applications. I specialize in crafting responsive, efficient front-end solutions that deliver exceptional user experiences. From designing clean, intuitive interfaces to implementing cutting-edge features, I thrive on transforming complex challenges into impactful, functional web applications. Let's collaborate to bring your ideas to life and create modern, engaging solutions for your needs!
                 </p>
 
                 <div className='flex flex-wrap items-center gap-4 md:gap-7'>

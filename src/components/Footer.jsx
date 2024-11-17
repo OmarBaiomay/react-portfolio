@@ -26,24 +26,20 @@ const sitemap = [
   const socials = [
     {
       label: 'GitHub',
-      href: 'https://www.github.com/codewithsadee-org'
+      href: 'https://github.com/OmarBaiomay'
     },
     {
       label: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/codewithsadee'
+      href: 'https://www.linkedin.com/in/omar-albayoumi/'
     },
     {
       label: 'Twitter X',
-      href: 'https://x.com/codewithsadee_'
+      href: 'https://x.com/OmarBaiomay'
     },
     {
       label: 'Instagram',
-      href: 'https://www.instagram.com/codewithsadee'
+      href: 'https://www.instagram.com/omar_baiomay/'
     },
-    {
-      label: 'CodePen',
-      href: 'https://codepen.io/codewithsadee'
-    }
   ];
 
 const Footer = () => {
@@ -93,7 +89,7 @@ const Footer = () => {
                 </div>
             </div>
 
-            <div className="flex items-center justify-between pt-10 mb-8 ">
+            <div className="flex items-center justify-between pt-10 mb-8 pb-10">
                 <a href="" className='reveal-up'>
                     <img src="/images/logo.svg" width={40} height={40} alt="Logo"/>
                 </a>
