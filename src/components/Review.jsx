@@ -1,13 +1,16 @@
 import React from 'react'
 import ReviewCard from './ReviewCard';
 
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import OwlCarousel from 'react-owl-carousel';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+// import required modules
+import { Pagination, Navigation } from 'swiper/modules';
 
 const reviews = [
 
@@ -52,60 +55,45 @@ const reviews = [
 const Review = () => {
 
 
-  // useGSAP(() =>{
-  //   gsap.to('.scrub-slide',{
-  //     ScrollTrigger: {
-  //       trigger: '.scrub-slide',
-  //       start: "-200% 80%",
-  //       end: "400% 80%",
-  //       scrub: true,
-  //       markers: true
-  //     },
-  //     x: '-1000'
-  //   })
-  // });
-
-  const options = {
-    responsive: {
-      0: {
-        items: 1,
-      },
-      400: {
-        items: 1,
-      },
-      600: {
-        items: 1,
-      },
-      700: {
-        items: 2,
-        dots: true,
-        nav: false,
-        margin: 50
-      },
-      800: {
-        items: 2,
-      },
-      1000: {
-        items: 2,
-      }
-    },
-    nav: false,
-    dots: true
-  }
-
   return (
     <section className="section overflow-hidden" id='reviews'>
         <div className="container">
             <h2 className="headline-2 mb-8 reveal-up">
                 What our customers say
             </h2>
-            <OwlCarousel className='owl-theme section' loop margin={50} autoplay {...options} >
+            <Swiper
+              spaceBetween={30}
+              loop={true}
+              pagination={{
+                clickable: true,
+              }}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                768:{
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                }
+              }}
+              navigation={false}
+            >
                 {
                     reviews.map(({content, userName, imgSrc, company}, key) => (
-                        <ReviewCard className="item" content={content} userName={userName} imgSrc={imgSrc} company={company} key={key}/>
+                      <SwiperSlide className='min-h-[200px]'>
+                          <ReviewCard 
+                            className="item" 
+                            content={content} 
+                            userName={userName} 
+                            imgSrc={imgSrc} 
+                            company={company} 
+                            key={key}
+                          />
+                      </SwiperSlide>
                     ))
                 }
-            </OwlCarousel>
+            </Swiper>
         </div>
     </section>
   )
