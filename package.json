@@ -12,11 +12,13 @@
   "dependencies": {
     "@gsap/react": "^2.1.1",
     "@material-tailwind/react": "^2.1.10",
+    "@rollup/plugin-inject": "^5.0.5",
     "gsap": "^3.12.5",
     "lenis": "^1.1.16",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-owl-carousel": "^2.3.3",
     "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {

@@ -7,6 +7,7 @@
  */
 
 import { ReactLenis, useLenis } from 'lenis/react'
+import * as $ from "jquery" 
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

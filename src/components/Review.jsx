@@ -5,6 +5,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
+import OwlCarousel from 'react-owl-carousel';
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const reviews = [
@@ -50,18 +52,46 @@ const reviews = [
 const Review = () => {
 
 
-  useGSAP(() =>{
-    gsap.to('.scrub-slide',{
-      ScrollTrigger: {
-        trigger: '.scrub-slide',
-        start: "-200% 80%",
-        end: "400% 80%",
-        scrub: true,
-        markers: true
+  // useGSAP(() =>{
+  //   gsap.to('.scrub-slide',{
+  //     ScrollTrigger: {
+  //       trigger: '.scrub-slide',
+  //       start: "-200% 80%",
+  //       end: "400% 80%",
+  //       scrub: true,
+  //       markers: true
+  //     },
+  //     x: '-1000'
+  //   })
+  // });
+
+  const options = {
+    responsive: {
+      0: {
+        items: 1,
       },
-      x: '-1000'
-    })
-  });
+      400: {
+        items: 1,
+      },
+      600: {
+        items: 1,
+      },
+      700: {
+        items: 2,
+        dots: true,
+        nav: false,
+        margin: 50
+      },
+      800: {
+        items: 2,
+      },
+      1000: {
+        items: 2,
+      }
+    },
+    nav: false,
+    dots: true
+  }
 
   return (
     <section className="section overflow-hidden" id='reviews'>
@@ -69,13 +99,13 @@ const Review = () => {
             <h2 className="headline-2 mb-8 reveal-up">
                 What our customers say
             </h2>
-            <div className='scrub-slide flex items-stretch gap-3 w-fit'>
+            <OwlCarousel className='owl-theme section' loop margin={50} autoplay {...options} >
                 {
                     reviews.map(({content, userName, imgSrc, company}, key) => (
-                        <ReviewCard content={content} userName={userName} imgSrc={imgSrc} company={company} key={key}/>
+                        <ReviewCard className="item" content={content} userName={userName} imgSrc={imgSrc} company={company} key={key}/>
                     ))
                 }
-            </div>
+            </OwlCarousel>
         </div>
     </section>
   )
