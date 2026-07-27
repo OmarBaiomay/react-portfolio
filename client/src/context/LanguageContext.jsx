@@ -5,8 +5,8 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
-    if (typeof window === 'undefined') return 'en';
-    return localStorage.getItem('bcode-lang') || 'en';
+    if (typeof window === 'undefined') return 'ar';
+    return localStorage.getItem('bcode-lang') || 'ar';
   });
 
   useEffect(() => {

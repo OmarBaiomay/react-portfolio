@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis, useLenis } from 'lenis/react';
 import 'lenis/dist/lenis.css';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -10,30 +10,31 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import ProjectPage from './pages/ProjectPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { scrollToSectionId } from './hooks/useScrollToSection';
 
 function ScrollToHash() {
   const { pathname, hash } = useLocation();
+  const lenis = useLenis();
 
   useEffect(() => {
     if (hash) {
       const id = hash.replace('#', '');
-      requestAnimationFrame(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-      return;
+      // Wait for route content / Lenis to be ready
+      const t = window.setTimeout(() => scrollToSectionId(id, lenis), 50);
+      return () => window.clearTimeout(t);
     }
     if (pathname !== '/') {
-      window.scrollTo(0, 0);
+      if (lenis) lenis.scrollTo(0, { immediate: true });
+      else window.scrollTo(0, 0);
     }
-  }, [pathname, hash]);
+  }, [pathname, hash, lenis]);
 
   return null;
 }
 
 function AppShell() {
   return (
-    <ReactLenis root>
+    <ReactLenis root options={{ lerp: 0.1, smoothWheel: true }}>
       <ScrollToHash />
       <Header />
       <Routes>

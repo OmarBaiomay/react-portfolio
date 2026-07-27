@@ -3,9 +3,9 @@ export const SITE = {
   name: 'B-Code',
   legalName: 'B-Code',
   url: 'https://b-code.tech',
-  localeDefault: 'en_US',
-  localeAlternate: 'ar_SA',
-  languageDefault: 'en',
+  localeDefault: 'ar_SA',
+  localeAlternate: 'en_US',
+  languageDefault: 'ar',
   email: 'baiomayomar@gmail.com',
   sameAs: [
     'https://github.com/OmarBaiomay',
@@ -77,9 +77,9 @@ export function absoluteUrl(path = '/') {
   return `${SITE.url}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-export function pageTitle(title, lang = 'en') {
+export function pageTitle(title, lang = 'ar') {
   const brand = SITE.name;
-  const tag = SITE.tagline[lang] || SITE.tagline.en;
+  const tag = SITE.tagline[lang] || SITE.tagline.ar;
   if (!title) return `${brand} | ${tag}`;
   return `${title} | ${brand}`;
 }

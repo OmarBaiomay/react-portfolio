@@ -10,7 +10,7 @@ export const translations = {
     },
     cta: {
       quote: 'Get a quote',
-      start: 'Start a project',
+      start: "Let's build yours",
       explore: 'Explore services',
       consult: 'Book a free consult',
       seePricing: 'See pricing',
@@ -221,7 +221,7 @@ export const translations = {
     },
     cta: {
       quote: 'عرض سعر',
-      start: 'ابدأ مشروعك الآن',
+      start: 'لنبنِ مشروعك معنا',
       explore: 'تعرّف على خدماتنا',
       consult: 'احجز استشارة مجانية',
       seePricing: 'اطّلع على الأسعار',

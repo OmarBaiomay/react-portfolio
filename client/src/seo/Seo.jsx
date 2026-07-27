@@ -11,19 +11,19 @@ export default function Seo({
   description,
   path = '/',
   image,
-  lang = 'en',
+  lang = 'ar',
   type = 'website',
   noindex = false,
   jsonLd,
 }) {
   const resolvedTitle = pageTitle(title, lang);
   const resolvedDescription =
-    description || SITE.description[lang] || SITE.description.en;
+    description || SITE.description[lang] || SITE.description.ar;
   const canonical = absoluteUrl(path);
   const ogImage = absoluteUrl(image || SITE.ogImagePath);
-  const keywords = (SITE.keywords[lang] || SITE.keywords.en).join(', ');
-  const ogLocale = lang === 'ar' ? SITE.localeAlternate : SITE.localeDefault;
-  const ogLocaleAlt = lang === 'ar' ? SITE.localeDefault : SITE.localeAlternate;
+  const keywords = (SITE.keywords[lang] || SITE.keywords.ar).join(', ');
+  const ogLocale = lang === 'ar' ? 'ar_SA' : 'en_US';
+  const ogLocaleAlt = lang === 'ar' ? 'en_US' : 'ar_SA';
 
   const payloads = Array.isArray(jsonLd) ? jsonLd.filter(Boolean) : jsonLd ? [jsonLd] : [];
 

@@ -42,11 +42,11 @@ body {
 }
 
 .container-site {
-  @apply mx-auto w-full max-w-site px-5 md:px-8;
+  @apply mx-auto w-full max-w-site px-5 md:px-8 lg:px-10;
 }
 
 .section {
-  @apply relative py-20 md:py-28;
+  @apply relative scroll-mt-24 py-14 md:scroll-mt-28 md:py-20 lg:py-24;
 }
 
 .glass {
@@ -84,7 +84,7 @@ body {
 }
 
 .nav-desktop {
-  @apply hidden min-w-0 items-center justify-center gap-0.5 overflow-visible md:flex lg:gap-1;
+  @apply relative hidden flex-1 items-center justify-center gap-1 overflow-visible lg:flex;
 }
 
 .nav-drawer {
@@ -126,4 +126,22 @@ label {
   font-family: 'Cairo', sans-serif;
   letter-spacing: 0;
   @apply px-1.5 text-[12px] lg:px-2 lg:text-[13px];
+}
+
+/* Hero Three.js: full-bleed on phones, side-faded on desktop */
+.hero-scene-wrap {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+@media (min-width: 768px) {
+  [dir='ltr'] .hero-scene-wrap {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.45) 22%, #000 48%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.45) 22%, #000 48%);
+  }
+
+  [dir='rtl'] .hero-scene-wrap {
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.45) 22%, #000 48%);
+    mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.45) 22%, #000 48%);
+  }
 }

@@ -269,8 +269,9 @@ export default function HeroScene() {
 
     try {
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
       const accent = 0xff5c1a;
-      const soft = isDark ? 0x2a2a2a : 0xc4c4c8;
+      const soft = isDark ? 0x2a2a2a : 0x9a9aa3;
       const fogColor = isDark ? 0x050505 : 0xf4f4f5;
 
       const width = mount.clientWidth || window.innerWidth;
@@ -280,21 +281,36 @@ export default function HeroScene() {
       while (mount.firstChild) mount.removeChild(mount.firstChild);
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(fogColor, 0.055);
+      // Lighter fog on phones so the wireframe stays readable
+      scene.fog = new THREE.FogExp2(fogColor, isMobile ? 0.022 : 0.028);
 
-      const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 80);
-      camera.position.set(0, 0.1, 9.2);
+      const camera = new THREE.PerspectiveCamera(isMobile ? 42 : 38, width / height, 0.1, 80);
+      camera.position.set(0, isMobile ? 0.05 : 0.1, isMobile ? 7.2 : 9.2);
 
       const renderer = createRenderer(mount, width, height);
 
       const root = new THREE.Group();
-      // Keep geometry on the visual end-side, away from copy
-      root.position.x = isRtl ? -0.85 : 0.85;
-      root.scale.setScalar(0.88);
+      root.position.x = isMobile ? 0 : isRtl ? -0.55 : 0.55;
+      root.position.y = isMobile ? 0.35 : 0;
+      root.scale.setScalar(isMobile ? 1.15 : 1.02);
       scene.add(root);
 
       const controller = builders[sceneIndex](root, accent, soft);
       const particles = addParticles(root, accent);
+
+      if (isMobile) {
+        root.traverse((child) => {
+          if (child.material && 'opacity' in child.material) {
+            child.material.transparent = true;
+            child.material.opacity = Math.min(1, (child.material.opacity || 0.5) + 0.22);
+            child.material.needsUpdate = true;
+          }
+        });
+        if (particles.material) {
+          particles.material.opacity = 0.9;
+          particles.material.size = 0.05;
+        }
+      }
 
       let frameId;
       let t = 0;
@@ -347,20 +363,13 @@ export default function HeroScene() {
     return () => cleanup();
   }, [isDark, isRtl, sceneIndex]);
 
-  const mask = isRtl
-    ? 'linear-gradient(to left, transparent 0%, rgba(0,0,0,0.35) 18%, black 42%)'
-    : 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 18%, black 42%)';
-
   return (
     <div
-      ref={mountRef}
-      className="pointer-events-none absolute inset-y-0 end-0 z-0 w-[72%] md:w-[48%] lg:w-[46%]"
-      style={{
-        WebkitMaskImage: mask,
-        maskImage: mask,
-      }}
-      aria-hidden="true"
+      className="hero-scene-wrap pointer-events-none absolute inset-0 z-0 md:inset-y-0 md:end-0 md:start-auto md:w-[56%] lg:w-[54%]"
       data-hero-scene={sceneIndex}
-    />
+      aria-hidden="true"
+    >
+      <div ref={mountRef} className="absolute inset-0" />
+    </div>
   );
 }

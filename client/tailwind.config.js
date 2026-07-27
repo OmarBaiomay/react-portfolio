@@ -26,7 +26,7 @@ export default {
         card: '0 20px 50px rgb(0 0 0 / 0.35)',
       },
       maxWidth: {
-        site: '72rem',
+        site: '80rem',
       },
       backgroundImage: {
         'grid-fade':
