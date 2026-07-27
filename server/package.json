@@ -1,0 +1,33 @@
+{
+  "name": "b-code-server",
+  "version": "1.0.0",
+  "description": "B-Code company website API (Express + PostgreSQL)",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "migrate": "node src/db/pg-migrate.js",
+    "seed": "node src/scripts/seedData.js",
+    "start:prod": "NODE_ENV=production SERVE_CLIENT=true node src/index.js"
+  },
+  "author": "B-Code",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.8.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
