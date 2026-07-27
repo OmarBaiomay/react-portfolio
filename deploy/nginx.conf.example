@@ -1,8 +1,9 @@
-# Optional reverse proxy in front of docker-compose.prod.yml (app on 127.0.0.1:3001).
+# Optional reverse proxy in front of docker-compose.prod.yml (app on 127.0.0.1:3002).
 # Replace b-code.tech and SSL paths.
+# Keep playstation-lounge on its own nginx site / port (often :3001).
 
 upstream bcode_app {
-    server 127.0.0.1:3001;
+    server 127.0.0.1:3002;
     keepalive 32;
 }
 

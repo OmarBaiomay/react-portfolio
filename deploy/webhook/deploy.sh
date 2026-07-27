@@ -25,8 +25,11 @@ echo "commit: ${BEFORE:0:8} -> ${AFTER:0:8}"
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build
 docker image prune -f >/dev/null 2>&1 || true
 
+APP_PORT="$(grep -E '^APP_PORT=' "$ENV_FILE" 2>/dev/null | cut -d= -f2- || true)"
+APP_PORT="${APP_PORT:-3002}"
+
 for _ in $(seq 1 30); do
-  if curl -fsS http://127.0.0.1:3001/api/health >/dev/null 2>&1; then
+  if curl -fsS "http://127.0.0.1:${APP_PORT}/api/health" >/dev/null 2>&1; then
     echo "health: OK"
     echo "=== deploy done $(date -Is) ==="
     exit 0

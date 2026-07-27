@@ -38,4 +38,4 @@ Dashboard → SSL/TLS → Overview → **Full (strict)** once origin has a valid
 ## 5. App behind nginx
 
 Copy `deploy/nginx.conf.example` to `/etc/nginx/sites-available/b-code`, enable it, reload nginx.
-Point it at `127.0.0.1:3001` (docker compose prod app).
+Point it at `127.0.0.1:3002` (docker compose prod app — use a free port if 3001 is playstation-lounge).

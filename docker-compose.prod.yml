@@ -3,8 +3,8 @@
 #   cp .env.production.example .env.production
 #   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
 #
-# App URL: http://localhost:${APP_PORT:-3001}
-# Admin:   http://localhost:${APP_PORT:-3001}/admin/
+# App URL: http://localhost:${APP_PORT:-3002}
+# Admin:   http://localhost:${APP_PORT:-3002}/admin/
 
 services:
   postgres:
@@ -39,7 +39,7 @@ services:
     container_name: bcode-app
     restart: unless-stopped
     ports:
-      - '${APP_PORT:-3001}:3001'
+      - '${APP_PORT:-3002}:3001'
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-bcode}
       NODE_ENV: production
