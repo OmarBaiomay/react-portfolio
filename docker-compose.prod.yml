@@ -1,0 +1,74 @@
+# Production stack: PostgreSQL + app (API + public SPA + admin SPA).
+#
+#   cp .env.production.example .env.production
+#   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+#
+# App URL: http://localhost:${APP_PORT:-3001}
+# Admin:   http://localhost:${APP_PORT:-3001}/admin/
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bcode-pg-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+      POSTGRES_DB: ${POSTGRES_DB:-bcode}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-bcode}',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+        VITE_API_URL: /api
+    container_name: bcode-app
+    restart: unless-stopped
+    ports:
+      - '${APP_PORT:-3001}:3001'
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-bcode}
+      NODE_ENV: production
+      SERVE_CLIENT: 'true'
+      CLIENT_DIST_PATH: /app/client/dist
+      ADMIN_DIST_PATH: /app/admin/dist
+      PORT: '3001'
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.production}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-}
+      ALLOW_PUBLIC_SIGNUP: ${ALLOW_PUBLIC_SIGNUP:-false}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SERVICE_ACCOUNT_JSON:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3001/api/health']
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+    networks:
+      - app
+
+volumes:
+  pgdata:
+
+networks:
+  app:
+    driver: bridge

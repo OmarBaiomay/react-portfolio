@@ -1,0 +1,16 @@
+[Unit]
+Description=B-Code GitHub deploy webhook
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/b-code
+Environment=WEBHOOK_SECRET=change-me
+Environment=REPO_DIR=/opt/b-code
+Environment=WEBHOOK_HOST=127.0.0.1
+Environment=WEBHOOK_PORT=9001
+ExecStart=/usr/bin/python3 /opt/b-code/deploy/webhook/webhook.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
