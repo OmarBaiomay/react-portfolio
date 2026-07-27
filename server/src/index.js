@@ -109,9 +109,29 @@ function serveSpas() {
   }
 
   if (fs.existsSync(clientDist)) {
-    app.use(express.static(clientDist));
-    app.get(/^(?!\/api)(?!\/admin).*/, (req, res) => {
-      res.sendFile(path.join(clientDist, 'index.html'));
+    app.use(express.static(clientDist, { index: ['index.html'] }));
+
+    // Prefer prerendered HTML (e.g. /work/slug/index.html) before SPA shell
+    app.get(/^(?!\/api)(?!\/admin).*/, (req, res, next) => {
+      const clean = (req.path || '/').split('?')[0];
+      if (clean.includes('..')) return next();
+
+      const candidates = [];
+      if (clean === '/' || clean === '') {
+        candidates.push(path.join(clientDist, 'index.html'));
+      } else {
+        const noSlash = clean.replace(/\/$/, '');
+        candidates.push(path.join(clientDist, noSlash, 'index.html'));
+        candidates.push(path.join(clientDist, `${noSlash}.html`));
+      }
+
+      for (const file of candidates) {
+        if (fs.existsSync(file) && file.startsWith(clientDist)) {
+          return res.sendFile(file);
+        }
+      }
+
+      return res.sendFile(path.join(clientDist, 'index.html'));
     });
   }
 }

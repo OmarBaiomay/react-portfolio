@@ -1,0 +1,10 @@
+# AI crawler hints for B-Code
+# See also: /llms.txt (preferred human + agent summary)
+
+site: https://b-code.tech
+name: B-Code
+contact: baiomayomar@gmail.com
+llms: https://b-code.tech/llms.txt
+sitemap: https://b-code.tech/sitemap.xml
+languages: en, ar
+topics: web development, Odoo ERP, custom software, React, bilingual Arabic English

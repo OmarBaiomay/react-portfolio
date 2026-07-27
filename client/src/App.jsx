@@ -9,6 +9,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import ProjectPage from './pages/ProjectPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function ScrollToHash() {
   const { pathname, hash } = useLocation();
@@ -16,7 +17,6 @@ function ScrollToHash() {
   useEffect(() => {
     if (hash) {
       const id = hash.replace('#', '');
-      // Wait a tick for home sections to mount
       requestAnimationFrame(() => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -39,7 +39,7 @@ function AppShell() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/work/:slug" element={<ProjectPage />} />
-        <Route path="*" element={<HomePage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
     </ReactLenis>

@@ -26,9 +26,16 @@ function Pricing() {
         publicAPI.getPackages(),
         publicAPI.getMaintenancePlans(),
       ]);
-      setPackages(packagesRes.data);
-      setMaintenancePlans(maintenanceRes.data);
+      const nextPackages = packagesRes?.data;
+      const nextPlans = maintenanceRes?.data;
+      setPackages(Array.isArray(nextPackages) ? nextPackages : []);
+      setMaintenancePlans(Array.isArray(nextPlans) ? nextPlans : []);
+      if (!Array.isArray(nextPackages)) {
+        setError(t.pricing.error);
+      }
     } catch (err) {
+      setPackages([]);
+      setMaintenancePlans([]);
       setError(err.response?.data?.message || t.pricing.error);
     } finally {
       setLoading(false);

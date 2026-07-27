@@ -48,3 +48,11 @@ docker compose --env-file .env.production -f docker-compose.prod.yml up -d --bui
 - API health: `http://localhost:3001/api/health`
 
 See [DEPLOY.md](DEPLOY.md) for Cloudflare + VPS.
+
+## SEO / AI search
+
+- OG image: `/images/og-cover.png` (1200×630)
+- Sitemap: `/sitemap.xml` · robots: `/robots.txt` · AI summary: `/llms.txt`
+- Client build prerenders `/` and `/work/:slug` for crawlers
+- Submit sitemap in Google/Bing: [client/SEO.md](client/SEO.md)
+

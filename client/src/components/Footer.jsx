@@ -8,6 +8,7 @@ const Footer = () => {
     { label: t.nav.portfolio, href: '/#portfolio' },
     { label: t.nav.pricing, href: '/#pricing' },
     { label: t.nav.about, href: '/#about' },
+    { label: t.faq.kicker, href: '/#faq' },
     { label: t.nav.contact, href: '/#contact' },
   ];
 

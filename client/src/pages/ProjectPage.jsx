@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowUpRight, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getProjectBySlug, getRelatedProjects } from '../data/projects';
 import { industries } from '../data/industries';
+import Seo from '../seo/Seo';
+import { breadcrumbJsonLd, creativeWorkJsonLd } from '../seo/structuredData';
 
 const ProjectPage = () => {
   const { slug } = useParams();
@@ -37,9 +39,27 @@ const ProjectPage = () => {
   const industry = industries.find((i) => i.id === project.industry);
   const related = getRelatedProjects(project.slug, 2);
   const p = t.project;
+  const title = project.title[lang] || project.title.en;
+  const summary = project.summary[lang] || project.summary.en;
 
   return (
-    <div ref={rootRef} className="bg-bg pt-24 md:pt-28">
+    <article ref={rootRef} className="bg-bg pt-24 md:pt-28">
+      <Seo
+        title={title}
+        description={summary}
+        path={`/work/${project.slug}`}
+        image={project.imgSrc}
+        lang={lang}
+        type="article"
+        jsonLd={[
+          creativeWorkJsonLd(project, lang),
+          breadcrumbJsonLd([
+            { name: 'B-Code', path: '/' },
+            { name: t.nav.portfolio, path: '/#portfolio' },
+            { name: title, path: `/work/${project.slug}` },
+          ]),
+        ]}
+      />
       <section className="container-site pb-10">
         <Link
           to="/#portfolio"
@@ -207,7 +227,7 @@ const ProjectPage = () => {
           </div>
         </section>
       ) : null}
-    </div>
+    </article>
   );
 };
 

@@ -265,78 +265,86 @@ export default function HeroScene() {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const accent = 0xff5c1a;
-    const soft = isDark ? 0x2a2a2a : 0xc4c4c8;
-    const fogColor = isDark ? 0x050505 : 0xf4f4f5;
+    let cleanup = () => {};
 
-    const width = mount.clientWidth || window.innerWidth;
-    const height = mount.clientHeight || window.innerHeight;
+    try {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const accent = 0xff5c1a;
+      const soft = isDark ? 0x2a2a2a : 0xc4c4c8;
+      const fogColor = isDark ? 0x050505 : 0xf4f4f5;
 
-    // Avoid leftover canvases from HMR / StrictMode
-    while (mount.firstChild) mount.removeChild(mount.firstChild);
+      const width = mount.clientWidth || window.innerWidth;
+      const height = mount.clientHeight || window.innerHeight;
 
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(fogColor, 0.055);
+      // Avoid leftover canvases from HMR / StrictMode
+      while (mount.firstChild) mount.removeChild(mount.firstChild);
 
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 80);
-    camera.position.set(0, 0.1, 9.2);
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(fogColor, 0.055);
 
-    const renderer = createRenderer(mount, width, height);
+      const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 80);
+      camera.position.set(0, 0.1, 9.2);
 
-    const root = new THREE.Group();
-    // Keep geometry on the visual end-side, away from copy
-    root.position.x = isRtl ? -0.85 : 0.85;
-    root.scale.setScalar(0.88);
-    scene.add(root);
+      const renderer = createRenderer(mount, width, height);
 
-    const controller = builders[sceneIndex](root, accent, soft);
-    const particles = addParticles(root, accent);
+      const root = new THREE.Group();
+      // Keep geometry on the visual end-side, away from copy
+      root.position.x = isRtl ? -0.85 : 0.85;
+      root.scale.setScalar(0.88);
+      scene.add(root);
 
-    let frameId;
-    let t = 0;
-    const pointer = { x: 0, y: 0 };
-    const onPointer = (e) => {
-      pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-      pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
-    };
-    window.addEventListener('pointermove', onPointer);
+      const controller = builders[sceneIndex](root, accent, soft);
+      const particles = addParticles(root, accent);
 
-    const onResize = () => {
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    };
-    window.addEventListener('resize', onResize);
+      let frameId;
+      let t = 0;
+      const pointer = { x: 0, y: 0 };
+      const onPointer = (e) => {
+        pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = (e.clientY / window.innerHeight) * 2 - 1;
+      };
+      window.addEventListener('pointermove', onPointer);
 
-    const animate = () => {
-      frameId = requestAnimationFrame(animate);
-      if (!prefersReduced) {
-        t += 0.009;
-        controller.update(t, pointer);
-        particles.rotation.y = t * 0.035;
+      const onResize = () => {
+        const w = mount.clientWidth;
+        const h = mount.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      };
+      window.addEventListener('resize', onResize);
+
+      const animate = () => {
+        frameId = requestAnimationFrame(animate);
+        if (!prefersReduced) {
+          t += 0.009;
+          controller.update(t, pointer);
+          particles.rotation.y = t * 0.035;
+        }
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      if (import.meta.env.DEV) {
+        console.info(`[HeroScene] variant ${sceneIndex + 1}/${SCENE_COUNT}`);
       }
-      renderer.render(scene, camera);
-    };
-    animate();
 
-    // Helpful in console while tuning
-    if (import.meta.env.DEV) {
-      console.info(`[HeroScene] variant ${sceneIndex + 1}/${SCENE_COUNT}`);
+      cleanup = () => {
+        cancelAnimationFrame(frameId);
+        window.removeEventListener('resize', onResize);
+        window.removeEventListener('pointermove', onPointer);
+        disposeObject(root);
+        renderer.dispose();
+        if (renderer.domElement.parentNode === mount) {
+          mount.removeChild(renderer.domElement);
+        }
+      };
+    } catch (err) {
+      console.warn('[HeroScene] skipped (WebGL unavailable):', err?.message || err);
+      while (mount.firstChild) mount.removeChild(mount.firstChild);
     }
 
-    return () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('pointermove', onPointer);
-      disposeObject(root);
-      renderer.dispose();
-      if (renderer.domElement.parentNode === mount) {
-        mount.removeChild(renderer.domElement);
-      }
-    };
+    return () => cleanup();
   }, [isDark, isRtl, sceneIndex]);
 
   const mask = isRtl

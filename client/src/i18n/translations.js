@@ -199,6 +199,16 @@ export const translations = {
       toggleTheme: 'Toggle color theme',
       toggleLang: 'Toggle language',
     },
+    faq: {
+      kicker: 'FAQ',
+      title: 'Answers before you ask',
+      lead: 'Straight answers about what B-Code builds, how we work, and how to start.',
+    },
+    notFound: {
+      title: 'Page not found',
+      lead: 'That link does not exist. Head back home to explore services, work, and pricing.',
+      home: 'Back to home',
+    },
   },
   ar: {
     brand: 'بي‑كود',
@@ -419,6 +429,16 @@ export const translations = {
       closeMenu: 'إغلاق القائمة',
       toggleTheme: 'تبديل وضع العرض',
       toggleLang: 'تبديل اللغة',
+    },
+    faq: {
+      kicker: 'الأسئلة الشائعة',
+      title: 'إجابات واضحة قبل أن تسأل',
+      lead: 'إجابات مباشرة عن خدمات بي‑كود، أسلوب عملنا، وكيف نبدأ معاً.',
+    },
+    notFound: {
+      title: 'الصفحة غير موجودة',
+      lead: 'هذا الرابط غير متاح. عد إلى الصفحة الرئيسية لاستكشاف الخدمات والأعمال والأسعار.',
+      home: 'العودة للرئيسية',
     },
   },
 };
