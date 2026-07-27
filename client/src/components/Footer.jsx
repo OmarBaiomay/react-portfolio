@@ -1,105 +1,82 @@
-import React from 'react'
-
-const sitemap = [
-    {
-      label: 'Home',
-      href: '#home'
-    },
-    {
-      label: 'About',
-      href: '#about'
-    },
-    {
-      label: 'Work',
-      href: '#work'
-    },
-    {
-      label: 'Reviews',
-      href: '#reviews'
-    },
-    {
-      label: 'Contact me',
-      href: '#contact'
-    }
-  ];
-  
-  const socials = [
-    {
-      label: 'GitHub',
-      href: 'https://github.com/OmarBaiomay'
-    },
-    {
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/omar-albayoumi/'
-    },
-    {
-      label: 'Twitter X',
-      href: 'https://x.com/OmarBaiomay'
-    },
-    {
-      label: 'Instagram',
-      href: 'https://www.instagram.com/omar_baiomay/'
-    },
-  ];
+import { useLanguage } from '../context/LanguageContext';
 
 const Footer = () => {
+  const { t } = useLanguage();
+
+  const sitemap = [
+    { label: t.nav.services, href: '/#services' },
+    { label: t.nav.portfolio, href: '/#portfolio' },
+    { label: t.nav.pricing, href: '/#pricing' },
+    { label: t.nav.about, href: '/#about' },
+    { label: t.nav.contact, href: '/#contact' },
+  ];
+
+  const socials = [
+    { label: 'GitHub', href: 'https://github.com/OmarBaiomay' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/omar-albayoumi/' },
+  ];
+
   return (
-    <footer className="section">
-        <div className="container">
-            <div className="lg:grid lg:grid-cols-2">
-                <div className="mb-10">
-                    <h2 className="headline-1 mb-8 lg-max-w-[12ch]">
-                        Let&apos;s work together today!
-                    </h2>
-                    <a className='btn rounded-xl bg-emerald-600 hover:bg-emerald-400 transition-colors' href='mailto:baiomayomar@gmail.com'>
-                        Start Project <span className='m-icon'>chevron_right</span>
+    <footer className="border-t border-line/10 bg-elevated">
+      <div className="container-site py-16 md:py-20">
+        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr]" data-animate="fade-up">
+          <div>
+            <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+              {t.brand}
+            </p>
+            <h2 className="mt-4 max-w-lg font-display text-3xl font-semibold md:text-4xl">
+              {t.footer.tagline}
+            </h2>
+            <a href="/#contact" className="btn-primary mt-8">
+              {t.cta.start}
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <p className="mb-3 text-sm font-semibold">{t.footer.sitemap}</p>
+              <ul className="space-y-2">
+                {sitemap.map(({ label, href }) => (
+                  <li key={href}>
+                    <a href={href} className="text-sm text-muted transition hover:text-accent">
+                      {label}
                     </a>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 lg:pl-20">
-                    <div className=''>
-                        <p className="mb-2 reveal-up">Sitemap</p>
-                        <ul>
-                        {
-                            sitemap.map(({label, href}, key) =>(
-                                <li key={key}>
-                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200 reveal-up' >
-                                        {label}
-                                    </a>
-                                </li>
-                            ))
-                        }
-                        </ul>
-                    </div>
-
-                    <div className=''>
-                        <p className="mb-2 reveal-up">Social Links</p>
-                        <ul>
-                        {
-                            socials.map(({label, href}, key) =>(
-                                <li key={key}>
-                                    <a href={href} className='block text-sm text-zinc-400 py-1 transition-all hover:text-zinc-200 reveal-up' target='_blank'>
-                                        {label}
-                                    </a>
-                                </li>
-                            ))
-                        }
-                        </ul>
-                    </div>
-                </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            <div className="flex items-center justify-between pt-10 mb-8 pb-10">
-                <a href="" className='reveal-up'>
-                    <img src="/images/logo.svg" width={40} height={40} alt="Logo"/>
-                </a>
-                <p className='text-zinc-500 text-sm reveal-up'>
-                    &copy; {new Date().getFullYear()} <span className='text-emerald-500'>B-Code | Omar Elbayoumi</span>
-                </p>
+            <div>
+              <p className="mb-3 text-sm font-semibold">{t.footer.connect}</p>
+              <ul className="space-y-2">
+                {socials.map(({ label, href }) => (
+                  <li key={href}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-muted transition hover:text-accent"
+                    >
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
+          </div>
         </div>
-    </footer>
-  )
-}
 
-export default Footer
+        <div className="mt-14 flex flex-col gap-4 border-t border-line/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <a href="#home" className="flex items-center gap-3">
+            <img src="/images/logo.svg" width={32} height={32} alt="" className="h-8 w-8" />
+            <span className="font-display font-semibold">{t.brand}</span>
+          </a>
+          <p className="text-sm text-muted">
+            © {new Date().getFullYear()} B-Code. {t.footer.rights}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;

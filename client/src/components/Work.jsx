@@ -1,49 +1,70 @@
-import React from 'react'
-import ProjectCard from './ProjectCard';
-
-const works = [
-    {
-      imgSrc: '/images/project-1.jpg',
-      title: 'Weather App',
-      tags: ['API', 'MVC', 'Development'],
-      projectLink: 'https://weathergo.b-code.tech/'
-    },
-    {
-      imgSrc: '/images/project-2.jpg',
-      title: 'Aisha Academy Website',
-      tags: ['Odoo', 'Design','Development'],
-      projectLink: 'https://www.aishaquran.com'
-    },
-    {
-      imgSrc: '/images/project-3.jpg',
-      title: 'Global Solutions',
-      tags: ['Odoo','Development'],
-      projectLink: 'https://globalsolutions.sa/'
-    },
-    {
-      imgSrc: '/images/project-4.jpg',
-      title: 'Najd Digital',
-      tags: ['Wordpress', 'Development'],
-      projectLink: 'https://www.najddigital.com'
-    },
-  ];
+import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { projects } from '../data/projects';
 
 const Work = () => {
-  return (
-    <section className='section' id='work'>
-        <div className='container'>
-            <h2 className='headline-2 mb-10 reveal-up'>
-                My portfolio highlights
-            </h2>
-            <div className='grid gap-x-4 gap-y-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
-                {
-                    works.map(({imgSrc, title, tags, projectLink}, key) => (
-                        <ProjectCard key={key} imgSrc={imgSrc} title={title} tags={tags} projectLink={projectLink} classes="reveal-up"/>
-                    ))}
-            </div>
-        </div>
-    </section>
-  )
-}
+  const { t, lang } = useLanguage();
 
-export default Work
+  return (
+    <section id="portfolio" className="section">
+      <div className="container-site">
+        <div
+          className="flex flex-col justify-between gap-6 md:flex-row md:items-end"
+          data-animate="fade-up"
+        >
+          <div>
+            <p className="kicker">{t.work.kicker}</p>
+            <h2 className="title">{t.work.title}</h2>
+            <p className="lead">{t.work.lead}</p>
+          </div>
+          <a href="/#contact" className="btn-ghost shrink-0">
+            {t.cta.startYours}
+          </a>
+        </div>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2" data-animate="stagger">
+          {projects.map((work) => (
+            <Link
+              key={work.slug}
+              to={`/work/${work.slug}`}
+              data-animate-child
+              className="group glass overflow-hidden rounded-2xl transition hover:border-accent/40 hover:shadow-glow"
+            >
+              <figure className="aspect-[16/10] overflow-hidden bg-surface">
+                <img
+                  src={work.imgSrc}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                />
+              </figure>
+              <div className="p-5 md:p-6">
+                <div className="flex flex-wrap gap-2">
+                  {work.tags[lang].map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[11px] font-semibold uppercase tracking-wider text-accent"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <h3 className="mt-3 font-display text-xl font-semibold">
+                  {work.title[lang]}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  {work.summary[lang]}
+                </p>
+                <span className="mt-4 inline-flex text-sm font-semibold text-ink transition group-hover:text-accent">
+                  {t.cta.viewProject} →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Work;

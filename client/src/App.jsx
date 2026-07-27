@@ -1,68 +1,59 @@
-/**
- * @copyright 2024 Omar Elbayoumi
- */
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { ReactLenis } from 'lenis/react';
+import 'lenis/dist/lenis.css';
 
-/**
- * Libraries
- */
+import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import ProjectPage from './pages/ProjectPage';
 
-import { ReactLenis, useLenis } from 'lenis/react'
-import * as $ from "jquery" 
-import { useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
+function ScrollToHash() {
+  const { pathname, hash } = useLocation();
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+  useEffect(() => {
+    if (hash) {
+      const id = hash.replace('#', '');
+      // Wait a tick for home sections to mount
+      requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      return;
+    }
+    if (pathname !== '/') {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
-/**
- * Components
- */
-import 'lenis/dist/lenis.css'
-import About from "./components/About"
-import Contact from "./components/Contact"
-import Footer from "./components/Footer"
-import Header from "./components/Header"
-import Hero from "./components/Hero"
-import Review from "./components/Review"
-import Skill from "./components/Skill"
-import Work from "./components/Work"
-
-const App = () => {
-
-  useGSAP(() =>{
-    const elements = gsap.utils.toArray(".reveal-up")
-    elements.forEach((element) =>{
-      gsap.to(element, {
-        scrollTrigger: {
-          trigger: element, 
-          scrub: true,
-          start: "-200 bottom",
-          end: "bottom 80%"
-        },
-        y:'0',
-        opacity: 1,
-        duration:1,
-        yoyo: true,
-        ease: 'power2.out',
-      })
-    })
-  })
-
-  return (
-    <ReactLenis root>
-    <Header />
-    <main>
-      <Hero />
-      <About />
-      <Skill />
-      <Work />
-      <Review />
-      <Contact />
-      <Footer />
-    </main>
-    </ReactLenis>
-  )
+  return null;
 }
 
-export default App
+function AppShell() {
+  return (
+    <ReactLenis root>
+      <ScrollToHash />
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/work/:slug" element={<ProjectPage />} />
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+      <Footer />
+    </ReactLenis>
+  );
+}
+
+const App = () => (
+  <ThemeProvider>
+    <LanguageProvider>
+      <BrowserRouter>
+        <AppShell />
+      </BrowserRouter>
+    </LanguageProvider>
+  </ThemeProvider>
+);
+
+export default App;
