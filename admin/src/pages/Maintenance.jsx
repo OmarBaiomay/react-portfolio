@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Plus, Wrench } from 'lucide-react';
-import { maintenanceAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import { maintenanceAPI } from '../services/api';
 import MaintenanceCard from '../components/MaintenanceCard';
 import MaintenanceForm from '../components/MaintenanceForm';
+import { useLanguage } from '../context/LanguageContext';
 
 const Maintenance = () => {
+  const { t } = useLanguage();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -22,7 +24,7 @@ const Maintenance = () => {
       setPlans(response.data);
     } catch (error) {
       console.error('Error fetching plans:', error);
-      toast.error('Failed to load maintenance plans');
+      toast.error(t.maintenance.loadError);
     } finally {
       setLoading(false);
     }
@@ -31,38 +33,38 @@ const Maintenance = () => {
   const handleCreate = async (formData) => {
     try {
       await maintenanceAPI.create(formData);
-      toast.success('Plan created successfully!');
+      toast.success(t.maintenance.createOk);
       setShowForm(false);
       fetchPlans();
     } catch (error) {
       console.error('Error creating plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to create plan');
+      toast.error(error.response?.data?.message || t.maintenance.createFail);
     }
   };
 
   const handleUpdate = async (formData) => {
     try {
-      await maintenanceAPI.update(editingPlan._id, formData);
-      toast.success('Plan updated successfully!');
+      await maintenanceAPI.update(editingPlan._id || editingPlan.id, formData);
+      toast.success(t.maintenance.updateOk);
       setShowForm(false);
       setEditingPlan(null);
       fetchPlans();
     } catch (error) {
       console.error('Error updating plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to update plan');
+      toast.error(error.response?.data?.message || t.maintenance.updateFail);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this plan?')) return;
+    if (!window.confirm(t.maintenance.deleteConfirm)) return;
 
     try {
       await maintenanceAPI.delete(id);
-      toast.success('Plan deleted successfully!');
+      toast.success(t.maintenance.deleteOk);
       fetchPlans();
     } catch (error) {
       console.error('Error deleting plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete plan');
+      toast.error(error.response?.data?.message || t.maintenance.deleteFail);
     }
   };
 
@@ -78,48 +80,41 @@ const Maintenance = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-accent border-t-transparent" />
       </div>
     );
   }
 
   return (
     <div className="animate-slide-in">
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100">Maintenance Plans</h1>
-          <p className="text-gray-600 dark:text-zinc-400 mt-1">Manage your maintenance & support plans</p>
+          <h1 className="font-display text-3xl font-bold text-ink">{t.maintenance.title}</h1>
+          <p className="mt-1 text-muted">{t.maintenance.subtitle}</p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors shadow-md"
-        >
-          <Plus className="w-5 h-5" />
-          Add Plan
+        <button type="button" onClick={() => setShowForm(true)} className="btn-primary">
+          <Plus className="h-5 w-5" />
+          {t.maintenance.add}
         </button>
       </div>
 
       {plans.length === 0 ? (
-        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-16 text-center shadow-sm">
-          <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Wrench className="w-8 h-8 text-gray-400 dark:text-zinc-500" />
+        <div className="glass rounded-xl p-16 text-center">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-surface">
+            <Wrench className="h-8 w-8 text-muted" />
           </div>
-          <p className="text-gray-600 dark:text-zinc-400 mb-4 text-lg">No maintenance plans found</p>
-          <p className="text-gray-500 dark:text-zinc-500 text-sm mb-6">Create your first maintenance plan to get started</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors shadow-md inline-flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Create Your First Plan
+          <p className="mb-6 text-lg text-muted">{t.maintenance.empty}</p>
+          <button type="button" onClick={() => setShowForm(true)} className="btn-primary">
+            <Plus className="h-5 w-5" />
+            {t.maintenance.add}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan) => (
             <MaintenanceCard
-              key={plan._id}
+              key={plan._id || plan.id}
               plan={plan}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -128,13 +123,13 @@ const Maintenance = () => {
         </div>
       )}
 
-      {showForm && (
+      {showForm ? (
         <MaintenanceForm
           plan={editingPlan}
           onSubmit={editingPlan ? handleUpdate : handleCreate}
           onClose={handleCloseForm}
         />
-      )}
+      ) : null}
     </div>
   );
 };

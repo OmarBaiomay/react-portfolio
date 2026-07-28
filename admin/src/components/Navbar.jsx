@@ -1,118 +1,140 @@
-import { User, LogOut, Moon, Sun, Menu, X } from 'lucide-react';
+import { User, LogOut, Moon, Sun, Menu, X, Languages } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useState } from 'react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
+  const { t, lang, toggleLang } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 px-4 md:px-6 py-4 sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center justify-between">
-        {/* Logo */}
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-emerald-500">B-CODE</h1>
-          <p className="text-xs md:text-sm text-gray-600 dark:text-zinc-400">Admin Dashboard</p>
+    <nav className="z-50 shrink-0 border-b border-line/10 bg-elevated/90 px-4 py-3 shadow-sm backdrop-blur-xl md:px-6">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <span
+            className="brand-logo-mask inline-block h-9 w-9 shrink-0 bg-ink"
+            style={{
+              WebkitMaskImage: 'url(/images/logo.svg)',
+              maskImage: 'url(/images/logo.svg)',
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+            }}
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <h1 className="font-display text-lg font-bold tracking-tight text-accent md:text-xl">
+              {t.brand}
+            </h1>
+            <p className="truncate text-xs text-muted">{t.admin}</p>
+          </div>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-4">
-          {/* Theme Toggle */}
+        <div className="hidden items-center gap-2 md:flex">
           <button
-            onClick={toggleTheme}
-            className="p-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-lg transition-colors"
-            aria-label="Toggle theme"
+            type="button"
+            onClick={toggleLang}
+            className="inline-flex h-9 items-center gap-1 rounded-md border border-line/15 bg-surface px-2 text-[11px] font-bold tracking-wide text-ink transition hover:border-accent/40 hover:text-accent"
+            aria-label={t.a11y.toggleLang}
           >
-            {isDark ? (
-              <Sun className="w-5 h-5 text-amber-400" />
-            ) : (
-              <Moon className="w-5 h-5 text-slate-700" />
-            )}
+            <Languages className="h-3.5 w-3.5" />
+            <span className={lang === 'en' ? 'text-accent' : 'text-muted'}>EN</span>
+            <span className="text-muted">/</span>
+            <span className={lang === 'ar' ? 'text-accent' : 'text-muted'}>AR</span>
           </button>
 
-          {/* User Info */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
-              <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="icon-btn"
+            aria-label={t.a11y.toggleTheme}
+          >
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <Link
+            to="/settings"
+            className="flex items-center gap-3 rounded-lg px-1 py-1 ps-1 transition hover:bg-surface"
+          >
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-accent/15">
+              <User className="h-5 w-5 text-accent" />
             </div>
             <div className="hidden lg:block">
-              <p className="text-sm font-medium text-gray-900 dark:text-zinc-100">{user?.fullName}</p>
-              <p className="text-xs text-gray-600 dark:text-zinc-400">{user?.email}</p>
+              <p className="text-sm font-medium text-ink">{user?.fullName}</p>
+              <p className="text-xs text-muted">{user?.email}</p>
             </div>
-          </div>
+          </Link>
 
-          {/* Logout Button */}
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-lg transition-colors text-sm text-gray-700 dark:text-zinc-300"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden lg:inline">Logout</span>
+          <button type="button" onClick={logout} className="btn-ghost !py-2 text-sm">
+            <LogOut className="h-4 w-4" />
+            <span className="hidden lg:inline">{t.logout}</span>
           </button>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 bg-gray-100 dark:bg-zinc-800 rounded-lg"
+          className="icon-btn md:hidden"
+          aria-label={mobileMenuOpen ? t.a11y.closeMenu : t.a11y.openMenu}
         >
-          {mobileMenuOpen ? (
-            <X className="w-5 h-5 text-gray-900 dark:text-zinc-100" />
-          ) : (
-            <Menu className="w-5 h-5 text-gray-900 dark:text-zinc-100" />
-          )}
+          {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-zinc-800 pt-4 slide-in-left">
-          <div className="flex flex-col gap-3">
-            {/* User Info */}
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-zinc-800 rounded-lg">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center">
-                <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-zinc-100">{user?.fullName}</p>
-                <p className="text-xs text-gray-600 dark:text-zinc-400">{user?.email}</p>
-              </div>
+      {mobileMenuOpen ? (
+        <div className="mt-3 space-y-2 border-t border-line/10 pt-3 md:hidden">
+          <Link
+            to="/settings"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg bg-surface p-3"
+          >
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-accent/15">
+              <User className="h-5 w-5 text-accent" />
             </div>
+            <div>
+              <p className="text-sm font-medium text-ink">{user?.fullName}</p>
+              <p className="text-xs text-muted">{user?.email}</p>
+            </div>
+          </Link>
 
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
-            >
-              {isDark ? (
-                <>
-                  <Sun className="w-5 h-5 text-amber-400" />
-                  <span className="text-gray-900 dark:text-zinc-100">Light Mode</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-5 h-5 text-slate-700" />
-                  <span className="text-gray-900 dark:text-zinc-100">Dark Mode</span>
-                </>
-              )}
-            </button>
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="flex w-full items-center gap-3 rounded-lg bg-surface px-4 py-3 text-ink"
+          >
+            <Languages className="h-5 w-5 text-accent" />
+            <span>EN / AR</span>
+          </button>
 
-            {/* Logout */}
-            <button
-              onClick={() => {
-                logout();
-                setMobileMenuOpen(false);
-              }}
-              className="flex items-center gap-3 px-4 py-3 bg-red-50 dark:bg-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/30 rounded-lg transition-colors text-red-600 dark:text-red-400"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex w-full items-center gap-3 rounded-lg bg-surface px-4 py-3 text-ink"
+          >
+            {isDark ? <Sun className="h-5 w-5 text-accent" /> : <Moon className="h-5 w-5 text-accent" />}
+            <span>{isDark ? t.theme.light : t.theme.dark}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              setMobileMenuOpen(false);
+            }}
+            className="flex w-full items-center gap-3 rounded-lg bg-red-500/10 px-4 py-3 text-red-500"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>{t.logout}</span>
+          </button>
         </div>
-      )}
+      ) : null}
     </nav>
   );
 };

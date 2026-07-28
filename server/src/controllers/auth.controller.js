@@ -4,6 +4,8 @@ import { generateToken } from '../lib/utils.js';
 import cloudinary from '../lib/cloudinary.js';
 import { mapUser } from '../lib/mappers.js';
 
+const USER_RETURNING = `id, full_name, email, role, profile_pic, details, fcm_tokens, created_at, updated_at`;
+
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
 
@@ -33,7 +35,7 @@ export const signup = async (req, res) => {
     const result = await query(
       `INSERT INTO users (full_name, email, password_hash, role)
        VALUES ($1, $2, $3, 'admin')
-       RETURNING id, full_name, email, role, profile_pic, fcm_tokens, created_at, updated_at`,
+       RETURNING ${USER_RETURNING}`,
       [fullName, email.toLowerCase(), hashPass]
     );
 
@@ -52,7 +54,7 @@ export const login = async (req, res) => {
 
   try {
     const result = await query(
-      `SELECT id, full_name, email, password_hash, role, profile_pic, fcm_tokens, created_at, updated_at
+      `SELECT id, full_name, email, password_hash, role, profile_pic, details, fcm_tokens, created_at, updated_at
        FROM users WHERE email = $1`,
       [email?.toLowerCase()]
     );
@@ -111,7 +113,7 @@ export const updateProfile = async (req, res) => {
     const result = await query(
       `UPDATE users SET profile_pic = $1, updated_at = CURRENT_TIMESTAMP
        WHERE id = $2
-       RETURNING id, full_name, email, role, profile_pic, fcm_tokens, created_at, updated_at`,
+       RETURNING ${USER_RETURNING}`,
       [uploadRes.secure_url, userId]
     );
 
@@ -119,6 +121,68 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.log('Error in Update Profile Controller', error.message);
     return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+export const updateAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { fullName, email, details, currentPassword, newPassword } = req.body || {};
+
+    const existing = await query(
+      `SELECT id, full_name, email, details, password_hash FROM users WHERE id = $1`,
+      [userId]
+    );
+    const current = existing.rows[0];
+    if (!current) return res.status(404).json({ message: 'User not found' });
+
+    const nextName = (fullName ?? current.full_name).toString().trim();
+    const nextEmail = (email ?? current.email).toString().trim().toLowerCase();
+    const nextDetails = (details ?? current.details ?? '').toString().trim();
+
+    if (!nextName || !nextEmail) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    const emailTaken = await query(
+      `SELECT id FROM users WHERE email = $1 AND id <> $2`,
+      [nextEmail, userId]
+    );
+    if (emailTaken.rows.length) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    let passwordHash = current.password_hash;
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Current password is required' });
+      }
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+      }
+      const ok = await bcrypt.compare(currentPassword, current.password_hash);
+      if (!ok) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+      passwordHash = await bcrypt.hash(newPassword, 10);
+    }
+
+    const result = await query(
+      `UPDATE users SET
+        full_name = $1,
+        email = $2,
+        details = $3,
+        password_hash = $4,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = $5
+       RETURNING ${USER_RETURNING}`,
+      [nextName, nextEmail, nextDetails, passwordHash, userId]
+    );
+
+    res.json(mapUser(result.rows[0]));
+  } catch (error) {
+    console.error('updateAccount:', error.message);
+    res.status(500).json({ message: 'Failed to update account' });
   }
 };
 

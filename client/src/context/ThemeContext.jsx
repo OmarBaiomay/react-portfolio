@@ -2,10 +2,18 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const ThemeContext = createContext(null);
 
+function readInitialTheme() {
+  if (typeof window === 'undefined') return 'dark';
+  return localStorage.getItem('bcode-theme') || 'dark';
+}
+
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return localStorage.getItem('bcode-theme') || 'dark';
+    const initial = readInitialTheme();
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', initial);
+    }
+    return initial;
   });
 
   useEffect(() => {

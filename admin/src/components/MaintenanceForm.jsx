@@ -1,137 +1,196 @@
-import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
-import { maintenanceAPI } from '../services/api';
-import toast from 'react-hot-toast';
-import MaintenanceCard from '../components/MaintenanceCard';
-import MaintenanceForm from '../components/MaintenanceForm';
+import { useEffect, useState } from 'react';
+import { Plus, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import {
+  emptyI18nList,
+  emptyI18nText,
+  normalizeI18nList,
+  normalizeI18nText,
+} from '../lib/i18nContent';
+import {
+  Field,
+  FormActions,
+  FormGrid,
+  FormModal,
+  FormSection,
+  LocaleTabs,
+} from './FormUI';
 
-const Maintenance = () => {
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingPlan, setEditingPlan] = useState(null);
+const MaintenanceForm = ({ plan: editPlan, onSubmit, onClose }) => {
+  const { t } = useLanguage();
+  const [localeTab, setLocaleTab] = useState('en');
+  const [formData, setFormData] = useState({
+    name: emptyI18nText(),
+    features: emptyI18nList(),
+    priceUSD: '',
+    priceEGP: '',
+    order: 0,
+  });
 
   useEffect(() => {
-    fetchPlans();
-  }, []);
+    if (!editPlan) return;
+    setFormData({
+      name: normalizeI18nText(editPlan.name),
+      features: normalizeI18nList(editPlan.features),
+      priceUSD: editPlan.priceUSD || '',
+      priceEGP: editPlan.priceEGP || '',
+      order: editPlan.order || 0,
+    });
+  }, [editPlan]);
 
-  const fetchPlans = async () => {
-    try {
-      setLoading(true);
-      const response = await maintenanceAPI.getAll();
-      setPlans(response.data);
-    } catch (error) {
-      console.error('Error fetching plans:', error);
-      toast.error('Failed to load maintenance plans');
-    } finally {
-      setLoading(false);
-    }
+  const handleFeatureChange = (index, value) => {
+    setFormData((prev) => {
+      const list = [...prev.features[localeTab]];
+      list[index] = value;
+      return { ...prev, features: { ...prev.features, [localeTab]: list } };
+    });
   };
 
-  const handleCreate = async (formData) => {
-    try {
-      await maintenanceAPI.create(formData);
-      toast.success('Plan created successfully!');
-      setShowForm(false);
-      fetchPlans();
-    } catch (error) {
-      console.error('Error creating plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to create plan');
-    }
+  const addFeature = () => {
+    setFormData((prev) => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [localeTab]: [...prev.features[localeTab], ''],
+      },
+    }));
   };
 
-  const handleUpdate = async (formData) => {
-    try {
-      await maintenanceAPI.update(editingPlan._id, formData);
-      toast.success('Plan updated successfully!');
-      setShowForm(false);
-      setEditingPlan(null);
-      fetchPlans();
-    } catch (error) {
-      console.error('Error updating plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to update plan');
-    }
+  const removeFeature = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [localeTab]: prev.features[localeTab].filter((_, i) => i !== index),
+      },
+    }));
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this plan?')) return;
-
-    try {
-      await maintenanceAPI.delete(id);
-      toast.success('Plan deleted successfully!');
-      fetchPlans();
-    } catch (error) {
-      console.error('Error deleting plan:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete plan');
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({
+      ...formData,
+      features: {
+        en: formData.features.en.filter(Boolean),
+        ar: formData.features.ar.filter(Boolean),
+      },
+    });
   };
 
-  const handleEdit = (plan) => {
-    setEditingPlan(plan);
-    setShowForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingPlan(null);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
-      </div>
-    );
-  }
+  const features = formData.features[localeTab] || [''];
+  const dir = localeTab === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <div className="animate-slide-in">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-zinc-100">Maintenance Plans</h1>
-          <p className="text-zinc-400 mt-1">Manage your maintenance & support plans</p>
-        </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-900 font-semibold rounded-lg transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Add Plan
-        </button>
-      </div>
+    <FormModal
+      title={editPlan ? t.form.editPlan : t.form.createPlan}
+      onClose={onClose}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
+        <FormSection>
+          <LocaleTabs
+            value={localeTab}
+            onChange={setLocaleTab}
+            labels={{ en: t.form.english, ar: t.form.arabic }}
+          />
+          <p className="form-hint mt-2">{t.form.i18nHint}</p>
 
-      {plans.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-zinc-400 mb-4">No maintenance plans found</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-zinc-900 font-semibold rounded-lg transition-colors"
-          >
-            Create Your First Plan
+          <div className="mt-4 space-y-4">
+            <Field label={t.form.planName} required={localeTab === 'en'}>
+              <input
+                type="text"
+                value={formData.name[localeTab]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    name: { ...prev.name, [localeTab]: e.target.value },
+                  }))
+                }
+                className="input-field"
+                dir={dir}
+                required={localeTab === 'en'}
+              />
+            </Field>
+
+            <Field label={t.form.features}>
+              <div className="space-y-2">
+                {features.map((feature, index) => (
+                  <div key={`${localeTab}-${index}`} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => handleFeatureChange(index, e.target.value)}
+                      className="input-field flex-1"
+                      dir={dir}
+                      placeholder={t.form.featurePlaceholder}
+                      required={localeTab === 'en' && index === 0}
+                    />
+                    {features.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => removeFeature(index)}
+                        className="icon-btn !text-rose-400"
+                        aria-label={t.common.delete}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    ) : null}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addFeature}
+                  className="btn-ghost w-full !justify-center text-sm"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t.form.addFeature}
+                </button>
+              </div>
+            </Field>
+          </div>
+        </FormSection>
+
+        <FormSection>
+          <FormGrid cols={2}>
+            <Field label={t.form.priceUSD} required>
+              <input
+                type="text"
+                value={formData.priceUSD}
+                onChange={(e) => setFormData((p) => ({ ...p, priceUSD: e.target.value }))}
+                className="input-field"
+                required
+              />
+            </Field>
+            <Field label={t.form.priceEGP} required>
+              <input
+                type="text"
+                value={formData.priceEGP}
+                onChange={(e) => setFormData((p) => ({ ...p, priceEGP: e.target.value }))}
+                className="input-field"
+                required
+              />
+            </Field>
+            <Field label={t.form.order} className="sm:col-span-2">
+              <input
+                type="number"
+                value={formData.order}
+                onChange={(e) => setFormData((p) => ({ ...p, order: Number(e.target.value) || 0 }))}
+                className="input-field"
+              />
+            </Field>
+          </FormGrid>
+        </FormSection>
+
+        <FormActions>
+          <button type="submit" className="btn-primary flex-1 sm:flex-none">
+            {editPlan ? t.common.save : t.form.createPlan}
           </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <MaintenanceCard
-              key={plan._id}
-              plan={plan}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
-
-      {showForm && (
-        <MaintenanceForm
-          plan={editingPlan}
-          onSubmit={editingPlan ? handleUpdate : handleCreate}
-          onClose={handleCloseForm}
-        />
-      )}
-    </div>
+          <button type="button" onClick={onClose} className="btn-ghost">
+            {t.common.cancel}
+          </button>
+        </FormActions>
+      </form>
+    </FormModal>
   );
 };
 
-export default Maintenance;
+export default MaintenanceForm;

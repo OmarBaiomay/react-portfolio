@@ -1,45 +1,43 @@
 import { useEffect, useState } from 'react';
-import { Package, Wrench, TrendingUp, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  Package,
+  Wrench,
+  TrendingUp,
+  Users,
+  Contact,
+  FolderKanban,
+  Receipt,
+  FileText,
+} from 'lucide-react';
 import StatsCard from '../components/StatsCard';
-import { packageAPI, maintenanceAPI } from '../services/api';
+import { statsAPI } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
+import { formatMoney } from '../lib/crm.jsx';
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    packages: 0,
-    maintenance: 0,
-    activePackages: 0,
-    activePlans: 0
-  });
+  const { t } = useLanguage();
+  const D = t.dashboard;
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStats();
+    (async () => {
+      try {
+        const { data } = await statsAPI.getOverview();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
-  const fetchStats = async () => {
-    try {
-      const [pkgStats, maintStats] = await Promise.all([
-        packageAPI.getStats(),
-        maintenanceAPI.getStats()
-      ]);
-
-      setStats({
-        packages: pkgStats.data.totalPackages || 0,
-        maintenance: maintStats.data.totalPlans || 0,
-        activePackages: pkgStats.data.activePackages || 0,
-        activePlans: maintStats.data.activePlans || 0
-      });
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (loading || !stats) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-accent border-t-transparent" />
       </div>
     );
   }
@@ -47,65 +45,123 @@ const Dashboard = () => {
   return (
     <div className="animate-slide-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100 mb-2">Dashboard</h1>
-        <p className="text-gray-600 dark:text-zinc-400">Welcome to B-CODE Admin Dashboard</p>
+        <h1 className="font-display text-3xl font-bold text-ink">{D.title}</h1>
+        <p className="mt-1 text-muted">{D.welcome}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{D.crmSection}</h2>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
         <StatsCard
-          title="Total Packages"
-          value={stats.packages}
-          icon={Package}
-          color="bg-emerald-100 dark:bg-emerald-500/20"
+          title={D.leadsTotal}
+          value={stats.leads?.total || 0}
+          icon={Contact}
+          color="bg-accent/15 text-accent"
         />
         <StatsCard
-          title="Active Packages"
-          value={stats.activePackages}
+          title={D.leadsNewMonth}
+          value={stats.leads?.newThisMonth || 0}
           icon={TrendingUp}
-          color="bg-blue-100 dark:bg-blue-500/20"
+          color="bg-sky-500/15 text-sky-300"
         />
         <StatsCard
-          title="Maintenance Plans"
-          value={stats.maintenance}
-          icon={Wrench}
-          color="bg-purple-100 dark:bg-purple-500/20"
+          title={D.projectsActive}
+          value={stats.projects?.active || 0}
+          icon={FolderKanban}
+          color="bg-violet-500/15 text-violet-300"
         />
         <StatsCard
-          title="Active Plans"
-          value={stats.activePlans}
+          title={D.overdueTasks}
+          value={stats.projects?.overdueTasks || 0}
           icon={Users}
-          color="bg-orange-100 dark:bg-orange-500/20"
+          color="bg-rose-500/15 text-rose-300"
         />
       </div>
 
-      {/* Quick Actions - Fixed Colors */}
-      <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-zinc-100 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a
-            href="/packages"
-            className="p-4 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors text-center group"
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{D.salesSection}</h2>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
+        <StatsCard
+          title={D.openQuotes}
+          value={formatMoney(stats.sales?.openQuotesValue)}
+          icon={FileText}
+          color="bg-amber-500/15 text-amber-300"
+        />
+        <StatsCard
+          title={D.unpaidInvoices}
+          value={formatMoney(stats.sales?.unpaidInvoicesValue)}
+          icon={Receipt}
+          color="bg-rose-500/15 text-rose-300"
+        />
+        <StatsCard
+          title={D.paidThisMonth}
+          value={formatMoney(stats.sales?.paidThisMonth)}
+          icon={TrendingUp}
+          color="bg-emerald-500/15 text-emerald-300"
+        />
+      </div>
+
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">{D.catalogSection}</h2>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
+        <StatsCard
+          title={D.totalPackages}
+          value={stats.catalog?.packages || 0}
+          icon={Package}
+          color="bg-accent/15 text-accent"
+        />
+        <StatsCard
+          title={D.activePackages}
+          value={stats.catalog?.activePackages || 0}
+          icon={TrendingUp}
+          color="bg-accent/10 text-accent"
+        />
+        <StatsCard
+          title={D.maintenancePlans}
+          value={stats.catalog?.maintenance || 0}
+          icon={Wrench}
+          color="bg-surface text-accent"
+        />
+        <StatsCard
+          title={D.activePlans}
+          value={stats.catalog?.activePlans || 0}
+          icon={Users}
+          color="bg-accent/15 text-accent"
+        />
+      </div>
+
+      <div className="glass rounded-xl p-6">
+        <h2 className="mb-4 font-display text-xl font-bold text-ink">{D.quickActions}</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Link
+            to="/leads"
+            className="group rounded-lg bg-surface p-4 text-center transition hover:border-accent/40 hover:bg-elevated"
           >
-            <Package className="w-8 h-8 text-emerald-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-gray-900 dark:text-zinc-100 font-medium">Manage Packages</p>
-            <p className="text-xs text-gray-600 dark:text-zinc-400 mt-1">Create and edit pricing packages</p>
-          </a>
-          <a
-            href="/maintenance"
-            className="p-4 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors text-center group"
+            <Contact className="mx-auto mb-2 h-8 w-8 text-accent transition group-hover:scale-110" />
+            <p className="font-medium text-ink">{D.manageLeads}</p>
+            <p className="mt-1 text-xs text-muted">{D.manageLeadsDesc}</p>
+          </Link>
+          <Link
+            to="/projects"
+            className="group rounded-lg bg-surface p-4 text-center transition hover:border-accent/40 hover:bg-elevated"
           >
-            <Wrench className="w-8 h-8 text-blue-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-gray-900 dark:text-zinc-100 font-medium">Manage Plans</p>
-            <p className="text-xs text-gray-600 dark:text-zinc-400 mt-1">Update maintenance offerings</p>
-          </a>
-          <a
-            href="/notifications"
-            className="p-4 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors text-center group"
+            <FolderKanban className="mx-auto mb-2 h-8 w-8 text-accent transition group-hover:scale-110" />
+            <p className="font-medium text-ink">{D.manageProjects}</p>
+            <p className="mt-1 text-xs text-muted">{D.manageProjectsDesc}</p>
+          </Link>
+          <Link
+            to="/invoices"
+            className="group rounded-lg bg-surface p-4 text-center transition hover:border-accent/40 hover:bg-elevated"
           >
-            <Users className="w-8 h-8 text-purple-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-gray-900 dark:text-zinc-100 font-medium">Send Notifications</p>
-            <p className="text-xs text-gray-600 dark:text-zinc-400 mt-1">Notify users and admins</p>
-          </a>
+            <Receipt className="mx-auto mb-2 h-8 w-8 text-accent transition group-hover:scale-110" />
+            <p className="font-medium text-ink">{D.manageInvoices}</p>
+            <p className="mt-1 text-xs text-muted">{D.manageInvoicesDesc}</p>
+          </Link>
+          <Link
+            to="/packages"
+            className="group rounded-lg bg-surface p-4 text-center transition hover:border-accent/40 hover:bg-elevated"
+          >
+            <Package className="mx-auto mb-2 h-8 w-8 text-accent transition group-hover:scale-110" />
+            <p className="font-medium text-ink">{D.managePackages}</p>
+            <p className="mt-1 text-xs text-muted">{D.managePackagesDesc}</p>
+          </Link>
         </div>
       </div>
     </div>

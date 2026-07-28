@@ -1,236 +1,259 @@
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import {
+  emptyI18nList,
+  emptyI18nText,
+  normalizeI18nList,
+  normalizeI18nText,
+} from '../lib/i18nContent';
+import {
+  Field,
+  FormActions,
+  FormGrid,
+  FormModal,
+  FormSection,
+  LocaleTabs,
+} from './FormUI';
 
 const PackageForm = ({ package: editPackage, onSubmit, onClose }) => {
+  const { t } = useLanguage();
+  const [localeTab, setLocaleTab] = useState('en');
   const [formData, setFormData] = useState({
-    name: '',
-    title: '',
-    subtitle: '',
+    name: emptyI18nText(),
+    title: emptyI18nText(),
+    subtitle: emptyI18nText(),
     icon: 'rocket',
-    features: [''],
-    delivery: '',
+    features: emptyI18nList(),
+    delivery: emptyI18nText(),
     priceUSD: '',
     priceEGP: '',
     featured: false,
-    order: 0
+    order: 0,
   });
 
   useEffect(() => {
-    if (editPackage) {
-      setFormData(editPackage);
-    }
+    if (!editPackage) return;
+    setFormData({
+      name: normalizeI18nText(editPackage.name),
+      title: normalizeI18nText(editPackage.title),
+      subtitle: normalizeI18nText(editPackage.subtitle),
+      icon: editPackage.icon || 'rocket',
+      features: normalizeI18nList(editPackage.features),
+      delivery: normalizeI18nText(editPackage.delivery),
+      priceUSD: editPackage.priceUSD || '',
+      priceEGP: editPackage.priceEGP || '',
+      featured: Boolean(editPackage.featured),
+      order: editPackage.order || 0,
+    });
   }, [editPackage]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+  const setI18nField = (field, value) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [field]: { ...prev[field], [localeTab]: value },
     }));
   };
 
   const handleFeatureChange = (index, value) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = value;
-    setFormData(prev => ({ ...prev, features: newFeatures }));
+    setFormData((prev) => {
+      const list = [...prev.features[localeTab]];
+      list[index] = value;
+      return { ...prev, features: { ...prev.features, [localeTab]: list } };
+    });
   };
 
   const addFeature = () => {
-    setFormData(prev => ({ ...prev, features: [...prev.features, ''] }));
+    setFormData((prev) => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [localeTab]: [...prev.features[localeTab], ''],
+      },
+    }));
   };
 
   const removeFeature = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      features: prev.features.filter((_, i) => i !== index)
+      features: {
+        ...prev.features,
+        [localeTab]: prev.features[localeTab].filter((_, i) => i !== index),
+      },
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      features: {
+        en: formData.features.en.filter(Boolean),
+        ar: formData.features.ar.filter(Boolean),
+      },
+    });
   };
 
+  const features = formData.features[localeTab] || [''];
+  const dir = localeTab === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-zinc-900 rounded-2xl max-w-2xl w-full my-8">
-        <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-xl font-bold text-zinc-100">
-            {editPackage ? 'Edit Package' : 'Create Package'}
-          </h2>
-          <button onClick={onClose} className="p-2 hover:bg-zinc-800 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-zinc-400" />
-          </button>
-        </div>
+    <FormModal
+      title={editPackage ? t.form.editPackage : t.form.createPackage}
+      onClose={onClose}
+      wide
+    >
+      <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
+        <FormSection title={t.form.english + ' / ' + t.form.arabic}>
+          <LocaleTabs
+            value={localeTab}
+            onChange={setLocaleTab}
+            labels={{ en: t.form.english, ar: t.form.arabic }}
+          />
+          <p className="form-hint mt-2">{t.form.i18nHint}</p>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Package Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Subtitle</label>
-            <input
-              type="text"
-              name="subtitle"
-              value={formData.subtitle}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Icon</label>
-            <select
-              name="icon"
-              value={formData.icon}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="rocket">Rocket</option>
-              <option value="crown">Crown</option>
-              <option value="shield">Shield</option>
-              <option value="store">Store</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Features</label>
-            {formData.features.map((feature, index) => (
-              <div key={index} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={feature}
-                  onChange={(e) => handleFeatureChange(index, e.target.value)}
-                  className="flex-1 px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  placeholder="Feature description"
-                  required
-                />
-                {formData.features.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addFeature}
-              className="mt-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors text-sm w-full"
-            >
-              + Add Feature
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Delivery Time</label>
+          <div className="mt-4 space-y-4">
+            <Field label={t.form.packageName} required={localeTab === 'en'}>
               <input
                 type="text"
-                name="delivery"
-                value={formData.delivery}
-                onChange={handleChange}
-                placeholder="e.g., 3 days"
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                required
+                value={formData.name[localeTab]}
+                onChange={(e) => setI18nField('name', e.target.value)}
+                className="input-field"
+                dir={dir}
+                required={localeTab === 'en'}
               />
-            </div>
+            </Field>
+            <Field label={t.form.title} required={localeTab === 'en'}>
+              <input
+                type="text"
+                value={formData.title[localeTab]}
+                onChange={(e) => setI18nField('title', e.target.value)}
+                className="input-field"
+                dir={dir}
+                required={localeTab === 'en'}
+              />
+            </Field>
+            <Field label={t.form.subtitle} required={localeTab === 'en'}>
+              <input
+                type="text"
+                value={formData.subtitle[localeTab]}
+                onChange={(e) => setI18nField('subtitle', e.target.value)}
+                className="input-field"
+                dir={dir}
+                required={localeTab === 'en'}
+              />
+            </Field>
+            <Field label={t.form.features}>
+              <div className="space-y-2">
+                {features.map((feature, index) => (
+                  <div key={`${localeTab}-${index}`} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => handleFeatureChange(index, e.target.value)}
+                      className="input-field flex-1"
+                      dir={dir}
+                      placeholder={t.form.featurePlaceholder}
+                      required={localeTab === 'en' && index === 0}
+                    />
+                    {features.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => removeFeature(index)}
+                        className="icon-btn !text-rose-400"
+                        aria-label={t.common.delete}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    ) : null}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addFeature}
+                  className="btn-ghost w-full !justify-center text-sm"
+                >
+                  <Plus className="h-4 w-4" />
+                  {t.form.addFeature}
+                </button>
+              </div>
+            </Field>
+            <Field label={t.form.delivery} required={localeTab === 'en'}>
+              <input
+                type="text"
+                value={formData.delivery[localeTab]}
+                onChange={(e) => setI18nField('delivery', e.target.value)}
+                className="input-field"
+                dir={dir}
+                placeholder={t.form.deliveryPlaceholder}
+                required={localeTab === 'en'}
+              />
+            </Field>
+          </div>
+        </FormSection>
 
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Order</label>
+        <FormSection title={t.form.priceUSD}>
+          <FormGrid cols={2}>
+            <Field label={t.form.icon}>
+              <select
+                value={formData.icon}
+                onChange={(e) => setFormData((p) => ({ ...p, icon: e.target.value }))}
+                className="input-field"
+              >
+                <option value="rocket">Rocket</option>
+                <option value="crown">Crown</option>
+                <option value="shield">Shield</option>
+                <option value="store">Store</option>
+              </select>
+            </Field>
+            <Field label={t.form.order}>
               <input
                 type="number"
-                name="order"
                 value={formData.order}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onChange={(e) => setFormData((p) => ({ ...p, order: Number(e.target.value) || 0 }))}
+                className="input-field"
               />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Price USD</label>
+            </Field>
+            <Field label={t.form.priceUSD} required>
               <input
                 type="text"
-                name="priceUSD"
                 value={formData.priceUSD}
-                onChange={handleChange}
-                placeholder="200 - 280"
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onChange={(e) => setFormData((p) => ({ ...p, priceUSD: e.target.value }))}
+                className="input-field"
                 required
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Price EGP</label>
+            </Field>
+            <Field label={t.form.priceEGP} required>
               <input
                 type="text"
-                name="priceEGP"
                 value={formData.priceEGP}
-                onChange={handleChange}
-                placeholder="9,440 – 13,216 EGP"
-                className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onChange={(e) => setFormData((p) => ({ ...p, priceEGP: e.target.value }))}
+                className="input-field"
                 required
               />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
+            </Field>
+          </FormGrid>
+          <label className="mt-4 flex cursor-pointer items-center gap-2.5 rounded-xl border border-line/10 bg-elevated px-3.5 py-3 text-sm text-ink">
             <input
               type="checkbox"
-              name="featured"
               checked={formData.featured}
-              onChange={handleChange}
-              id="featured"
-              className="w-4 h-4 rounded border-zinc-700 bg-zinc-800 text-emerald-500 focus:ring-2 focus:ring-emerald-500"
+              onChange={(e) => setFormData((p) => ({ ...p, featured: e.target.checked }))}
+              className="h-4 w-4 rounded border-line/20 accent-[rgb(var(--c-accent))]"
             />
-            <label htmlFor="featured" className="text-sm text-zinc-300 cursor-pointer">Mark as Featured</label>
-          </div>
+            {t.form.featured}
+          </label>
+        </FormSection>
 
-          <div className="flex gap-3 pt-4 sticky bottom-0 bg-zinc-900 pb-2">
-            <button
-              type="submit"
-              className="flex-1 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-zinc-900 font-semibold rounded-lg transition-colors"
-            >
-              {editPackage ? 'Update Package' : 'Create Package'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <FormActions>
+          <button type="submit" className="btn-primary flex-1 sm:flex-none">
+            {editPackage ? t.common.save : t.form.createPackage}
+          </button>
+          <button type="button" onClick={onClose} className="btn-ghost">
+            {t.common.cancel}
+          </button>
+        </FormActions>
+      </form>
+    </FormModal>
   );
 };
 

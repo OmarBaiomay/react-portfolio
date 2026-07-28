@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Crown, Shield, Rocket, ShoppingBag, Wrench } from 'lucide-react';
 import { publicAPI } from '../services/frontendApi';
 import { useLanguage } from '../context/LanguageContext';
+import { pickLocalized, pickLocalizedList } from '../lib/i18nContent';
 
 const iconMap = {
   rocket: Rocket,
@@ -12,7 +13,7 @@ const iconMap = {
 };
 
 function Pricing() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [packages, setPackages] = useState([]);
   const [maintenancePlans, setMaintenancePlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,6 +88,11 @@ function Pricing() {
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" data-animate="stagger">
           {packages.map((pkg) => {
             const Icon = iconMap[pkg.icon] || Rocket;
+            const name = pickLocalized(pkg.name, lang);
+            const title = pickLocalized(pkg.title, lang);
+            const subtitle = pickLocalized(pkg.subtitle, lang);
+            const delivery = pickLocalized(pkg.delivery, lang);
+            const features = pickLocalizedList(pkg.features, lang);
             return (
               <article
                 key={pkg._id || pkg.id}
@@ -102,17 +108,17 @@ function Pricing() {
                 ) : null}
                 <Icon className="mb-4 h-7 w-7 text-accent" strokeWidth={1.5} />
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  {pkg.name}
+                  {name}
                 </p>
-                <h4 className="mt-1 font-display text-xl font-semibold">{pkg.title}</h4>
-                <p className="mt-2 text-sm text-muted">{pkg.subtitle}</p>
+                <h4 className="mt-1 font-display text-xl font-semibold">{title}</h4>
+                <p className="mt-2 text-sm text-muted">{subtitle}</p>
                 <p className="mt-5 font-display text-2xl font-semibold">${pkg.priceUSD}</p>
                 <p className="text-sm text-muted">{pkg.priceEGP}</p>
                 <p className="mt-2 text-xs text-muted">
-                  {t.pricing.delivery}: {pkg.delivery}
+                  {t.pricing.delivery}: {delivery}
                 </p>
                 <ul className="mt-5 flex-1 space-y-2">
-                  {(pkg.features || []).map((feature) => (
+                  {features.map((feature) => (
                     <li key={feature} className="flex gap-2 text-sm text-muted">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                       <span>{feature}</span>
@@ -136,7 +142,10 @@ function Pricing() {
               {t.pricing.maintenance}
             </h3>
             <div className="mt-8 grid gap-5 md:grid-cols-2" data-animate="stagger">
-              {maintenancePlans.map((plan) => (
+              {maintenancePlans.map((plan) => {
+                const name = pickLocalized(plan.name, lang);
+                const features = pickLocalizedList(plan.features, lang);
+                return (
                 <article
                   key={plan._id || plan.id}
                   data-animate-child
@@ -145,7 +154,7 @@ function Pricing() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <Wrench className="mb-3 h-6 w-6 text-accent" strokeWidth={1.5} />
-                      <h4 className="font-display text-xl font-semibold">{plan.name}</h4>
+                      <h4 className="font-display text-xl font-semibold">{name}</h4>
                     </div>
                     <div className="text-end">
                       <p className="font-display text-2xl font-semibold">${plan.priceUSD}</p>
@@ -153,7 +162,7 @@ function Pricing() {
                     </div>
                   </div>
                   <ul className="mt-5 space-y-2">
-                    {(plan.features || []).map((feature) => (
+                    {features.map((feature) => (
                       <li key={feature} className="flex gap-2 text-sm text-muted">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                         <span>{feature}</span>
@@ -164,7 +173,8 @@ function Pricing() {
                     {t.cta.maintenance}
                   </a>
                 </article>
-              ))}
+              );
+              })}
             </div>
           </>
         ) : null}

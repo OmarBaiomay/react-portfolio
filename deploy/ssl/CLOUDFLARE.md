@@ -13,6 +13,7 @@ Move DNS to Cloudflare (free). Domain registration can stay with your registrar.
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
 | A | `@` | `YOUR_VPS_IP` | DNS only (grey) during first SSL issue |
+| A | `app` | `YOUR_VPS_IP` | DNS only (grey) — admin PWA |
 | CNAME | `www` | `b-code.tech` | DNS only (grey) |
 
 After certificates work, you can orange-cloud the A record (Full Strict SSL).
@@ -28,7 +29,8 @@ certbot certonly \
   --dns-cloudflare \
   --dns-cloudflare-credentials /etc/bcode-cloudflare.ini \
   -d b-code.tech \
-  -d www.b-code.tech
+  -d www.b-code.tech \
+  -d app.b-code.tech
 ```
 
 ## 4. Cloudflare SSL mode

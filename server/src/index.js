@@ -14,6 +14,12 @@ import authRoutes from './routes/auth.route.js';
 import packageRoutes from './routes/package.route.js';
 import maintenanceRoutes from './routes/maintenance.route.js';
 import notificationRoutes from './routes/notification.route.js';
+import settingsRoutes from './routes/settings.route.js';
+import usersRoutes from './routes/users.route.js';
+import leadsRoutes from './routes/leads.route.js';
+import projectsRoutes from './routes/projects.route.js';
+import salesRoutes from './routes/sales.route.js';
+import statsRoutes from './routes/stats.route.js';
 
 dotenv.config();
 
@@ -21,11 +27,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+// Required behind nginx / Cloudflare for secure cookies + correct host detection
+app.set('trust proxy', 1);
+
 const defaultOrigins = [
   'http://localhost:3000',
+  'http://localhost:3001',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
   'http://127.0.0.1:5173',
 ];
 
@@ -48,7 +59,7 @@ app.use(
       callback(new Error(`CORS blocked for origin: ${origin}`));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
@@ -57,6 +68,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/leads', leadsRoutes);
+app.use('/api/projects', projectsRoutes);
+app.use('/api/sales', salesRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -90,6 +107,16 @@ function resolveAdminDist() {
   );
 }
 
+function requestHost(req) {
+  const raw = req.headers['x-forwarded-host'] || req.headers.host || '';
+  return raw.split(',')[0].trim().split(':')[0].toLowerCase();
+}
+
+function isAdminAppHost(req) {
+  const host = (process.env.ADMIN_APP_HOST || 'app.b-code.tech').toLowerCase();
+  return requestHost(req) === host;
+}
+
 function serveSpas() {
   const serve =
     process.env.SERVE_CLIENT === 'true' || process.env.NODE_ENV === 'production';
@@ -97,22 +124,39 @@ function serveSpas() {
 
   const clientDist = resolveClientDist();
   const adminDist = resolveAdminDist();
+  const adminAppUrl = (process.env.ADMIN_APP_URL || 'https://app.b-code.tech').replace(/\/$/, '');
 
   if (fs.existsSync(adminDist)) {
-    app.use(
-      '/admin',
-      express.static(adminDist, { index: false })
-    );
-    app.get(/^\/admin(\/.*)?$/, (req, res) => {
-      res.sendFile(path.join(adminDist, 'index.html'));
+    // Legacy path on marketing domain → admin subdomain
+    app.get(/^\/admin(\/.*)?$/, (req, res, next) => {
+      if (isAdminAppHost(req)) return next();
+      const suffix = req.path.replace(/^\/admin/, '') || '/';
+      const target = suffix === '/' ? adminAppUrl : `${adminAppUrl}${suffix}`;
+      return res.redirect(301, target);
+    });
+
+    // Admin PWA at app.b-code.tech (root)
+    app.use((req, res, next) => {
+      if (!isAdminAppHost(req) || req.path.startsWith('/api')) return next();
+      return express.static(adminDist, { index: false })(req, res, next);
+    });
+
+    app.get(/^(?!\/api).*/, (req, res, next) => {
+      if (!isAdminAppHost(req)) return next();
+      return res.sendFile(path.join(adminDist, 'index.html'));
     });
   }
 
   if (fs.existsSync(clientDist)) {
-    app.use(express.static(clientDist, { index: ['index.html'] }));
+    app.use((req, res, next) => {
+      if (isAdminAppHost(req)) return next();
+      return express.static(clientDist, { index: ['index.html'] })(req, res, next);
+    });
 
     // Prefer prerendered HTML (e.g. /work/slug/index.html) before SPA shell
     app.get(/^(?!\/api)(?!\/admin).*/, (req, res, next) => {
+      if (isAdminAppHost(req)) return next();
+
       const clean = (req.path || '/').split('?')[0];
       if (clean.includes('..')) return next();
 

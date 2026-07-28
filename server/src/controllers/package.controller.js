@@ -1,5 +1,6 @@
 import { query } from '../db/pg-connection.js';
 import { mapPackage } from '../lib/mappers.js';
+import { hasI18nList, hasI18nText, toI18nList, toI18nText } from '../lib/i18n.js';
 
 export const getAllPackages = async (req, res) => {
   try {
@@ -44,22 +45,37 @@ export const createPackage = async (req, res) => {
       order,
     } = req.body;
 
-    if (!name || !title || !subtitle || !icon || !features || !delivery || !priceUSD || !priceEGP) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const nameI18n = toI18nText(name);
+    const titleI18n = toI18nText(title);
+    const subtitleI18n = toI18nText(subtitle);
+    const deliveryI18n = toI18nText(delivery);
+    const featuresI18n = toI18nList(features);
+
+    if (
+      !hasI18nText(nameI18n) ||
+      !hasI18nText(titleI18n) ||
+      !hasI18nText(subtitleI18n) ||
+      !icon ||
+      !hasI18nList(featuresI18n) ||
+      !hasI18nText(deliveryI18n) ||
+      !priceUSD ||
+      !priceEGP
+    ) {
+      return res.status(400).json({ message: 'All fields are required (EN or AR)' });
     }
 
     const result = await query(
       `INSERT INTO packages
         (name, title, subtitle, icon, features, delivery, price_usd, price_egp, featured, sort_order)
-       VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7, $8, $9, $10)
+       VALUES ($1::jsonb, $2::jsonb, $3::jsonb, $4, $5::jsonb, $6::jsonb, $7, $8, $9, $10)
        RETURNING *`,
       [
-        name,
-        title,
-        subtitle,
+        JSON.stringify(nameI18n),
+        JSON.stringify(titleI18n),
+        JSON.stringify(subtitleI18n),
         icon,
-        JSON.stringify(features),
-        delivery,
+        JSON.stringify(featuresI18n),
+        JSON.stringify(deliveryI18n),
         priceUSD,
         priceEGP,
         featured || false,
@@ -98,12 +114,12 @@ export const updatePackage = async (req, res) => {
 
     const result = await query(
       `UPDATE packages SET
-        name = $1,
-        title = $2,
-        subtitle = $3,
+        name = $1::jsonb,
+        title = $2::jsonb,
+        subtitle = $3::jsonb,
         icon = $4,
         features = $5::jsonb,
-        delivery = $6,
+        delivery = $6::jsonb,
         price_usd = $7,
         price_egp = $8,
         featured = $9,
@@ -113,12 +129,12 @@ export const updatePackage = async (req, res) => {
        WHERE id = $12
        RETURNING *`,
       [
-        name,
-        title,
-        subtitle,
+        JSON.stringify(toI18nText(name)),
+        JSON.stringify(toI18nText(title)),
+        JSON.stringify(toI18nText(subtitle)),
         icon,
-        JSON.stringify(features),
-        delivery,
+        JSON.stringify(toI18nList(features)),
+        JSON.stringify(toI18nText(delivery)),
         priceUSD,
         priceEGP,
         featured,

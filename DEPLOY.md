@@ -7,6 +7,11 @@ Runs **alongside** other stacks (e.g. playstation-lounge at `/opt/arena`).
 | playstation-lounge | `/opt/arena` | `3001` |
 | **B-Code** | `/opt/b-code` | **`3002`** |
 
+| URL | Purpose |
+|-----|---------|
+| `https://b-code.tech` | Public marketing site |
+| `https://app.b-code.tech` | Admin dashboard (installable PWA) |
+
 ## Prerequisites
 
 - Ubuntu VPS with Docker + Docker Compose
@@ -43,7 +48,9 @@ Set at least:
 APP_PORT=3002
 POSTGRES_PASSWORD='…strong…'
 JWT_SECRET='…long-random…'
-CLIENT_ORIGIN=https://b-code.tech
+CLIENT_ORIGIN=https://b-code.tech,https://www.b-code.tech,https://app.b-code.tech
+ADMIN_APP_HOST=app.b-code.tech
+ADMIN_APP_URL=https://app.b-code.tech
 ALLOW_PUBLIC_SIGNUP=true   # only for first admin, then set false
 ```
 
@@ -71,9 +78,33 @@ sudo ln -sf /etc/nginx/sites-available/b-code /etc/nginx/sites-enabled/b-code
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
+## 4b. Admin PWA subdomain (`app.b-code.tech`)
+
+1. **Cloudflare DNS:** A record `app` → VPS IP (grey cloud during first cert issue)
+2. **TLS:**
+
+```bash
+certbot certonly \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials /etc/bcode-cloudflare.ini \
+  -d app.b-code.tech
+```
+
+3. **nginx** (separate site file):
+
+```bash
+sudo cp /opt/b-code/deploy/nginx-app.conf.example /etc/nginx/sites-available/b-code-app
+sudo ln -sf /etc/nginx/sites-available/b-code-app /etc/nginx/sites-enabled/b-code-app
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+4. Open **`https://app.b-code.tech`** — install from browser (Chrome → Install app / Add to Home Screen).
+
+`https://b-code.tech/admin/` redirects to the app subdomain automatically.
+
 ## 5. First admin
 
-1. With `ALLOW_PUBLIC_SIGNUP=true`, open `https://b-code.tech/admin/`
+1. With `ALLOW_PUBLIC_SIGNUP=true`, open `https://app.b-code.tech/`
 2. Create the admin account
 3. Set `ALLOW_PUBLIC_SIGNUP=false` in `.env.production`
 4. Recreate app:

@@ -1,42 +1,35 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider');
-  }
-  return context;
-};
-
-export const ThemeProvider = ({ children }) => {
+export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Check localStorage or default to LIGHT
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'light';
+    if (typeof window === 'undefined') return 'dark';
+    return localStorage.getItem('bcode-admin-theme') || 'dark';
   });
 
   useEffect(() => {
-    // Update document class and localStorage
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
-    localStorage.setItem('theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('bcode-admin-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
-
-  const value = {
-    theme,
-    toggleTheme,
-    isDark: theme === 'dark'
-  };
-
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+  const value = useMemo(
+    () => ({
+      theme,
+      isDark: theme === 'dark',
+      toggleTheme: () => setTheme((t) => (t === 'dark' ? 'light' : 'dark')),
+      setTheme,
+    }),
+    [theme]
   );
-};
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
+  return ctx;
+}

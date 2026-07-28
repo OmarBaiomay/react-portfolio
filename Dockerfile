@@ -22,7 +22,9 @@ COPY admin/package.json admin/package-lock.json ./
 RUN npm ci
 COPY admin/ ./
 ARG VITE_API_URL=/api
+ARG VITE_BASE=/
 ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_BASE=${VITE_BASE}
 RUN npm run build
 
 FROM node:20-alpine AS server

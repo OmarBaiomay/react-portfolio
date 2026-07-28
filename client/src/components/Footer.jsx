@@ -1,4 +1,5 @@
 import { useLanguage } from '../context/LanguageContext';
+import BrandLogo from './BrandLogo';
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -20,7 +21,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-line/10 bg-elevated">
       <div className="container-site py-16 md:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr]" data-animate="fade-up">
+        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="font-display text-sm font-semibold uppercase tracking-[0.2em] text-accent">
               {t.brand}
@@ -68,8 +69,8 @@ const Footer = () => {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-line/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <a href="#home" className="flex items-center gap-3">
-            <img src="/images/logo.svg" width={32} height={32} alt="" className="h-8 w-8" />
-            <span className="font-display font-semibold">{t.brand}</span>
+            <BrandLogo className="h-8 w-8" />
+            <span className="font-display font-semibold text-ink">{t.brand}</span>
           </a>
           <p className="text-sm text-muted">
             © {new Date().getFullYear()} B-Code. {t.footer.rights}

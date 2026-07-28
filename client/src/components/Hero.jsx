@@ -1,27 +1,24 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { Suspense, lazy } from 'react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useScrollToSection } from '../hooks/useScrollToSection';
-import HeroScene from './HeroScene';
+import { useHeavyVisuals } from '../hooks/useHeavyVisuals';
+
+const HeroScene = lazy(() => import('./HeroScene'));
+
+function DeferredHeroScene() {
+  const ready = useHeavyVisuals({ timeoutMs: 60000 });
+  if (!ready) return null;
+  return (
+    <Suspense fallback={null}>
+      <HeroScene />
+    </Suspense>
+  );
+}
 
 const Hero = () => {
-  const { t, lang, isRtl } = useLanguage();
+  const { t, isRtl } = useLanguage();
   const scrollToSection = useScrollToSection();
-  const rootRef = useRef(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.from('[data-hero="kicker"]', { y: 24, opacity: 0, duration: 0.55 })
-        .from('[data-hero="line1"]', { y: 40, opacity: 0, duration: 0.75 }, '-=0.2')
-        .from('[data-hero="line2"]', { y: 40, opacity: 0, duration: 0.75 }, '-=0.5')
-        .from('[data-hero="lead"]', { y: 20, opacity: 0, duration: 0.6 }, '-=0.35')
-        .from('[data-hero="cta"] > *', { y: 16, opacity: 0, duration: 0.5, stagger: 0.08, clearProps: 'all' }, '-=0.3')
-        .from('[data-hero="stat"]', { y: 16, opacity: 0, stagger: 0.07, duration: 0.5 }, '-=0.25');
-    }, rootRef);
-    return () => ctx.revert();
-  }, [lang]);
 
   const stats = [
     { label: t.hero.years, value: '2+' },
@@ -40,12 +37,10 @@ const Hero = () => {
   return (
     <section
       id="home"
-      ref={rootRef}
       className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-bg pb-12 pt-[4.75rem] sm:pt-20 md:min-h-[88svh] md:items-center md:pb-16 md:pt-24 lg:min-h-[82svh] lg:pb-20"
     >
-      <HeroScene />
+      <DeferredHeroScene />
 
-      {/* Readability veil — softer on mobile so the 3D shape stays visible */}
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
@@ -66,49 +61,34 @@ const Hero = () => {
       />
 
       <div className="container-site relative z-10 w-full">
+        {/* No absolute inset backdrop here — it was the CLS culprit when fonts resized the parent. */}
         <div className="relative max-w-2xl lg:max-w-[38rem]">
-          <div
-            className="pointer-events-none absolute -inset-x-3 -inset-y-4 -z-10 rounded-3xl md:-inset-x-5 md:-inset-y-6"
-            style={{
-              background:
-                'linear-gradient(180deg, rgb(var(--c-bg) / 0.35) 0%, rgb(var(--c-bg) / 0.18) 70%, transparent 100%)',
-            }}
-            aria-hidden="true"
-          />
           <p
-            data-hero="kicker"
-            className={`text-sm font-semibold text-accent ${
-              isRtl
-                ? 'font-sans tracking-normal'
-                : 'font-display uppercase tracking-[0.28em]'
+            className={`font-display text-sm font-semibold text-accent ${
+              isRtl ? 'tracking-normal' : 'uppercase tracking-[0.28em]'
             }`}
           >
             {t.hero.brand}
           </p>
 
           <h1
-            className={`mt-3 text-4xl font-bold leading-[1.12] sm:text-5xl md:mt-4 md:text-6xl lg:text-[4.25rem] ${
-              isRtl ? 'font-sans tracking-normal' : 'font-display tracking-tight leading-[0.95]'
+            className={`mt-3 font-display text-4xl font-bold leading-[1.12] sm:text-5xl md:mt-4 md:text-6xl lg:text-[4.25rem] ${
+              isRtl ? 'tracking-normal' : 'tracking-tight leading-[0.95]'
             }`}
           >
-            <span data-hero="line1" className="block text-ink">
-              {t.hero.line1}
-            </span>
-            <span data-hero="line2" className="mt-1 block text-accent">
-              {t.hero.line2}
-            </span>
+            <span className="block min-h-[1.12em] text-ink">{t.hero.line1}</span>
+            <span className="mt-1 block min-h-[1.12em] text-accent">{t.hero.line2}</span>
           </h1>
 
           <p
-            data-hero="lead"
-            className={`mt-4 max-w-xl text-base leading-relaxed text-muted md:mt-5 md:text-lg ${
+            className={`mt-4 max-w-xl text-base leading-relaxed text-muted md:mt-5 md:min-h-[3.5rem] md:text-lg ${
               isRtl ? 'leading-8' : ''
             }`}
           >
             {t.hero.lead}
           </p>
 
-          <div data-hero="cta" className="relative z-20 mt-6 flex w-full flex-col gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:flex-wrap">
+          <div className="relative z-20 mt-6 flex w-full flex-col gap-3 sm:mt-7 sm:w-auto sm:flex-row sm:flex-wrap">
             <a
               href="#contact"
               onClick={goTo('contact')}
@@ -130,16 +110,9 @@ const Hero = () => {
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                data-hero="stat"
                 className="glass min-w-[7.5rem] rounded-xl px-4 py-3 sm:min-w-[8.5rem]"
               >
-                <p
-                  className={`text-xl font-semibold text-ink ${
-                    isRtl ? 'font-sans' : 'font-display'
-                  }`}
-                >
-                  {stat.value}
-                </p>
+                <p className="font-display text-xl font-semibold text-ink">{stat.value}</p>
                 <p className={`mt-0.5 text-xs text-muted ${isRtl ? 'leading-5' : ''}`}>
                   {stat.label}
                 </p>

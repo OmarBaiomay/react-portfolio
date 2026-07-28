@@ -16,7 +16,7 @@ export const protectRoute = async (req, res, next) => {
     }
 
     const result = await query(
-      `SELECT id, full_name, email, role, profile_pic, fcm_tokens, created_at, updated_at
+      `SELECT id, full_name, email, role, profile_pic, details, fcm_tokens, created_at, updated_at
        FROM users WHERE id = $1`,
       [decoded.userId]
     );
@@ -37,6 +37,13 @@ export const protectRoute = async (req, res, next) => {
 export const requireAdmin = (req, res, next) => {
   if (!req.user || !['admin', 'editor'].includes(req.user.role)) {
     return res.status(403).json({ message: 'Forbidden - Admin access required' });
+  }
+  next();
+};
+
+export const requireSuperAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden - Admin only' });
   }
   next();
 };

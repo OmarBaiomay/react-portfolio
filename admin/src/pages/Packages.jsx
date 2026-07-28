@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Plus, Package } from 'lucide-react';
-import { packageAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import { packageAPI } from '../services/api';
 import PackageCard from '../components/PackageCard';
 import PackageForm from '../components/PackageForm';
+import { useLanguage } from '../context/LanguageContext';
 
 const Packages = () => {
+  const { t } = useLanguage();
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -22,7 +24,7 @@ const Packages = () => {
       setPackages(response.data);
     } catch (error) {
       console.error('Error fetching packages:', error);
-      toast.error('Failed to load packages');
+      toast.error(t.packages.loadError);
     } finally {
       setLoading(false);
     }
@@ -31,38 +33,38 @@ const Packages = () => {
   const handleCreate = async (formData) => {
     try {
       await packageAPI.create(formData);
-      toast.success('Package created successfully!');
+      toast.success(t.packages.createOk);
       setShowForm(false);
       fetchPackages();
     } catch (error) {
       console.error('Error creating package:', error);
-      toast.error(error.response?.data?.message || 'Failed to create package');
+      toast.error(error.response?.data?.message || t.packages.createFail);
     }
   };
 
   const handleUpdate = async (formData) => {
     try {
-      await packageAPI.update(editingPackage._id, formData);
-      toast.success('Package updated successfully!');
+      await packageAPI.update(editingPackage._id || editingPackage.id, formData);
+      toast.success(t.packages.updateOk);
       setShowForm(false);
       setEditingPackage(null);
       fetchPackages();
     } catch (error) {
       console.error('Error updating package:', error);
-      toast.error(error.response?.data?.message || 'Failed to update package');
+      toast.error(error.response?.data?.message || t.packages.updateFail);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this package?')) return;
+    if (!window.confirm(t.packages.deleteConfirm)) return;
 
     try {
       await packageAPI.delete(id);
-      toast.success('Package deleted successfully!');
+      toast.success(t.packages.deleteOk);
       fetchPackages();
     } catch (error) {
       console.error('Error deleting package:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete package');
+      toast.error(error.response?.data?.message || t.packages.deleteFail);
     }
   };
 
@@ -78,48 +80,41 @@ const Packages = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-accent border-t-transparent" />
       </div>
     );
   }
 
   return (
     <div className="animate-slide-in">
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100">Packages</h1>
-          <p className="text-gray-600 dark:text-zinc-400 mt-1">Manage your pricing packages</p>
+          <h1 className="font-display text-3xl font-bold text-ink">{t.packages.title}</h1>
+          <p className="mt-1 text-muted">{t.packages.subtitle}</p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors shadow-md"
-        >
-          <Plus className="w-5 h-5" />
-          Add Package
+        <button type="button" onClick={() => setShowForm(true)} className="btn-primary">
+          <Plus className="h-5 w-5" />
+          {t.packages.add}
         </button>
       </div>
 
       {packages.length === 0 ? (
-        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-16 text-center shadow-sm">
-          <div className="w-16 h-16 bg-gray-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Package className="w-8 h-8 text-gray-400 dark:text-zinc-500" />
+        <div className="glass rounded-xl p-16 text-center">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-surface">
+            <Package className="h-8 w-8 text-muted" />
           </div>
-          <p className="text-gray-600 dark:text-zinc-400 mb-4 text-lg">No packages found</p>
-          <p className="text-gray-500 dark:text-zinc-500 text-sm mb-6">Get started by creating your first pricing package</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors shadow-md inline-flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Create Your First Package
+          <p className="mb-6 text-lg text-muted">{t.packages.empty}</p>
+          <button type="button" onClick={() => setShowForm(true)} className="btn-primary">
+            <Plus className="h-5 w-5" />
+            {t.packages.add}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {packages.map((pkg) => (
             <PackageCard
-              key={pkg._id}
+              key={pkg._id || pkg.id}
               package={pkg}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -128,13 +123,13 @@ const Packages = () => {
         </div>
       )}
 
-      {showForm && (
+      {showForm ? (
         <PackageForm
           package={editingPackage}
           onSubmit={editingPackage ? handleUpdate : handleCreate}
           onClose={handleCloseForm}
         />
-      )}
+      ) : null}
     </div>
   );
 };

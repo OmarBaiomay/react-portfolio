@@ -12,6 +12,10 @@ const frontendApi = axios.create({
 export const publicAPI = {
   getPackages: () => frontendApi.get('/packages'),
   getMaintenancePlans: () => frontendApi.get('/maintenance'),
+  getTheme: () => frontendApi.get('/settings/theme'),
+  getManifesto: () => frontendApi.get('/settings/manifesto'),
+  getHeroScene: () => frontendApi.get('/settings/hero-scene'),
+  createLead: (data) => frontendApi.post('/leads', data),
 };
 
 export default frontendApi;

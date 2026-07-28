@@ -9,6 +9,29 @@
     <meta name="application-name" content="B-Code" />
     <meta name="format-detection" content="telephone=no" />
 
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('bcode-theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+          var raw = localStorage.getItem('bcode-appearance');
+          if (!raw) return;
+          var data = JSON.parse(raw);
+          var palette = data && data.palette;
+          if (!palette) return;
+          var tones = theme === 'light' ? palette.light : palette.dark;
+          var accent = (tones && tones.accent) || (palette.dark && palette.dark.accent);
+          if (!accent) return;
+          var root = document.documentElement;
+          root.style.setProperty('--c-accent', accent);
+          root.style.setProperty('--c-accent-soft', accent);
+          if (data.btn) root.style.setProperty('--c-accent-btn', data.btn);
+          if (data.on) root.style.setProperty('--c-on-accent', data.on);
+          if (palette.id) root.setAttribute('data-palette', palette.id);
+        } catch (e) {}
+      })();
+    </script>
+
     <title>B-Code | Web, Odoo &amp; Software Solutions</title>
     <meta
       name="description"
@@ -58,15 +81,12 @@
     <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/images/logo.svg" />
 
+    <!-- Brand fonts: Syne (EN display) · Manrope (EN body) · Cairo (AR) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Manrope:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0"
     />
 
     <!-- First-paint structured data for crawlers that read raw HTML -->

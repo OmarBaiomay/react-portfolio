@@ -1,5 +1,6 @@
 import { query } from '../db/pg-connection.js';
 import { mapMaintenance } from '../lib/mappers.js';
+import { hasI18nList, hasI18nText, toI18nList, toI18nText } from '../lib/i18n.js';
 
 export const getAllPlans = async (req, res) => {
   try {
@@ -33,15 +34,18 @@ export const createPlan = async (req, res) => {
   try {
     const { name, features, priceUSD, priceEGP, order } = req.body;
 
-    if (!name || !features || !priceUSD || !priceEGP) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const nameI18n = toI18nText(name);
+    const featuresI18n = toI18nList(features);
+
+    if (!hasI18nText(nameI18n) || !hasI18nList(featuresI18n) || !priceUSD || !priceEGP) {
+      return res.status(400).json({ message: 'All fields are required (EN or AR)' });
     }
 
     const result = await query(
       `INSERT INTO maintenance_plans (name, features, price_usd, price_egp, sort_order)
-       VALUES ($1, $2::jsonb, $3, $4, $5)
+       VALUES ($1::jsonb, $2::jsonb, $3, $4, $5)
        RETURNING *`,
-      [name, JSON.stringify(features), priceUSD, priceEGP, order || 0]
+      [JSON.stringify(nameI18n), JSON.stringify(featuresI18n), priceUSD, priceEGP, order || 0]
     );
 
     res.status(201).json(mapMaintenance(result.rows[0]));
@@ -70,7 +74,7 @@ export const updatePlan = async (req, res) => {
 
     const result = await query(
       `UPDATE maintenance_plans SET
-        name = $1,
+        name = $1::jsonb,
         features = $2::jsonb,
         price_usd = $3,
         price_egp = $4,
@@ -79,7 +83,15 @@ export const updatePlan = async (req, res) => {
         updated_at = CURRENT_TIMESTAMP
        WHERE id = $7
        RETURNING *`,
-      [name, JSON.stringify(features), priceUSD, priceEGP, order, isActive, req.params.id]
+      [
+        JSON.stringify(toI18nText(name)),
+        JSON.stringify(toI18nList(features)),
+        priceUSD,
+        priceEGP,
+        order,
+        isActive,
+        req.params.id,
+      ]
     );
 
     res.status(200).json(mapMaintenance(result.rows[0]));

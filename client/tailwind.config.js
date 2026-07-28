@@ -18,8 +18,27 @@ export default {
         line: 'rgb(var(--c-line) / <alpha-value>)',
       },
       fontFamily: {
-        display: ['Syne', 'Cairo', 'sans-serif'],
-        sans: ['Manrope', 'Cairo', 'sans-serif'],
+        // System fallbacks first for metrics; webfonts optional (less CLS).
+        display: [
+          'Syne',
+          'Cairo',
+          'ui-sans-serif',
+          'system-ui',
+          'Segoe UI',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif',
+        ],
+        sans: [
+          'Manrope',
+          'Cairo',
+          'ui-sans-serif',
+          'system-ui',
+          'Segoe UI',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif',
+        ],
       },
       boxShadow: {
         glow: '0 0 40px rgb(var(--c-accent) / 0.25)',
