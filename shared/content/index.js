@@ -6,9 +6,10 @@ import { techStack } from './techStack.js';
 import { site } from './site.js';
 import { sections } from './sections.js';
 import { pages } from './pages.js';
+import { services } from './services.js';
 
 /** Built-in website content. The API stores edits per part and merges them over this. */
-export const DEFAULT_CONTENT = { translations, projects, faqs, industries, techStack, site, sections, pages };
+export const DEFAULT_CONTENT = { translations, projects, faqs, industries, techStack, site, sections, pages, services };
 
 export const CONTENT_PARTS = Object.keys(DEFAULT_CONTENT);
 

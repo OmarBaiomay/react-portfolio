@@ -14,6 +14,8 @@ const ProjectPage = lazy(() => import('./pages/ProjectPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const StaticPage = lazy(() => import('./pages/StaticPage'));
+const WorkPage = lazy(() => import('./pages/WorkPage'));
+const ServicePage = lazy(() => import('./pages/ServicePage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const LenisBoot = lazy(() => import('./components/LenisBoot'));
 
@@ -118,7 +120,9 @@ function AppShell() {
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/work" element={<WorkPage />} />
           <Route path="/work/:slug" element={<ProjectPage />} />
+          <Route path="/services/:slug" element={<ServicePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
           {/* Pages managed in the dashboard (privacy policy, terms, …); unknown slugs show 404. */}

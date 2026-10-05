@@ -32,6 +32,7 @@ import {
   Sparkles,
   Bot,
   ScrollText as PagesIcon,
+  Layers as ServicesIcon,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
@@ -155,6 +156,7 @@ const Sidebar = () => {
           { name: t.nav.aiAssistant, path: '/ai', icon: Sparkles },
           { name: t.nav.content, path: '/content', icon: FileTextIcon },
           { name: t.nav.portfolio, path: '/portfolio', icon: FolderOpen },
+          { name: t.nav.servicesPages, path: '/services-pages', icon: ServicesIcon },
           { name: t.nav.blog, path: '/blog', icon: Newspaper },
           { name: t.nav.pages, path: '/pages', icon: PagesIcon },
           { name: t.nav.faqs, path: '/faqs', icon: HelpCircle },

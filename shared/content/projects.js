@@ -4,6 +4,7 @@ export const projects = [
     imgSrc: '/images/projects/madeeda-hospitals/cover.jpg',
     liveUrl: 'https://edumadeeda2.odoo.com/',
     industry: 'healthcare',
+    services: ['odoo', 'web'],
     year: '2026',
     title: { en: 'Madeeda Hospitals', ar: 'مستشفيات مديدة' },
     tags: {
@@ -66,6 +67,7 @@ export const projects = [
     imgSrc: '/images/projects/agent-seven/cover.jpg',
     liveUrl: 'https://www.agentsevensa.com/',
     industry: 'services',
+    services: ['web'],
     title: { en: 'Agent Seven Media', ar: 'مؤسسة إيجنت سفن' },
     tags: {
       en: ['WordPress', 'Website', 'Media production'],
@@ -126,6 +128,7 @@ export const projects = [
     imgSrc: '/images/projects/above-group/cover.jpg',
     liveUrl: 'https://abovegroupsa.com/',
     industry: 'real-estate',
+    services: ['web'],
     year: '2025',
     title: { en: 'Above Group', ar: 'مجموعة أبوف' },
     tags: {
@@ -183,10 +186,137 @@ export const projects = [
     },
   },
   {
+    slug: 'clinorax',
+    imgSrc: '/images/projects/clinorax/cover.jpg',
+    liveUrl: 'https://clinorax.b-code.tech/',
+    industry: 'healthcare',
+    year: '2026',
+    services: ['software'],
+    title: { en: 'ClinoraX', ar: 'ClinoraX' },
+    tags: {
+      en: ['Desktop app', 'SaaS', 'Healthcare'],
+      ar: ['تطبيق سطح مكتب', 'SaaS', 'رعاية صحية'],
+    },
+    summary: {
+      en: 'A multi-clinic management platform — a Windows desktop app that also runs as a PWA — for appointments, medical records, billing and patient leads.',
+      ar: 'منصة لإدارة العيادات متعددة الفروع — تطبيق سطح مكتب لويندوز يعمل أيضاً كتطبيق ويب — للمواعيد والسجلات الطبية والفوترة والعملاء المحتملين.',
+    },
+    client: { en: 'B-Code product', ar: 'منتج من B-Code' },
+    role: {
+      en: 'Product design & full-stack development',
+      ar: 'تصميم المنتج والتطوير الكامل',
+    },
+    overview: {
+      en: 'ClinoraX is our own clinic management SaaS. Clinics run it as a Windows desktop app or in the browser, in Arabic or English, online or offline. It covers the full patient journey: booking and a drag-and-drop calendar, a live waiting-room queue, visits with diagnosis, ICD-10 codes and printed prescriptions, VAT invoices and payments, and a Kanban leads CRM — plus an agency console to onboard and manage every client clinic.',
+      ar: 'ClinoraX منتجنا الخاص لإدارة العيادات بنظام SaaS. تعمل به العيادات كتطبيق سطح مكتب على ويندوز أو من المتصفح، بالعربية أو الإنجليزية، متصلاً أو دون اتصال. يغطي رحلة المريض كاملة: الحجز وتقويم بالسحب والإفلات، وقائمة انتظار مباشرة، والزيارات مع التشخيص وأكواد ICD-10 وطباعة الوصفات، وفواتير ضريبية ومدفوعات، ونظام CRM للعملاء المحتملين — إضافة إلى لوحة وكالة لإضافة وإدارة كل عيادة عميلة.',
+    },
+    challenge: {
+      en: 'Clinics juggle paper files, spreadsheets and WhatsApp. They needed one system that works across branches and staff roles, protects medical records, keeps working when the internet drops, and is simple enough for a busy reception desk.',
+      ar: 'تتعامل العيادات مع ملفات ورقية وجداول بيانات ورسائل واتساب متفرقة. كانت الحاجة إلى نظام واحد يعمل عبر الفروع وأدوار الموظفين، ويحمي السجلات الطبية، ويستمر في العمل عند انقطاع الإنترنت، ويكون سهلاً على موظفي الاستقبال المشغولين.',
+    },
+    solution: {
+      en: 'A multi-tenant NestJS + PostgreSQL API with role-based permissions (owner, admin, doctor, receptionist), an Electron desktop app whose renderer also ships as an installable PWA, offline caching, per-device sign-in that can be revoked remotely, branch-aware invoice numbering with VAT, and an agency console for subscriptions, branch and device limits, and audit logs.',
+      ar: 'واجهة برمجية متعددة المستأجرين بـ NestJS وPostgreSQL مع صلاحيات حسب الدور (مالك، مدير، طبيب، استقبال)، وتطبيق سطح مكتب بـ Electron تُنشر واجهته أيضاً كتطبيق ويب قابل للتثبيت، مع تخزين للعمل دون اتصال، وتسجيل دخول مرتبط بكل جهاز يمكن إلغاؤه عن بُعد، وترقيم فواتير لكل فرع مع ضريبة القيمة المضافة، ولوحة وكالة للاشتراكات وحدود الفروع والأجهزة وسجل التدقيق.',
+    },
+    results: {
+      en: [
+        'One system for appointments, records, billing and leads',
+        'Works on Windows, in the browser, and offline',
+        'Multi-branch clinics managed from one agency console',
+      ],
+      ar: [
+        'نظام واحد للمواعيد والسجلات والفوترة والعملاء المحتملين',
+        'يعمل على ويندوز وفي المتصفح ودون اتصال',
+        'إدارة العيادات متعددة الفروع من لوحة وكالة واحدة',
+      ],
+    },
+    stack: ['Electron', 'React', 'NestJS', 'PostgreSQL', 'Prisma', 'PWA', 'Arabic RTL'],
+    gallery: {
+      desktop: [
+        { src: '/images/projects/clinorax/desktop-dashboard.webp', alt: { en: 'Dashboard on desktop', ar: 'لوحة التحكم على سطح المكتب' } },
+        { src: '/images/projects/clinorax/desktop-appointments.webp', alt: { en: 'Appointments calendar', ar: 'تقويم المواعيد' } },
+        { src: '/images/projects/clinorax/desktop-crm.webp', alt: { en: 'Leads CRM board', ar: 'لوحة العملاء المحتملين' } },
+        { src: '/images/projects/clinorax/desktop-billing.webp', alt: { en: 'Invoices', ar: 'الفواتير' } },
+      ],
+      tablet: [
+        { src: '/images/projects/clinorax/tablet-appointments.webp', alt: { en: 'Appointments on tablet', ar: 'المواعيد على الجهاز اللوحي' } },
+      ],
+      mobile: [
+        { src: '/images/projects/clinorax/mobile-dashboard.webp', alt: { en: 'Dashboard on mobile', ar: 'لوحة التحكم على الجوال' } },
+        { src: '/images/projects/clinorax/mobile-appointments.webp', alt: { en: 'Appointments on mobile', ar: 'المواعيد على الجوال' } },
+        { src: '/images/projects/clinorax/mobile-crm.webp', alt: { en: 'Leads on mobile', ar: 'العملاء المحتملون على الجوال' } },
+      ],
+    },
+  },
+  {
+    slug: 'arena',
+    imgSrc: '/images/projects/arena/cover.jpg',
+    liveUrl: 'https://arenause.com/',
+    industry: 'services',
+    year: '2026',
+    services: ['software', 'web'],
+    title: { en: 'Arena', ar: 'أرينا Arena' },
+    tags: {
+      en: ['SaaS', 'POS', 'Gaming lounges'],
+      ar: ['SaaS', 'نقطة بيع', 'صالات الألعاب'],
+    },
+    summary: {
+      en: 'A cloud platform for PlayStation and gaming lounges: live sessions, POS, bookings, shifts and reports — on any screen.',
+      ar: 'منصة سحابية لصالات البلايستيشن والألعاب: جلسات مباشرة ونقطة بيع وحجوزات وورديات وتقارير — على أي شاشة.',
+    },
+    client: { en: 'B-Code product', ar: 'منتج من B-Code' },
+    role: {
+      en: 'Product design & full-stack development',
+      ar: 'تصميم المنتج والتطوير الكامل',
+    },
+    overview: {
+      en: 'Arena is our SaaS for gaming lounges in Egypt and the Arab world. Each lounge gets its own subdomain and a live board of every PlayStation, billiards table and VR station — with timers, single and multiplayer pricing, a point-of-sale for drinks and snacks, bookings and tournaments, daily shifts, customer debts and loyalty, and owner reports.',
+      ar: 'أرينا منصتنا لصالات الألعاب في مصر والوطن العربي. تحصل كل صالة على نطاق فرعي خاص بها ولوحة مباشرة لكل جهاز بلايستيشن وطاولة بلياردو ومحطة VR — مع مؤقتات وتسعير فردي وجماعي، ونقطة بيع للمشروبات والوجبات الخفيفة، وحجوزات وبطولات، وورديات يومية، وديون العملاء والولاء، وتقارير للمالك.',
+    },
+    challenge: {
+      en: 'Lounge owners lose money to untracked time, forgotten sessions and cash that does not match at the end of the shift. They needed something staff can use in seconds, that the owner can check from a phone, and that works across several branches.',
+      ar: 'يخسر أصحاب الصالات أموالاً بسبب وقت غير مسجّل وجلسات منسية ونقدية لا تتطابق في نهاية الوردية. كانوا بحاجة إلى نظام يستخدمه الموظفون في ثوانٍ، ويتابعه المالك من جواله، ويعمل عبر عدة فروع.',
+    },
+    solution: {
+      en: 'A multi-tenant Node.js + PostgreSQL platform (one schema per lounge) with a real-time React PWA: live device board, timed and open sessions, POS linked to visits, shift opening and closing, booking reminders, WhatsApp owner summaries, role permissions, and an agency console for plans, billing and lounge onboarding. It also ships as a Windows desktop app.',
+      ar: 'منصة متعددة المستأجرين بـ Node.js وPostgreSQL (مخطط مستقل لكل صالة) مع تطبيق ويب React يعمل لحظياً: لوحة أجهزة مباشرة، وجلسات بوقت محدد أو مفتوح، ونقطة بيع مرتبطة بالزيارات، وفتح وإغلاق الورديات، وتذكيرات الحجوزات، وملخصات للمالك عبر واتساب، وصلاحيات حسب الدور، ولوحة وكالة للباقات والفوترة وإضافة الصالات. ويتوفر أيضاً كتطبيق سطح مكتب لويندوز.',
+    },
+    results: {
+      en: [
+        'Every device, session and sale tracked in real time',
+        'Owners follow shifts and revenue from their phone',
+        'New lounges onboarded on their own subdomain in minutes',
+      ],
+      ar: [
+        'تتبّع لحظي لكل جهاز وجلسة وعملية بيع',
+        'يتابع المالك الورديات والإيرادات من جواله',
+        'إضافة صالات جديدة على نطاقها الفرعي خلال دقائق',
+      ],
+    },
+    stack: ['React', 'Vite', 'PWA', 'Node.js', 'Express', 'PostgreSQL', 'Socket.IO', 'Electron'],
+    gallery: {
+      desktop: [
+        { src: '/images/projects/arena/desktop-landing.webp', alt: { en: 'arenause.com landing page', ar: 'الصفحة الرئيسية لموقع arenause.com' } },
+        { src: '/images/projects/arena/desktop-sessions.webp', alt: { en: 'Live sessions board', ar: 'لوحة الجلسات المباشرة' } },
+        { src: '/images/projects/arena/desktop-pos.webp', alt: { en: 'Point of sale', ar: 'نقطة البيع' } },
+        { src: '/images/projects/arena/desktop-dashboard.webp', alt: { en: 'Owner dashboard', ar: 'لوحة تحكم المالك' } },
+      ],
+      tablet: [
+        { src: '/images/projects/arena/tablet-sessions.webp', alt: { en: 'Sessions on tablet', ar: 'الجلسات على الجهاز اللوحي' } },
+      ],
+      mobile: [
+        { src: '/images/projects/arena/mobile-landing.webp', alt: { en: 'Landing page on mobile', ar: 'الصفحة الرئيسية على الجوال' } },
+        { src: '/images/projects/arena/mobile-sessions.webp', alt: { en: 'Sessions on mobile', ar: 'الجلسات على الجوال' } },
+        { src: '/images/projects/arena/mobile-pos.webp', alt: { en: 'POS on mobile', ar: 'نقطة البيع على الجوال' } },
+      ],
+    },
+  },
+  {
     slug: 'aisha-academy',
     imgSrc: '/images/projects/aisha-academy/cover.jpg',
     liveUrl: 'https://aishaquran.com',
     industry: 'education',
+    services: ['web'],
     year: '2024',
     title: { en: 'Aisha Quran Academy', ar: 'أكاديمية عائشة للقرآن' },
     tags: {

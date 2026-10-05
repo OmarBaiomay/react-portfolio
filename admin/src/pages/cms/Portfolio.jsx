@@ -20,6 +20,7 @@ const bi = () => ({ en: '', ar: '' });
 
 const newProject = (n) => ({
   slug: `new-project-${n}`,
+  services: [],
   imgSrc: '',
   liveUrl: '',
   industry: '',
@@ -75,7 +76,7 @@ function ShotList({ label, list = [], onChange, aspect, addLabel, altLabel }) {
   );
 }
 
-function ProjectEditor({ project, industries, onChange, onBack }) {
+function ProjectEditor({ project, industries, services, onChange, onBack }) {
   const { t, lang } = useLanguage();
   const P = t.cms.portfolio;
   const set = (key, val) => onChange({ ...project, [key]: val });
@@ -126,6 +127,28 @@ function ProjectEditor({ project, industries, onChange, onBack }) {
         <BiField label={P.client} value={project.client} onChange={(v) => set('client', v)} />
         <BiField label={P.role} value={project.role} onChange={(v) => set('role', v)} />
         <BiStringList label={P.tags} value={project.tags} onChange={(v) => set('tags', v)} />
+        <div>
+          <p className="form-label">{P.services}</p>
+          <div className="flex flex-wrap gap-2">
+            {services.map((sv) => {
+              const on = (project.services || []).includes(sv.id);
+              return (
+                <button
+                  key={sv.id}
+                  type="button"
+                  onClick={() =>
+                    set('services', on ? project.services.filter((x) => x !== sv.id) : [...(project.services || []), sv.id])
+                  }
+                  className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
+                    on ? 'border-accent bg-accent text-white' : 'border-line/15 text-ink hover:border-accent/50'
+                  }`}
+                >
+                  {sv.title?.[lang] || sv.title?.en || sv.id}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </FormCard>
 
       <FormCard title={P.images}>
@@ -156,6 +179,7 @@ export default function Portfolio() {
   const part = useContentPart('projects', { saved: c.savedToast, reset: c.resetToast, loadError: c.loadError, saveError: c.saveError });
   const [editing, setEditing] = useState(null);
   const [industries, setIndustries] = useState([]);
+  const [services, setServices] = useState([]);
   const [params, setParams] = useSearchParams();
 
   // Open a project directly, e.g. after the AI assistant created it.
@@ -170,7 +194,10 @@ export default function Portfolio() {
   useEffect(() => {
     contentAPI
       .get()
-      .then(({ data }) => setIndustries(data.industries || []))
+      .then(({ data }) => {
+        setIndustries(data.industries || []);
+        setServices(data.services || []);
+      })
       .catch(() => {});
   }, []);
 
@@ -217,6 +244,7 @@ export default function Portfolio() {
         <ProjectEditor
           project={list[editing]}
           industries={industries}
+          services={services}
           onChange={(next) => setProject(editing, next)}
           onBack={() => setEditing(null)}
         />

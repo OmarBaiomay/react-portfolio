@@ -17,15 +17,17 @@ function urlEntry(path, { lastmod, changefreq = 'monthly', priority = '0.8' } = 
 /** sitemap.xml built from live content: home, portfolio projects, blog. */
 export async function sitemapXml() {
   const stored = await query(
-    `SELECT key, value FROM site_settings WHERE key IN ('content.projects', 'content.pages')`
+    `SELECT key, value FROM site_settings WHERE key IN ('content.projects', 'content.pages', 'content.services')`
   );
   const saved = Object.fromEntries(stored.rows.map((r) => [r.key.replace('content.', ''), r.value]));
-  const { projects, pages } = mergeContent(saved);
+  const { projects, pages, services } = mergeContent(saved);
   const posts = await publishedPostSlugs();
 
   const entries = [
     urlEntry('/', { changefreq: 'weekly', priority: '1.0' }),
+    urlEntry('/work', { changefreq: 'weekly', priority: '0.8' }),
     ...projects.filter((p) => !p.hidden).map((p) => urlEntry(`/work/${p.slug}`)),
+    ...services.filter((s) => !s.hidden).map((s) => urlEntry(`/services/${s.slug}`, { priority: '0.9' })),
     ...pages.filter((p) => !p.hidden).map((p) => urlEntry(`/${p.slug}`, { changefreq: 'yearly', priority: '0.3' })),
   ];
   if (posts.length) {

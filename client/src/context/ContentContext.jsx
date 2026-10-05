@@ -65,6 +65,7 @@ export function ContentProvider({ children }) {
       faqs: content.faqs.filter((f) => !f.hidden),
       industries: content.industries.filter((i) => !i.hidden),
       pages: (content.pages || []).filter((p) => !p.hidden),
+      services: (content.services || []).filter((s) => !s.hidden),
       loaded,
     }),
     [content, loaded]

@@ -1,13 +1,18 @@
 import { Code2, Boxes, Cpu, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useContent } from '../context/ContentContext';
 
 const Services = () => {
   const { t } = useLanguage();
+  const { services = [] } = useContent();
   const s = t.services;
+  const pageFor = (id) => services.find((x) => x.id === id)?.slug;
 
   const items = [
     {
       icon: Code2,
+      id: 'web',
       title: s.webTitle,
       desc: s.webDesc,
       points: s.webPoints,
@@ -15,6 +20,7 @@ const Services = () => {
     },
     {
       icon: Boxes,
+      id: 'odoo',
       title: s.odooTitle,
       desc: s.odooDesc,
       points: s.odooPoints,
@@ -22,6 +28,7 @@ const Services = () => {
     },
     {
       icon: Cpu,
+      id: 'software',
       title: s.softTitle,
       desc: s.softDesc,
       points: s.softPoints,
@@ -39,7 +46,7 @@ const Services = () => {
         </div>
 
         <div className="mt-14 grid gap-5 md:grid-cols-3" data-animate="stagger">
-          {items.map(({ icon: Icon, title, desc, points, cta }) => (
+          {items.map(({ id, icon: Icon, title, desc, points, cta }) => (
             <article
               key={title}
               data-animate-child
@@ -48,7 +55,15 @@ const Services = () => {
               <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-accent/15 text-accent">
                 <Icon className="h-6 w-6" strokeWidth={1.5} />
               </div>
-              <h3 className="font-display text-2xl font-semibold">{title}</h3>
+              <h3 className="font-display text-2xl font-semibold">
+                {pageFor(id) ? (
+                  <Link to={`/services/${pageFor(id)}`} className="transition hover:text-accent">
+                    {title}
+                  </Link>
+                ) : (
+                  title
+                )}
+              </h3>
               <p className="mt-3 text-sm leading-relaxed text-muted md:text-base">{desc}</p>
               <ul className="mt-6 space-y-2 text-sm text-muted">
                 {points.map((point) => (
@@ -58,13 +73,20 @@ const Services = () => {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#contact"
-                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-accent transition group-hover:gap-3"
-              >
-                {cta}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-              </a>
+              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2">
+                {pageFor(id) ? (
+                  <Link
+                    to={`/services/${pageFor(id)}`}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition group-hover:gap-3"
+                  >
+                    {t.servicePage.learnMore}
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                  </Link>
+                ) : null}
+                <a href="#contact" className="text-sm font-semibold text-muted transition hover:text-accent">
+                  {cta}
+                </a>
+              </div>
             </article>
           ))}
         </div>

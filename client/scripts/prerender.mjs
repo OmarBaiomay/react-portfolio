@@ -140,9 +140,12 @@ async function main() {
   }
 
   const { pages } = await import(pathToFileURL(path.resolve(__dirname, '../../shared/content/pages.js')).href);
+  const { services } = await import(pathToFileURL(path.resolve(__dirname, '../../shared/content/services.js')).href);
   const routes = [
     '/',
     '/blog',
+    '/work',
+    ...services.filter((s) => !s.hidden).map((s) => `/services/${s.slug}`),
     ...(await loadProjectSlugs()).map((slug) => `/work/${slug}`),
     ...pages.filter((p) => !p.hidden).map((p) => `/${p.slug}`),
   ];
