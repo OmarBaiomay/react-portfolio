@@ -26,8 +26,8 @@ export default {
         ar: 'هل نختار شريكاً رسمياً لأودو؟',
       },
       a: {
-        en: 'Official partnership shows a commercial relationship with Odoo and some certified staff [VERIFY partner programme criteria]. It is useful, but not enough on its own. Judge partners on relevant references, the team doing your work, and how they handle support and upgrades.',
-        ar: 'الشراكة الرسمية تدل على علاقة تجارية مع أودو وعلى وجود موظفين معتمدين [VERIFY معايير برنامج الشركاء]. وهي مفيدة لكنها غير كافية وحدها. قيّم الشركاء بناءً على مراجع مشابهة لنشاطك، والفريق الذي سينفذ عملك، وطريقة تعاملهم مع الدعم والترقيات.',
+        en: 'Official partnership shows a commercial relationship with Odoo and some certified staff. It is useful, but not enough on its own. Judge partners on relevant references, the team doing your work, and how they handle support and upgrades.',
+        ar: 'الشراكة الرسمية تدل على علاقة تجارية مع أودو وعلى وجود موظفين معتمدين. وهي مفيدة لكنها غير كافية وحدها. قيّم الشركاء بناءً على مراجع مشابهة لنشاطك، والفريق الذي سينفذ عملك، وطريقة تعاملهم مع الدعم والترقيات.',
       },
     },
     {

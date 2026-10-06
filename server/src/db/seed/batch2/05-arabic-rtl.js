@@ -132,7 +132,7 @@ Search engines need to understand that you have two language versions of each pa
 
 - **One URL per language.** For example \`/ar/…\` and \`/en/…\`, or a default language at the root and the other in a folder. Avoid switching language only with a cookie on the same URL.
 - **Set the language and direction on every page:** \`lang="ar"\` with \`dir="rtl"\` for Arabic, \`lang="en"\` for English.
-- **Add hreflang tags** that link each page to its other-language version, plus an \`x-default\` [VERIFY current guidance for your setup].
+- **Add hreflang tags** that link each page to its other-language version, plus an \`x-default\`.
 - **Write Arabic titles and meta descriptions** for every page. Do not leave English metadata on Arabic pages.
 - **Do Arabic keyword research.** People search differently in Arabic, including spelling variations and Saudi dialect terms.
 - **Include both language versions in your sitemap.**
@@ -255,7 +255,7 @@ If Arabic speakers are your main customers, the Arabic site is not a translation
 
 - **رابط مستقل لكل لغة.** مثل \`/ar/…\` و\`/en/…\`، أو اللغة الافتراضية في الجذر والأخرى في مجلد. وتجنّب تبديل اللغة عبر ملف تعريف الارتباط فقط على الرابط نفسه.
 - **حدّد اللغة والاتجاه في كل صفحة:** \`lang="ar"\` مع \`dir="rtl"\` للعربية، و\`lang="en"\` للإنجليزية.
-- **أضف وسوم hreflang** التي تربط كل صفحة بنسختها باللغة الأخرى، مع \`x-default\` [VERIFY الإرشادات الحالية لإعدادك].
+- **أضف وسوم hreflang** التي تربط كل صفحة بنسختها باللغة الأخرى، مع \`x-default\`.
 - **اكتب عناوين وأوصافاً عربية** لكل صفحة، ولا تترك بيانات إنجليزية على الصفحات العربية.
 - **ابحث عن الكلمات المفتاحية بالعربية.** يبحث الناس بالعربية بطرق مختلفة، منها اختلاف الإملاء والمصطلحات المحلية.
 - **أدرج نسختي اللغتين في خريطة الموقع.**

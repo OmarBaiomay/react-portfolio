@@ -36,8 +36,8 @@ export default {
         ar: 'هل نحتاج سجلاً تجارياً للبيع عبر الإنترنت؟',
       },
       a: {
-        en: 'Rules for online sellers in Saudi Arabia include registration and consumer-protection requirements under the e-commerce law. Check the current requirements with the Ministry of Commerce before you launch [VERIFY].',
-        ar: 'تتضمن أنظمة البيع الإلكتروني في السعودية متطلبات تسجيل وحماية للمستهلك وفق نظام التجارة الإلكترونية. تحقق من المتطلبات الحالية لدى وزارة التجارة قبل الإطلاق [VERIFY].',
+        en: 'Rules for online sellers in Saudi Arabia include registration and consumer-protection requirements under the e-commerce law. Check the current requirements with the Ministry of Commerce before you launch.',
+        ar: 'تتضمن أنظمة البيع الإلكتروني في السعودية متطلبات تسجيل وحماية للمستهلك وفق نظام التجارة الإلكترونية. تحقق من المتطلبات الحالية لدى وزارة التجارة قبل الإطلاق.',
       },
     },
     {
@@ -54,13 +54,13 @@ export default {
   body: {
     en: `Launching an online store in Saudi Arabia is easier than ever. You can open a store on a local platform in an afternoon, connect mada and Apple Pay, and start taking orders. The harder question comes later: will the platform you chose still fit when you have thousands of orders, several warehouses and an accounting team asking for clean numbers?
 
-This guide compares four common routes — Salla, Zid, Shopify and Odoo eCommerce — on what matters to a Saudi retailer. Platform features and fees change often, so anything specific is marked [VERIFY]. Check each platform's current plans before you decide.
+This guide compares four common routes — Salla, Zid, Shopify and Odoo eCommerce — on what matters to a Saudi retailer. Platform features and fees change often, so check each platform's current plans before you decide.
 
 ## The four options at a glance
 
 **Salla and Zid** are Saudi-built hosted platforms. You pay a monthly plan, pick a theme and start selling. They are designed for the local market, with Arabic, local payments and local shipping companies in mind.
 
-**Shopify** is a global hosted platform with a very large app and theme ecosystem. It supports Arabic storefronts and right-to-left themes, and connects to local payment gateways through apps [VERIFY].
+**Shopify** is a global hosted platform with a very large app and theme ecosystem. It supports Arabic storefronts and right-to-left themes, and connects to local payment gateways through apps.
 
 **Odoo eCommerce** is the online store module of Odoo, the ERP. The store shares one database with sales, inventory, purchasing and accounting, so an order on the website is immediately an order in your back office.
 
@@ -69,14 +69,14 @@ This guide compares four common routes — Salla, Zid, Shopify and Odoo eCommerc
 | | Salla | Zid | Shopify | Odoo eCommerce |
 |---|---|---|---|---|
 | **Setup speed** | Very fast | Very fast | Fast | Slower — part of an ERP setup |
-| **Arabic storefront** | Native | Native | Through themes and settings [VERIFY] | Native RTL, needs design work |
-| **mada, Apple Pay** | Built in [VERIFY] | Built in [VERIFY] | Through local gateway apps [VERIFY] | Through supported payment providers [VERIFY] |
-| **Buy now, pay later** | Tabby, Tamara and similar [VERIFY] | Tabby, Tamara and similar [VERIFY] | Through apps [VERIFY] | Through integrations [VERIFY] |
-| **Local shipping** | Many local carriers [VERIFY] | Many local carriers [VERIFY] | Through apps [VERIFY] | Through integrations or custom work |
+| **Arabic storefront** | Native | Native | Through themes and settings | Native RTL, needs design work |
+| **mada, Apple Pay** | Built in | Built in | Through local gateway apps | Through supported payment providers |
+| **Buy now, pay later** | Tabby, Tamara and similar | Tabby, Tamara and similar | Through apps | Through integrations |
+| **Local shipping** | Many local carriers | Many local carriers | Through apps | Through integrations or custom work |
 | **Inventory and accounting** | Basic stock; accounting through integrations | Basic stock; accounting through integrations | Basic stock; accounting through apps | Full inventory, purchasing and accounting in one system |
-| **Design freedom** | Themes, limited custom code [VERIFY] | Themes, limited custom code [VERIFY] | High, with theme development | High, with development |
+| **Design freedom** | Themes, limited custom code | Themes, limited custom code | High, with theme development | High, with development |
 | **Long-term flexibility** | Medium | Medium | High | Very high |
-| **Fees** | Monthly plan + payment fees [VERIFY] | Monthly plan + payment fees [VERIFY] | Monthly plan + app and payment fees [VERIFY] | Odoo licences or hosting + implementation [VERIFY] |
+| **Fees** | Monthly plan + payment fees | Monthly plan + payment fees | Monthly plan + app and payment fees | Odoo licences or hosting + implementation |
 
 ## What to look at closely
 
@@ -92,8 +92,8 @@ Most Saudi shoppers expect a natural Arabic store: right-to-left layout, Arabic 
 
 Your checkout should offer the methods your customers actually use: mada cards, Apple Pay, credit cards and often buy-now-pay-later options. Ask each platform:
 
-- Which gateways are supported, and are they built in or through an app [VERIFY]?
-- What are the transaction fees and settlement times [VERIFY]?
+- Which gateways are supported, and are they built in or through an app?
+- What are the transaction fees and settlement times?
 - Is cash on delivery available, and what does it cost to operate?
 
 ### Shipping
@@ -102,7 +102,7 @@ Check which carriers are integrated, whether labels and tracking are automatic, 
 
 ### Inventory and accounting
 
-This is where the platforms differ most as you grow. Hosted stores manage basic stock for the website. If you also sell in physical branches, on marketplaces or to businesses, you need one source of truth for stock and proper accounting — including ZATCA e-invoicing [VERIFY how each platform handles it]. That usually means an ERP, either as your store platform (Odoo eCommerce) or connected to it.
+This is where the platforms differ most as you grow. Hosted stores manage basic stock for the website. If you also sell in physical branches, on marketplaces or to businesses, you need one source of truth for stock and proper accounting — including ZATCA e-invoicing. That usually means an ERP, either as your store platform (Odoo eCommerce) or connected to it.
 
 ### Long-term flexibility
 
@@ -122,8 +122,8 @@ Ask what happens when you need something the platform does not offer: a custom b
 
 Your own store is rarely your only channel. Many Saudi brands also sell on marketplaces and through social media and messaging:
 
-- **Marketplaces** bring traffic but take a commission and control the customer relationship [VERIFY current terms]. Use them for reach, and your own store for loyalty and margin.
-- **Social and messaging channels** such as Instagram, Snapchat, TikTok and WhatsApp drive a lot of discovery. Check how each platform connects product catalogues and orders from these channels [VERIFY].
+- **Marketplaces** bring traffic but take a commission and control the customer relationship. Use them for reach, and your own store for loyalty and margin.
+- **Social and messaging channels** such as Instagram, Snapchat, TikTok and WhatsApp drive a lot of discovery. Check how each platform connects product catalogues and orders from these channels.
 - **One stock pool.** The more channels you sell on, the more important it is that stock is managed in one place. Selling the same last item twice on two channels is a quick way to lose a customer.
 
 ## A launch checklist for any platform
@@ -134,7 +134,7 @@ Your own store is rarely your only channel. Many Saudi brands also sell on marke
 - [ ] Shipping rates, delivery times and returns policy published
 - [ ] Order, shipping and refund messages tested in Arabic
 - [ ] Analytics and conversion tracking installed and tested
-- [ ] Legal pages: terms, privacy and returns [VERIFY local requirements]
+- [ ] Legal pages: terms, privacy and returns (check local requirements)
 
 ## Questions to ask before you choose
 
@@ -143,7 +143,7 @@ Your own store is rarely your only channel. Many Saudi brands also sell on marke
 - [ ] Which payment methods do our customers use most?
 - [ ] Which carriers do we need, and who handles returns?
 - [ ] Who manages stock and accounting, and in which system?
-- [ ] How will we issue compliant e-invoices for online orders [VERIFY]?
+- [ ] How will we issue compliant e-invoices for online orders?
 - [ ] What will we need in two years that the platform may not offer?
 
 ## The bottom line
@@ -157,13 +157,13 @@ Revisit the decision once a year. The right platform for your first thousand ord
 **Planning an online store or connecting one to Odoo?** We build bilingual stores and integrate them with inventory and accounting. See our [web development services](/services/web-development).`,
     ar: `أصبح إطلاق متجر إلكتروني في السعودية أسهل من أي وقت مضى. يمكنك فتح متجر على منصة محلية خلال ساعات، وربط مدى وApple Pay، والبدء في استقبال الطلبات. لكن السؤال الأصعب يأتي لاحقاً: هل ستبقى المنصة التي اخترتها مناسبة عندما تصل إلى آلاف الطلبات وعدة مستودعات، ويطلب منك فريق المحاسبة أرقاماً دقيقة؟
 
-يقارن هذا الدليل بين أربعة مسارات شائعة — سلة وزد وشوبيفاي وأودو للتجارة الإلكترونية — فيما يهم التاجر السعودي. ولأن ميزات المنصات ورسومها تتغير كثيراً، وضعنا علامة [VERIFY] على كل تفصيل محدد. راجع الخطط الحالية لكل منصة قبل القرار.
+يقارن هذا الدليل بين أربعة مسارات شائعة — سلة وزد وشوبيفاي وأودو للتجارة الإلكترونية — فيما يهم التاجر السعودي. ولأن ميزات المنصات ورسومها تتغير كثيراً، راجع الخطط الحالية لكل منصة قبل القرار.
 
 ## الخيارات الأربعة باختصار
 
 **سلة وزد** منصتان سعوديتان مستضافتان. تدفع اشتراكاً شهرياً، وتختار قالباً، وتبدأ البيع. صُممتا للسوق المحلي، مع مراعاة العربية وطرق الدفع وشركات الشحن المحلية.
 
-**شوبيفاي** منصة عالمية مستضافة بمنظومة كبيرة جداً من التطبيقات والقوالب. تدعم واجهات المتاجر العربية والقوالب من اليمين إلى اليسار، وتتصل ببوابات الدفع المحلية عبر تطبيقات [VERIFY].
+**شوبيفاي** منصة عالمية مستضافة بمنظومة كبيرة جداً من التطبيقات والقوالب. تدعم واجهات المتاجر العربية والقوالب من اليمين إلى اليسار، وتتصل ببوابات الدفع المحلية عبر تطبيقات.
 
 **أودو للتجارة الإلكترونية** هو وحدة المتجر في نظام أودو. يتشارك المتجر قاعدة بيانات واحدة مع المبيعات والمخزون والمشتريات والمحاسبة، فيصبح الطلب على الموقع طلباً في نظامك الداخلي مباشرة.
 
@@ -172,14 +172,14 @@ Revisit the decision once a year. The right platform for your first thousand ord
 | | سلة | زد | شوبيفاي | أودو |
 |---|---|---|---|---|
 | **سرعة الإطلاق** | سريعة جداً | سريعة جداً | سريعة | أبطأ — جزء من إعداد ERP |
-| **واجهة عربية** | أصيلة | أصيلة | عبر القوالب والإعدادات [VERIFY] | دعم كامل للاتجاه من اليمين، ويحتاج عملاً تصميمياً |
-| **مدى وApple Pay** | مدمجة [VERIFY] | مدمجة [VERIFY] | عبر تطبيقات بوابات محلية [VERIFY] | عبر مزوّدي الدفع المدعومين [VERIFY] |
-| **اشترِ الآن وادفع لاحقاً** | تابي وتمارا وغيرهما [VERIFY] | تابي وتمارا وغيرهما [VERIFY] | عبر تطبيقات [VERIFY] | عبر تكاملات [VERIFY] |
-| **الشحن المحلي** | شركات محلية كثيرة [VERIFY] | شركات محلية كثيرة [VERIFY] | عبر تطبيقات [VERIFY] | عبر تكاملات أو تطوير خاص |
+| **واجهة عربية** | أصيلة | أصيلة | عبر القوالب والإعدادات | دعم كامل للاتجاه من اليمين، ويحتاج عملاً تصميمياً |
+| **مدى وApple Pay** | مدمجة | مدمجة | عبر تطبيقات بوابات محلية | عبر مزوّدي الدفع المدعومين |
+| **اشترِ الآن وادفع لاحقاً** | تابي وتمارا وغيرهما | تابي وتمارا وغيرهما | عبر تطبيقات | عبر تكاملات |
+| **الشحن المحلي** | شركات محلية كثيرة | شركات محلية كثيرة | عبر تطبيقات | عبر تكاملات أو تطوير خاص |
 | **المخزون والمحاسبة** | مخزون أساسي، والمحاسبة عبر تكاملات | مخزون أساسي، والمحاسبة عبر تكاملات | مخزون أساسي، والمحاسبة عبر تطبيقات | مخزون ومشتريات ومحاسبة كاملة في نظام واحد |
-| **حرية التصميم** | قوالب مع كود مخصص محدود [VERIFY] | قوالب مع كود مخصص محدود [VERIFY] | عالية مع تطوير القوالب | عالية مع التطوير |
+| **حرية التصميم** | قوالب مع كود مخصص محدود | قوالب مع كود مخصص محدود | عالية مع تطوير القوالب | عالية مع التطوير |
 | **المرونة على المدى الطويل** | متوسطة | متوسطة | عالية | عالية جداً |
-| **الرسوم** | اشتراك شهري + رسوم الدفع [VERIFY] | اشتراك شهري + رسوم الدفع [VERIFY] | اشتراك شهري + رسوم التطبيقات والدفع [VERIFY] | تراخيص أو استضافة أودو + التطبيق [VERIFY] |
+| **الرسوم** | اشتراك شهري + رسوم الدفع | اشتراك شهري + رسوم الدفع | اشتراك شهري + رسوم التطبيقات والدفع | تراخيص أو استضافة أودو + التطبيق |
 
 ## ما الذي يستحق التدقيق؟
 
@@ -195,8 +195,8 @@ Revisit the decision once a year. The right platform for your first thousand ord
 
 يجب أن تقدّم صفحة الدفع الطرق التي يستخدمها عملاؤك فعلاً: بطاقات مدى، وApple Pay، والبطاقات الائتمانية، وغالباً خيارات التقسيط. اسأل كل منصة:
 
-- ما البوابات المدعومة، وهل هي مدمجة أم عبر تطبيق [VERIFY]؟
-- ما رسوم العمليات ومدة التسوية [VERIFY]؟
+- ما البوابات المدعومة، وهل هي مدمجة أم عبر تطبيق؟
+- ما رسوم العمليات ومدة التسوية؟
 - هل يتوفر الدفع عند الاستلام، وكم تكلفة تشغيله؟
 
 ### الشحن
@@ -205,7 +205,7 @@ Revisit the decision once a year. The right platform for your first thousand ord
 
 ### المخزون والمحاسبة
 
-هنا يظهر أكبر فرق بين المنصات مع نموك. فالمتاجر المستضافة تدير مخزوناً أساسياً للموقع. لكن إذا كنت تبيع أيضاً في فروع أو منصات بيع أو لشركات، فأنت تحتاج مصدراً واحداً موثوقاً للمخزون ومحاسبة منظمة — بما فيها الفوترة الإلكترونية من زاتكا [VERIFY طريقة تعامل كل منصة معها]. وهذا يعني غالباً نظام ERP، إما كمنصة لمتجرك (أودو) أو مرتبطاً بها.
+هنا يظهر أكبر فرق بين المنصات مع نموك. فالمتاجر المستضافة تدير مخزوناً أساسياً للموقع. لكن إذا كنت تبيع أيضاً في فروع أو منصات بيع أو لشركات، فأنت تحتاج مصدراً واحداً موثوقاً للمخزون ومحاسبة منظمة — بما فيها الفوترة الإلكترونية من زاتكا. وهذا يعني غالباً نظام ERP، إما كمنصة لمتجرك (أودو) أو مرتبطاً بها.
 
 ### المرونة على المدى الطويل
 
@@ -225,8 +225,8 @@ Revisit the decision once a year. The right platform for your first thousand ord
 
 نادراً ما يكون متجرك هو قناتك الوحيدة، فكثير من العلامات السعودية تبيع أيضاً عبر منصات البيع ووسائل التواصل والمراسلة:
 
-- **منصات البيع (Marketplaces)** تجلب الزيارات لكنها تأخذ عمولة وتتحكم في العلاقة مع العميل [VERIFY الشروط الحالية]. استخدمها للوصول، ومتجرك الخاص للولاء والهامش.
-- **وسائل التواصل والمراسلة** مثل إنستغرام وسناب شات وتيك توك وواتساب تقود جزءاً كبيراً من الاكتشاف. تحقق كيف تربط كل منصة كتالوج المنتجات والطلبات من هذه القنوات [VERIFY].
+- **منصات البيع (Marketplaces)** تجلب الزيارات لكنها تأخذ عمولة وتتحكم في العلاقة مع العميل. استخدمها للوصول، ومتجرك الخاص للولاء والهامش.
+- **وسائل التواصل والمراسلة** مثل إنستغرام وسناب شات وتيك توك وواتساب تقود جزءاً كبيراً من الاكتشاف. تحقق كيف تربط كل منصة كتالوج المنتجات والطلبات من هذه القنوات.
 - **مخزون واحد.** كلما زادت قنوات البيع زادت أهمية إدارة المخزون في مكان واحد، فبيع آخر قطعة مرتين عبر قناتين طريق سريع لخسارة العميل.
 
 ## قائمة إطلاق لأي منصة
@@ -237,7 +237,7 @@ Revisit the decision once a year. The right platform for your first thousand ord
 - [ ] نشر أسعار الشحن ومدد التوصيل وسياسة الاسترجاع
 - [ ] اختبار رسائل الطلب والشحن والاسترداد بالعربية
 - [ ] تثبيت أدوات التحليل وتتبع التحويل واختبارها
-- [ ] الصفحات النظامية: الشروط والخصوصية والاسترجاع [VERIFY المتطلبات المحلية]
+- [ ] الصفحات النظامية: الشروط والخصوصية والاسترجاع (تحقق من المتطلبات المحلية)
 
 ## أسئلة قبل الاختيار
 
@@ -246,7 +246,7 @@ Revisit the decision once a year. The right platform for your first thousand ord
 - [ ] ما طرق الدفع الأكثر استخداماً لدى عملائنا؟
 - [ ] ما شركات الشحن التي نحتاجها، ومن يتولى المرتجعات؟
 - [ ] من يدير المخزون والمحاسبة، وفي أي نظام؟
-- [ ] كيف سنُصدر فواتير إلكترونية متوافقة لطلبات المتجر [VERIFY]؟
+- [ ] كيف سنُصدر فواتير إلكترونية متوافقة لطلبات المتجر؟
 - [ ] ما الذي سنحتاجه بعد سنتين وقد لا توفره المنصة؟
 
 ## الخلاصة

@@ -96,7 +96,7 @@ When every report is a project, people stop asking for reports. Decisions are ma
 
 **The scenario:** purchase requests, discounts and leave requests are approved with a thumbs-up emoji in a WhatsApp group.
 
-There is no record of who approved what, when, and against which budget. When something goes wrong, nobody can trace it — and auditors and ZATCA expect a clear trail [VERIFY your specific obligations].
+There is no record of who approved what, when, and against which budget. When something goes wrong, nobody can trace it — and auditors and ZATCA expect a clear trail.
 
 ## 8. Growth makes everything harder, not easier
 
@@ -217,7 +217,7 @@ Spreadsheets are not the problem; using them as a system is. If several of these
 
 **الموقف:** طلبات الشراء والخصومات والإجازات تُعتمد بوجه تعبيري في مجموعة واتساب.
 
-لا يوجد سجل يوضح من اعتمد ماذا ومتى ومقابل أي ميزانية. وعند حدوث مشكلة لا يمكن تتبعها — بينما يتوقع المراجعون وهيئة الزكاة والضريبة والجمارك مساراً واضحاً [VERIFY التزاماتك المحددة].
+لا يوجد سجل يوضح من اعتمد ماذا ومتى ومقابل أي ميزانية. وعند حدوث مشكلة لا يمكن تتبعها — بينما يتوقع المراجعون وهيئة الزكاة والضريبة والجمارك مساراً واضحاً.
 
 ## 8. النمو يجعل كل شيء أصعب لا أسهل
 

@@ -14,6 +14,7 @@ import {
   Plus,
   Save,
   Sparkles,
+  Tags,
   Trash2,
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
@@ -370,23 +371,6 @@ export default function Blog() {
           </p>
           <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">{B.title}</h1>
           <p className="mt-1 text-sm text-muted">{B.description}</p>
-          <div className="locale-tabs mt-4 w-fit" role="tablist">
-            {[
-              ['posts', B.postsTab, posts.length],
-              ['categories', B.categoriesTab, categories.length],
-            ].map(([key, label, n]) => (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                aria-selected={view === key}
-                onClick={() => setView(key)}
-                className={`locale-tab ${view === key ? 'locale-tab-active' : ''}`}
-              >
-                {label} <span className="ms-1 text-xs opacity-70">{n}</span>
-              </button>
-            ))}
-          </div>
         </div>
         <div className="flex flex-wrap gap-2">
         <Link to="/ai" className="btn-ghost">
@@ -398,6 +382,37 @@ export default function Blog() {
           {B.add}
         </button>
         </div>
+      </div>
+
+      <div className="mb-6 flex gap-1 border-b border-line/10" role="tablist">
+        {[
+          ['posts', B.postsTab, posts.length, Newspaper],
+          ['categories', B.categoriesTab, categories.length, Tags],
+        ].map(([key, label, n, Icon]) => {
+          const on = view === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => setView(key)}
+              className={`relative -mb-px inline-flex items-center gap-2 whitespace-nowrap border-b-2 px-3 pb-3 pt-1 text-sm font-semibold transition ${
+                on ? 'border-accent text-ink' : 'border-transparent text-muted hover:text-ink'
+              }`}
+            >
+              <Icon className={`h-4 w-4 ${on ? 'text-accent' : ''}`} />
+              {label}
+              <span
+                className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none ${
+                  on ? 'bg-accent/15 text-accent' : 'bg-line/10 text-muted'
+                }`}
+              >
+                {n}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {view === 'categories' ? (

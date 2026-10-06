@@ -46,8 +46,8 @@ export default {
         ar: 'هل يحسّن الموقع الأسرع ترتيبي في Google؟',
       },
       a: {
-        en: 'Page experience, including Core Web Vitals, is one of many signals Google uses [VERIFY]. Speed alone will not outrank better content, but a slow site can hold good content back — and it definitely affects how many visitors stay.',
-        ar: 'تجربة الصفحة، ومنها Core Web Vitals، إحدى إشارات كثيرة تستخدمها Google [VERIFY]. فالسرعة وحدها لن تتفوق على محتوى أفضل، لكن الموقع البطيء قد يعيق المحتوى الجيد، ويؤثر بلا شك في عدد الزوار الذين يبقون.',
+        en: 'Page experience, including Core Web Vitals, is one of many signals Google uses. Speed alone will not outrank better content, but a slow site can hold good content back — and it definitely affects how many visitors stay.',
+        ar: 'تجربة الصفحة، ومنها Core Web Vitals، إحدى إشارات كثيرة تستخدمها Google. فالسرعة وحدها لن تتفوق على محتوى أفضل، لكن الموقع البطيء قد يعيق المحتوى الجيد، ويؤثر بلا شك في عدد الزوار الذين يبقون.',
       },
     },
   ],
@@ -60,15 +60,15 @@ This guide explains speed in plain language, shows you how to test your own site
 
 ### People leave slow pages
 
-When a page takes too long, visitors press back and choose the next result. Many studies have shown that conversions fall as load time rises [VERIFY any specific figure before quoting it]. You do not need a statistic to see it in your own data: compare bounce rates of your fastest and slowest pages in your analytics.
+When a page takes too long, visitors press back and choose the next result. Many studies have shown that conversions fall as load time rises. You do not need a statistic to see it in your own data: compare bounce rates of your fastest and slowest pages in your analytics.
 
 ### Most of your visitors are on phones
 
-In Saudi Arabia, a large share of browsing happens on mobile [VERIFY current share]. Phones have less processing power than laptops, and mobile connections vary. A page that feels fine on an office computer can feel slow on a phone.
+For most businesses in Saudi Arabia, a large share of visitors arrive on phones — your analytics will show your own share. Phones have less processing power than laptops, and mobile connections vary. A page that feels fine on an office computer can feel slow on a phone.
 
 ### Search engines notice
 
-Google uses page experience signals, including Core Web Vitals, as part of how it ranks pages [VERIFY current weighting]. Speed will not beat better content, but a slow site makes good content work harder.
+Google uses page experience signals, including Core Web Vitals, as part of how it ranks pages. Speed will not beat better content, but a slow site makes good content work harder.
 
 ### Slow pages cost money twice
 
@@ -76,13 +76,13 @@ If you run ads, you pay for every click — including the ones that leave before
 
 ## Core Web Vitals in plain language
 
-Google measures real-world experience with three main metrics, called Core Web Vitals [VERIFY current metrics and thresholds]:
+Google measures real-world experience with three main metrics, called Core Web Vitals:
 
 | Metric | What it means | Good target |
 |---|---|---|
-| **Largest Contentful Paint (LCP)** | How quickly the main content — usually the hero image or headline — appears | Within 2.5 seconds [VERIFY] |
-| **Interaction to Next Paint (INP)** | How quickly the page responds when someone taps or clicks | Under 200 milliseconds [VERIFY] |
-| **Cumulative Layout Shift (CLS)** | How much the page jumps around while loading | Below 0.1 [VERIFY] |
+| **Largest Contentful Paint (LCP)** | How quickly the main content — usually the hero image or headline — appears | Within 2.5 seconds |
+| **Interaction to Next Paint (INP)** | How quickly the page responds when someone taps or clicks | Under 200 milliseconds |
+| **Cumulative Layout Shift (CLS)** | How much the page jumps around while loading | Below 0.1 |
 
 In everyday words: **does the important part show up fast, does the page react when I tap, and does it stay still while I read?**
 
@@ -91,7 +91,7 @@ In everyday words: **does the important part show up fast, does the page react w
 You do not need special software. Start with these free tools:
 
 1. **PageSpeed Insights** (pagespeed.web.dev). Enter your address. It shows real-user data from Chrome users when available, plus a lab test with specific suggestions. Always check the **mobile** tab first.
-2. **Google Search Console.** The Core Web Vitals report groups your pages into good, needs improvement and poor, based on real visitors [VERIFY report name]. You need to verify your site first.
+2. **Google Search Console.** The Core Web Vitals report groups your pages into good, needs improvement and poor, based on real visitors. You need to verify your site first.
 3. **Chrome DevTools Lighthouse.** Built into the Chrome browser on desktop: right-click, Inspect, then Lighthouse. Useful for testing a single page after a change.
 4. **A real phone.** Open your site on a mid-range phone using mobile data, not office Wi-Fi. Time how long it takes before you can read and tap.
 
@@ -139,7 +139,7 @@ Several font files, or fonts that swap in late, make text jump. Images without s
 2. **Set image dimensions** to stop layout shifts.
 3. **Defer or delay non-essential scripts** so the page shows before trackers and widgets load.
 4. **Turn on caching and compression** on the server.
-5. **Put the site behind a CDN**, ideally with points of presence near your customers [VERIFY provider coverage].
+5. **Put the site behind a CDN**, ideally with points of presence near your customers.
 6. **Upgrade hosting** if the server itself is slow to respond.
 7. **Preload the main image and fonts** used on the first screen.
 8. **Review the theme or builder.** Sometimes the fastest fix is a lighter template or a custom build.
@@ -186,15 +186,15 @@ Speed is part of the customer experience, just like design and content. Start wi
 
 ### الناس يغادرون الصفحات البطيئة
 
-عندما تتأخر الصفحة يضغط الزائر زر الرجوع ويختار النتيجة التالية. وقد أظهرت دراسات كثيرة أن معدلات التحويل تنخفض كلما زاد وقت التحميل [VERIFY أي رقم محدد قبل الاستشهاد به]. ولا تحتاج إحصائية لترى ذلك في بياناتك: قارن معدل الارتداد لأسرع صفحاتك وأبطئها في أداة التحليلات.
+عندما تتأخر الصفحة يضغط الزائر زر الرجوع ويختار النتيجة التالية. وقد أظهرت دراسات كثيرة أن معدلات التحويل تنخفض كلما زاد وقت التحميل. ولا تحتاج إحصائية لترى ذلك في بياناتك: قارن معدل الارتداد لأسرع صفحاتك وأبطئها في أداة التحليلات.
 
 ### أغلب زوارك يتصفحون من الجوال
 
-في السعودية تتم نسبة كبيرة من التصفح عبر الجوال [VERIFY النسبة الحالية]. والهواتف أقل قدرة على المعالجة من الحواسيب، واتصالات الجوال متفاوتة. فالصفحة التي تبدو مقبولة على حاسب المكتب قد تكون بطيئة على الهاتف.
+لدى أغلب الشركات في السعودية، تصل نسبة كبيرة من الزوار عبر الجوال — وتُظهر لك أدوات التحليل نسبتك الفعلية. والهواتف أقل قدرة على المعالجة من الحواسيب، واتصالات الجوال متفاوتة. فالصفحة التي تبدو مقبولة على حاسب المكتب قد تكون بطيئة على الهاتف.
 
 ### محركات البحث تلاحظ
 
-تستخدم Google إشارات تجربة الصفحة، ومنها Core Web Vitals، ضمن طريقة ترتيب الصفحات [VERIFY الوزن الحالي]. السرعة لن تتفوق على محتوى أفضل، لكن الموقع البطيء يجعل المحتوى الجيد يعمل بجهد أكبر.
+تستخدم Google إشارات تجربة الصفحة، ومنها Core Web Vitals، ضمن طريقة ترتيب الصفحات. السرعة لن تتفوق على محتوى أفضل، لكن الموقع البطيء يجعل المحتوى الجيد يعمل بجهد أكبر.
 
 ### الصفحات البطيئة تكلفك مرتين
 
@@ -202,13 +202,13 @@ Speed is part of the customer experience, just like design and content. Start wi
 
 ## مؤشرات Core Web Vitals بلغة بسيطة
 
-تقيس Google التجربة الفعلية بثلاثة مؤشرات رئيسية تُسمى Core Web Vitals [VERIFY المؤشرات والحدود الحالية]:
+تقيس Google التجربة الفعلية بثلاثة مؤشرات رئيسية تُسمى Core Web Vitals:
 
 | المؤشر | ماذا يعني | الهدف الجيد |
 |---|---|---|
-| **أكبر عرض للمحتوى (LCP)** | سرعة ظهور المحتوى الرئيسي، وهو غالباً الصورة الرئيسية أو العنوان | خلال 2.5 ثانية [VERIFY] |
-| **التفاعل حتى العرض التالي (INP)** | سرعة استجابة الصفحة عند اللمس أو النقر | أقل من 200 جزء من الثانية [VERIFY] |
-| **التحول التراكمي في التخطيط (CLS)** | مقدار اهتزاز الصفحة وتحرك عناصرها أثناء التحميل | أقل من 0.1 [VERIFY] |
+| **أكبر عرض للمحتوى (LCP)** | سرعة ظهور المحتوى الرئيسي، وهو غالباً الصورة الرئيسية أو العنوان | خلال 2.5 ثانية |
+| **التفاعل حتى العرض التالي (INP)** | سرعة استجابة الصفحة عند اللمس أو النقر | أقل من 200 جزء من الثانية |
+| **التحول التراكمي في التخطيط (CLS)** | مقدار اهتزاز الصفحة وتحرك عناصرها أثناء التحميل | أقل من 0.1 |
 
 وبكلمات يومية: **هل يظهر الجزء المهم بسرعة؟ وهل تستجيب الصفحة عندما ألمسها؟ وهل تبقى ثابتة وأنا أقرأ؟**
 
@@ -217,7 +217,7 @@ Speed is part of the customer experience, just like design and content. Start wi
 لا تحتاج برامج خاصة. ابدأ بهذه الأدوات المجانية:
 
 1. **PageSpeed Insights** (pagespeed.web.dev). أدخل عنوان موقعك، فيعرض بيانات المستخدمين الحقيقيين من متصفح Chrome عند توفرها، إضافة إلى اختبار مختبري باقتراحات محددة. وابدأ دائماً بتبويب **الجوال**.
-2. **Google Search Console.** يجمّع تقرير Core Web Vitals صفحاتك في فئات: جيدة، وتحتاج تحسيناً، وضعيفة، بناءً على الزوار الحقيقيين [VERIFY اسم التقرير]. وتحتاج أولاً لإثبات ملكية موقعك.
+2. **Google Search Console.** يجمّع تقرير Core Web Vitals صفحاتك في فئات: جيدة، وتحتاج تحسيناً، وضعيفة، بناءً على الزوار الحقيقيين. وتحتاج أولاً لإثبات ملكية موقعك.
 3. **أداة Lighthouse في Chrome.** مدمجة في متصفح Chrome على الحاسب: انقر بالزر الأيمن، ثم "فحص"، ثم Lighthouse. وهي مفيدة لاختبار صفحة واحدة بعد أي تعديل.
 4. **هاتف حقيقي.** افتح موقعك على هاتف متوسط المواصفات عبر بيانات الجوال لا شبكة المكتب، واحسب الوقت حتى تتمكن من القراءة واللمس.
 
@@ -265,7 +265,7 @@ Speed is part of the customer experience, just like design and content. Start wi
 2. **تحديد أبعاد الصور** لمنع تحرك عناصر الصفحة.
 3. **تأجيل السكربتات غير الضرورية** لتظهر الصفحة قبل تحميل أدوات التتبع والإضافات.
 4. **تفعيل التخزين المؤقت والضغط** على الخادم.
-5. **وضع الموقع خلف شبكة توصيل محتوى**، ويُفضّل أن تكون لها نقاط قريبة من عملائك [VERIFY تغطية المزوّد].
+5. **وضع الموقع خلف شبكة توصيل محتوى**، ويُفضّل أن تكون لها نقاط قريبة من عملائك.
 6. **ترقية الاستضافة** إذا كان الخادم نفسه بطيء الاستجابة.
 7. **التحميل المسبق للصورة الرئيسية والخطوط** المستخدمة في الشاشة الأولى.
 8. **مراجعة القالب أو أداة البناء.** أحياناً يكون أسرع حل هو قالب أخف أو بناء مخصص.
