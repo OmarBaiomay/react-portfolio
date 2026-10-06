@@ -19,9 +19,10 @@ import {
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { blogAPI, mediaAPI } from '../../services/api';
-import { SITE_URL, assetUrl, slugify } from '../../lib/cms';
-import { BiField, CmsLoading, ImageField, StringList, TextField } from '../../components/cms/CmsFields';
+import { SITE_URL, assetUrl, moveItem, slugify } from '../../lib/cms';
+import { BiField, CmsLoading, ImageField, RowTools, StringList, TextField } from '../../components/cms/CmsFields';
 import { FormCard } from '../../components/FormUI';
+import CategoryPicker from '../../components/cms/CategoryPicker';
 
 const bi = () => ({ en: '', ar: '' });
 
@@ -32,6 +33,9 @@ const emptyPost = (author) => ({
   body: bi(),
   coverUrl: '',
   tags: [],
+  category: '',
+  seo: { title: bi(), description: bi() },
+  faq: [],
   author: author || '',
   status: 'draft',
   publishedAt: null,
@@ -125,7 +129,7 @@ export function MarkdownEditor({ lang, value, onChange, hint, insertLabel }) {
 }
 
 function PostEditor({ initial, onBack, onSaved }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const B = t.cms.blog;
   const [post, setPost] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -197,7 +201,47 @@ function PostEditor({ initial, onBack, onSaved }) {
           />
         </div>
         <ImageField label={B.cover} value={post.coverUrl} onChange={(v) => set('coverUrl', v)} />
+        <CategoryPicker value={post.category || ''} onChange={(v) => set('category', v)} lang={lang} labels={B} />
         <StringList label={B.tags} value={post.tags} onChange={(v) => set('tags', v)} />
+      </FormCard>
+
+      <FormCard title={B.seo}>
+        <BiField
+          label={B.seoTitle}
+          hint={B.seoTitleHint}
+          value={post.seo?.title || bi()}
+          onChange={(v) => set('seo', { ...post.seo, title: v })}
+        />
+        <BiField
+          label={B.seoDescription}
+          hint={B.seoDescriptionHint}
+          multiline
+          rows={2}
+          value={post.seo?.description || bi()}
+          onChange={(v) => set('seo', { ...post.seo, description: v })}
+        />
+      </FormCard>
+
+      <FormCard title={B.faq}>
+        {(post.faq || []).map((item, i, list) => (
+          <div key={i} className="rounded-xl border border-line/10 bg-bg/40 p-3">
+            <div className="mb-2 flex justify-end">
+              <RowTools
+                onUp={i > 0 ? () => set('faq', moveItem(list, i, -1)) : null}
+                onDown={i < list.length - 1 ? () => set('faq', moveItem(list, i, 1)) : null}
+                onDelete={() => set('faq', list.filter((_, j) => j !== i))}
+              />
+            </div>
+            <div className="space-y-3">
+              <BiField label={B.faqQuestion} value={item.q} onChange={(q) => set('faq', list.map((row, j) => (j === i ? { ...row, q } : row)))} />
+              <BiField label={B.faqAnswer} multiline rows={3} value={item.a} onChange={(a) => set('faq', list.map((row, j) => (j === i ? { ...row, a } : row)))} />
+            </div>
+          </div>
+        ))}
+        <button type="button" className="btn-ghost !py-2 text-xs" onClick={() => set('faq', [...(post.faq || []), { q: bi(), a: bi() }])}>
+          <Plus className="h-3.5 w-3.5" />
+          {B.addFaq}
+        </button>
       </FormCard>
 
       <FormCard title={B.body}>

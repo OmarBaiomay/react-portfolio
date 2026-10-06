@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MessageCircle, Send, Sparkles } from 'lucide-react';
+import { Boxes, CodeXml, Globe, MessageCircle, Send, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { publicAPI } from '../services/frontendApi';
 import PhoneField, { isValidPhoneNumber } from './PhoneField';
+import Select from './Select';
 
 const Contact = () => {
   const { t } = useLanguage();
@@ -230,17 +231,19 @@ const Contact = () => {
               <label htmlFor="service" className="mb-1.5 block">
                 {c.need}
               </label>
-              <select
+              <Select
                 id="service"
+                size="lg"
                 value={service}
-                onChange={(e) => setService(e.target.value)}
-                className="text-field h-12 !py-0"
-              >
-                <option value="web">{c.options.web}</option>
-                <option value="odoo">{c.options.odoo}</option>
-                <option value="software">{c.options.software}</option>
-                <option value="other">{c.options.other}</option>
-              </select>
+                onChange={setService}
+                ariaLabel={c.need}
+                options={[
+                  { value: 'web', label: c.options.web, icon: Globe },
+                  { value: 'odoo', label: c.options.odoo, icon: Boxes },
+                  { value: 'software', label: c.options.software, icon: CodeXml },
+                  { value: 'other', label: c.options.other, icon: MessageCircle },
+                ]}
+              />
             </div>
 
             <div>

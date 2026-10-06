@@ -99,8 +99,14 @@ body {
 .prose-post hr {
   @apply my-10 border-line/10;
 }
+.prose-post .table-scroll {
+  @apply overflow-x-auto;
+}
 .prose-post table {
-  @apply w-full text-sm;
+  @apply w-full min-w-[32rem] text-sm;
+}
+.prose-post th {
+  @apply bg-elevated font-semibold text-ink;
 }
 .prose-post th,
 .prose-post td {

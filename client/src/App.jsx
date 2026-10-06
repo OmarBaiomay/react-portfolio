@@ -6,6 +6,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { ContentProvider } from './context/ContentContext';
 import { BrandProvider } from './context/BrandContext';
 import Header from './components/Header';
+import BackToTop from './components/BackToTop';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import { scrollToSectionId } from './hooks/useScrollToSection';
@@ -131,6 +132,7 @@ function AppShell() {
         </Routes>
       </Suspense>
       <DeferredFooter />
+      <BackToTop />
     </>
   );
 }

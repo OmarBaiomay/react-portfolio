@@ -17,6 +17,7 @@ export const publicAPI = {
   createLead: (data) => frontendApi.post('/leads', data),
   getContent: () => frontendApi.get('/content'),
   getBlogPosts: (params) => frontendApi.get('/blog', { params }),
+  getBlogCategories: () => frontendApi.get('/blog/categories'),
   getBlogPost: (slug) => frontendApi.get(`/blog/${encodeURIComponent(slug)}`),
 };
 

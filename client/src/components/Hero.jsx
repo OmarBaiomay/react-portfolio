@@ -16,7 +16,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-bg pb-16 pt-24 md:min-h-[88svh] md:pt-28 lg:min-h-[82svh] lg:pb-20"
+      className="relative isolate flex items-center overflow-hidden bg-bg pb-20 pt-28 md:min-h-[88svh] md:pb-16 md:pt-28 lg:min-h-[82svh] lg:pb-20"
     >
       {/* Faint grid + accent glow — CSS only */}
       <div
@@ -38,7 +38,7 @@ const Hero = () => {
       />
 
       <div className="container-site relative w-full">
-        <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
           <div className="max-w-2xl">
             <p
               className={`font-display text-sm font-semibold text-accent ${
@@ -77,7 +77,8 @@ const Hero = () => {
             </a>
           </div>
 
-          <div className="hidden lg:block">
+          {/* Shown on every screen size; scaled down on phones */}
+          <div className="mx-auto w-full max-w-md pb-6 lg:max-w-none lg:pb-0">
             <HeroVisual />
           </div>
         </div>

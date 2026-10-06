@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { formatPostDate, pickLang } from '../lib/blog';
+import { categoryLabel, formatPostDate, pickLang } from '../lib/blog';
 
 export default function BlogCard({ post }) {
   const { t, lang } = useLanguage();
@@ -12,9 +12,9 @@ export default function BlogCard({ post }) {
   return (
     <Link
       to={`/blog/${post.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line/10 bg-elevated/60 transition hover:-translate-y-1 hover:border-accent/40"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line/10 bg-elevated/60 transition hover:-translate-y-1 hover:border-accent/40"
     >
-      <figure className="aspect-[16/9] overflow-hidden bg-surface">
+      <figure className="relative aspect-[16/9] overflow-hidden bg-surface">
         {post.coverUrl ? (
           <img
             src={post.coverUrl}
@@ -31,15 +31,19 @@ export default function BlogCard({ post }) {
             }}
           />
         )}
+        {post.minutes ? (
+          <span className="absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+            <Clock className="h-3 w-3" />
+            {post.minutes[lang] || post.minutes.en} {t.blog.minRead}
+          </span>
+        ) : null}
       </figure>
       <div className="flex flex-1 flex-col p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
           <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt, lang)}</time>
-          {post.tags?.slice(0, 2).map((tag) => (
-            <span key={tag} className="font-semibold text-accent">
-              {tag}
-            </span>
-          ))}
+          {categoryLabel(post, lang) ? (
+            <span className="font-semibold text-accent">{categoryLabel(post, lang)}</span>
+          ) : null}
         </div>
         <h3 className="mt-3 font-display text-xl font-semibold leading-snug text-ink">{title}</h3>
         {excerpt ? <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{excerpt}</p> : null}
@@ -60,5 +64,7 @@ BlogCard.propTypes = {
     coverUrl: PropTypes.string,
     tags: PropTypes.arrayOf(PropTypes.string),
     publishedAt: PropTypes.string,
+    minutes: PropTypes.object,
+    categoryName: PropTypes.object,
   }).isRequired,
 };

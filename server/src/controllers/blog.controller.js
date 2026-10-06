@@ -2,6 +2,10 @@ import { query } from '../db/pg-connection.js';
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/** Reading time per language (~200 words a minute), so lists can show it without the body. */
+const minutesFor = (text) =>
+  Math.max(1, Math.round(String(text || '').split(/\s+/).filter(Boolean).length / 200));
+
 function mapPost(row, { withBody = true } = {}) {
   if (!row) return null;
   const post = {
@@ -11,6 +15,11 @@ function mapPost(row, { withBody = true } = {}) {
     excerpt: row.excerpt || {},
     coverUrl: row.cover_url || '',
     tags: row.tags || [],
+    category: row.category || '',
+    categoryName: row.category_name || null,
+    seo: row.seo || {},
+    minutes: { en: minutesFor(row.body?.en), ar: minutesFor(row.body?.ar) },
+    faq: row.faq || [],
     author: row.author || '',
     status: row.status,
     publishedAt: row.published_at,
@@ -34,6 +43,13 @@ function readPostInput(body = {}) {
     ? body.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 12)
     : [];
   const publishedAt = body.publishedAt ? new Date(body.publishedAt) : null;
+  const seo = { title: bilingual(body.seo?.title), description: bilingual(body.seo?.description) };
+  const faq = Array.isArray(body.faq)
+    ? body.faq
+        .map((item) => ({ q: bilingual(item?.q), a: bilingual(item?.a) }))
+        .filter((item) => item.q.en.trim() || item.q.ar.trim())
+        .slice(0, 12)
+    : [];
   return {
     value: {
       slug,
@@ -42,6 +58,9 @@ function readPostInput(body = {}) {
       body: bilingual(body.body),
       coverUrl: String(body.coverUrl || ''),
       tags,
+      seo,
+      faq,
+      category: SLUG_RE.test(String(body.category || '')) ? String(body.category) : '',
       author: String(body.author || '').slice(0, 120),
       status: body.status === 'published' ? 'published' : 'draft',
       publishedAt: publishedAt && !Number.isNaN(publishedAt.getTime()) ? publishedAt : null,
@@ -56,7 +75,9 @@ export async function listPublishedPosts(req, res) {
   try {
     const limit = Math.min(Number(req.query.limit) || 50, 100);
     const result = await query(
-      `SELECT * FROM blog_posts WHERE ${PUBLISHED} ORDER BY published_at DESC LIMIT $1`,
+      `SELECT p.*, c.name AS category_name FROM blog_posts p
+       LEFT JOIN blog_categories c ON c.slug = p.category
+       WHERE ${PUBLISHED} ORDER BY published_at DESC LIMIT $1`,
       [limit]
     );
     res.set('Cache-Control', 'no-cache');
@@ -69,7 +90,9 @@ export async function listPublishedPosts(req, res) {
 
 export async function getPublishedPost(req, res) {
   try {
-    const result = await query(`SELECT * FROM blog_posts WHERE slug = $1 AND ${PUBLISHED}`, [
+    const result = await query(`SELECT p.*, c.name AS category_name FROM blog_posts p
+       LEFT JOIN blog_categories c ON c.slug = p.category
+       WHERE p.slug = $1 AND ${PUBLISHED}`, [
       String(req.params.slug || '').toLowerCase(),
     ]);
     if (!result.rows[0]) return res.status(404).json({ message: 'Post not found' });
@@ -101,8 +124,8 @@ export async function createPost(req, res) {
     const publishedAt =
       value.status === 'published' ? value.publishedAt || new Date() : value.publishedAt;
     const result = await query(
-      `INSERT INTO blog_posts (slug, title, excerpt, body, cover_url, tags, author, status, published_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      `INSERT INTO blog_posts (slug, title, excerpt, body, cover_url, tags, author, status, published_at, seo, faq, category)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
       [
         value.slug,
         value.title,
@@ -113,6 +136,9 @@ export async function createPost(req, res) {
         value.author,
         value.status,
         publishedAt,
+        value.seo,
+        JSON.stringify(value.faq),
+        value.category,
       ]
     );
     res.status(201).json(mapPost(result.rows[0]));
@@ -132,7 +158,7 @@ export async function updatePost(req, res) {
     const result = await query(
       `UPDATE blog_posts SET
          slug = $2, title = $3, excerpt = $4, body = $5, cover_url = $6, tags = $7,
-         author = $8, status = $9,
+         author = $8, status = $9, seo = $11, faq = $12, category = $13,
          published_at = CASE WHEN $9 = 'published'
            THEN COALESCE($10, published_at, CURRENT_TIMESTAMP) ELSE $10 END,
          updated_at = CURRENT_TIMESTAMP
@@ -148,6 +174,9 @@ export async function updatePost(req, res) {
         value.author,
         value.status,
         value.publishedAt,
+        value.seo,
+        JSON.stringify(value.faq),
+        value.category,
       ]
     );
     if (!result.rows[0]) return res.status(404).json({ message: 'Post not found' });
@@ -179,4 +208,53 @@ export async function publishedPostSlugs() {
     `SELECT slug, updated_at FROM blog_posts WHERE ${PUBLISHED} ORDER BY published_at DESC`
   );
   return result.rows;
+}
+
+/* ---------------------------------------------------------------- categories */
+
+const mapCategory = (row) => ({ id: row.id, slug: row.slug, name: row.name || {}, sortOrder: row.sort_order });
+
+const slugifyCategory = (text) =>
+  String(text || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+
+/** Public: all categories in display order. */
+export async function listCategories(req, res) {
+  try {
+    const result = await query(`SELECT * FROM blog_categories ORDER BY sort_order ASC, created_at ASC`);
+    res.set('Cache-Control', 'no-cache');
+    res.json(result.rows.map(mapCategory));
+  } catch (error) {
+    console.error('listCategories:', error.message);
+    res.status(500).json({ message: 'Failed to load categories' });
+  }
+}
+
+/** Admin: create a category inline from the post editor. Returns the existing one if the slug is taken. */
+export async function createCategory(req, res) {
+  try {
+    const name = bilingual(req.body?.name);
+    if (!name.en.trim() && !name.ar.trim()) return res.status(400).json({ message: 'Add a category name' });
+    if (!name.en.trim()) name.en = name.ar;
+    if (!name.ar.trim()) name.ar = name.en;
+    // Arabic-only names have no Latin letters to build a slug from.
+    const slug = slugifyCategory(name.en) || `category-${Date.now().toString(36)}`;
+    const existing = await query(`SELECT * FROM blog_categories WHERE slug = $1`, [slug]);
+    if (existing.rows[0]) return res.json(mapCategory(existing.rows[0]));
+    const result = await query(
+      `INSERT INTO blog_categories (slug, name, sort_order)
+       VALUES ($1, $2, COALESCE((SELECT MAX(sort_order) FROM blog_categories), 0) + 10) RETURNING *`,
+      [slug, name]
+    );
+    res.status(201).json(mapCategory(result.rows[0]));
+  } catch (error) {
+    console.error('createCategory:', error.message);
+    res.status(500).json({ message: 'Failed to create category' });
+  }
 }

@@ -44,7 +44,7 @@ const CODE = [
 export default function HeroVisual() {
   return (
     <div className="relative mx-auto w-full max-w-[34rem]" dir="ltr" aria-hidden="true">
-      <div className="pointer-events-none absolute -inset-10 rounded-full bg-accent/20 blur-3xl" />
+      <div className="pointer-events-none absolute -inset-6 rounded-full bg-accent/20 blur-3xl sm:-inset-10" />
 
       <div className="hero-code relative overflow-hidden rounded-2xl border border-line/10 bg-elevated/80 shadow-card backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-line/10 px-4 py-3">
@@ -54,10 +54,10 @@ export default function HeroVisual() {
           <span className="ml-3 font-mono text-xs text-muted">project.js</span>
         </div>
 
-        <pre className="overflow-hidden px-5 py-5 font-mono text-[13px] leading-7 sm:text-sm">
+        <pre className="overflow-hidden px-4 py-4 font-mono text-[11px] leading-6 sm:px-5 sm:py-5 sm:text-[13px] sm:leading-7 lg:text-sm">
           {CODE.map((tokens, i) => (
             <div key={i} className="hero-code-line flex" style={{ '--i': i }}>
-              <span className="mr-5 w-4 select-none text-right text-muted/40">{i + 1}</span>
+              <span className="mr-3 w-4 select-none text-right text-muted/40 sm:mr-5">{i + 1}</span>
               <span className="whitespace-pre">
                 {tokens.map((tok, j) => (
                   <span key={j} className={tok.c}>
