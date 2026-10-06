@@ -39,7 +39,7 @@ export function contactChannels(site = {}) {
   const wa = waLink(site.whatsapp);
   if (wa) out.push({ key: 'whatsapp', label: 'WhatsApp', href: wa, Icon: FaWhatsapp, external: true });
   const tel = telLink(site.phone);
-  if (tel) out.push({ key: 'phone', label: site.phone, href: tel, Icon: Phone, external: false });
+  if (tel) out.push({ key: 'phone', label: 'Call', href: tel, Icon: Phone, external: false });
   if (site.email) {
     out.push({ key: 'email', label: site.email, href: `mailto:${site.email}`, Icon: Mail, external: false });
   }

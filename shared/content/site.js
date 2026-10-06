@@ -4,10 +4,10 @@
  * `whatsapp` and `phone` take a phone number (e.g. +9665XXXXXXXX).
  */
 export const site = {
-  email: 'baiomayomar@gmail.com',
-  phone: '',
-  whatsapp: '',
-  address: { en: 'Saudi Arabia', ar: 'المملكة العربية السعودية' },
+  email: '',
+  phone: '+201067068698',
+  whatsapp: '+201067068698',
+  address: { en: '', ar: '' },
   socials: {
     linkedin: 'https://www.linkedin.com/in/omar-albayoumi/',
     instagram: '',

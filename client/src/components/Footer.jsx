@@ -11,7 +11,7 @@ const CREDIT = {
 
 const Footer = () => {
   const { t, lang } = useLanguage();
-  const { site, sections } = useContent();
+  const { site, sections, pages } = useContent();
   const f = t.footer;
 
   const shown = new Set(sections.filter((s) => s.visible !== false).map((s) => s.id));
@@ -54,19 +54,6 @@ const Footer = () => {
                 {t.cta.start}
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5 rtl:rotate-180" />
               </a>
-              {direct
-                .filter((c) => c.key !== 'email')
-                .map(({ key, href, Icon, external }) => (
-                  <a
-                    key={key}
-                    href={href}
-                    {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                    className="btn-ghost !px-6 !py-3.5 text-base"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {key === 'whatsapp' ? f.whatsapp : f.call}
-                  </a>
-                ))}
             </div>
           </div>
         </div>
@@ -125,7 +112,9 @@ const Footer = () => {
                   className="inline-flex items-center gap-2.5 text-sm text-muted transition hover:text-accent"
                 >
                   <Icon className="h-4 w-4 shrink-0 text-accent" />
-                  <span dir="ltr">{key === 'whatsapp' ? f.whatsapp : label}</span>
+                  <span dir={key === 'email' ? 'ltr' : undefined}>
+                    {key === 'whatsapp' ? f.whatsapp : key === 'phone' ? f.call : label}
+                  </span>
                 </a>
               </li>
             ))}
@@ -142,9 +131,22 @@ const Footer = () => {
       {/* Bottom bar */}
       <div className="border-t border-line/10">
         <div className="container-site flex flex-col gap-3 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} B-Code. {f.rights}
-          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-5">
+            <p>
+              © {new Date().getFullYear()} B-Code. {f.rights}
+            </p>
+            {pages.some((p) => p.footer) ? (
+              <nav className="flex flex-wrap gap-x-4 gap-y-1" aria-label="Legal">
+                {pages
+                  .filter((p) => p.footer)
+                  .map((p) => (
+                    <a key={p.slug} href={`/${p.slug}`} className="transition hover:text-accent">
+                      {p.title?.[lang] || p.title?.en}
+                    </a>
+                  ))}
+              </nav>
+            ) : null}
+          </div>
           <p>
             {f.madeBy}{' '}
             <a

@@ -13,6 +13,7 @@ import { scrollToSectionId } from './hooks/useScrollToSection';
 const ProjectPage = lazy(() => import('./pages/ProjectPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
+const StaticPage = lazy(() => import('./pages/StaticPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const LenisBoot = lazy(() => import('./components/LenisBoot'));
 
@@ -120,6 +121,8 @@ function AppShell() {
           <Route path="/work/:slug" element={<ProjectPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          {/* Pages managed in the dashboard (privacy policy, terms, …); unknown slugs show 404. */}
+          <Route path="/:slug" element={<StaticPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>

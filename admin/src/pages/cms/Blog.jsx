@@ -39,7 +39,7 @@ const emptyPost = (author) => ({
 
 const toDateInput = (value) => (value ? new Date(value).toISOString().slice(0, 10) : '');
 
-function MarkdownEditor({ lang, value, onChange, hint, insertLabel }) {
+export function MarkdownEditor({ lang, value, onChange, hint, insertLabel }) {
   const ref = useRef(null);
   const fileRef = useRef(null);
   const [tab, setTab] = useState('write');

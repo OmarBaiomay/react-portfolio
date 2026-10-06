@@ -20,6 +20,7 @@ import TechStackAdmin from './pages/cms/TechStack';
 import SiteInfo from './pages/cms/SiteInfo';
 import AIAssistant from './pages/cms/AIAssistant';
 import AISettings from './pages/cms/AISettings';
+import Pages from './pages/cms/Pages';
 import Settings from './pages/Settings';
 import Leads from './pages/Leads';
 import Projects from './pages/Projects';
@@ -105,6 +106,7 @@ function App() {
                   <Route path="/site-info" element={<PrivateRoute><SiteInfo /></PrivateRoute>} />
                   <Route path="/ai" element={<PrivateRoute><AIAssistant /></PrivateRoute>} />
                   <Route path="/ai-settings" element={<PrivateRoute><AISettings /></PrivateRoute>} />
+                  <Route path="/pages" element={<PrivateRoute><Pages /></PrivateRoute>} />
                   <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
                   <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
                   <Route path="*" element={<Navigate to="/dashboard" />} />

@@ -139,7 +139,13 @@ async function main() {
     process.exit(1);
   }
 
-  const routes = ['/', '/blog', ...(await loadProjectSlugs()).map((slug) => `/work/${slug}`)];
+  const { pages } = await import(pathToFileURL(path.resolve(__dirname, '../../shared/content/pages.js')).href);
+  const routes = [
+    '/',
+    '/blog',
+    ...(await loadProjectSlugs()).map((slug) => `/work/${slug}`),
+    ...pages.filter((p) => !p.hidden).map((p) => `/${p.slug}`),
+  ];
   const { server, port } = await startStaticServer();
   const baseUrl = `http://127.0.0.1:${port}`;
 

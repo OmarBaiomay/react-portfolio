@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MessageCircle, Clock, Send, Sparkles } from 'lucide-react';
+import { MessageCircle, Send, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { publicAPI } from '../services/frontendApi';
 import PhoneField, { isValidPhoneNumber } from './PhoneField';
@@ -95,17 +95,6 @@ const Contact = () => {
           <h2 className="title">{c.title}</h2>
           <p className="lead">{c.lead}</p>
 
-          <div
-            className="mt-8 inline-flex items-center gap-2.5 rounded-xl border border-accent/25 bg-accent/10 px-3.5 py-2 text-sm text-accent"
-            data-animate="scale-in"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="contact-pulse absolute inline-flex h-full w-full rounded-full bg-accent opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-            </span>
-            <Clock className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
-            <span className="font-medium">{c.replyTime}</span>
-          </div>
 
           <div className="mt-8 space-y-3" data-animate="stagger">
             <div

@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Eye, EyeOff, Languages, Lock, Moon, Palette, Package, Shield, Sun } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Languages,
+  Lock,
+  Moon,
+  Shield,
+  Sun,
+  FileText,
+  Newspaper,
+  Sparkles,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -122,16 +133,6 @@ const Login = () => {
             }}
             aria-hidden="true"
           />
-          <div>
-            <p
-              className={`text-xl font-bold tracking-tight text-white sm:text-2xl ${
-                isRtl ? 'font-sans' : 'font-display'
-              }`}
-            >
-              {t.brand}
-            </p>
-            <p className="mt-0.5 text-sm text-white/70">{t.admin}</p>
-          </div>
         </div>
 
         <div className="relative z-10 mt-5 max-w-lg sm:my-10 lg:my-0">
@@ -148,9 +149,9 @@ const Login = () => {
 
           <div className="mt-8 hidden flex-wrap gap-2 sm:flex">
             {[
-              { icon: Package, label: t.auth.chipPackages },
-              { icon: Box, label: t.auth.chipShapes },
-              { icon: Palette, label: t.auth.chipTheme },
+              { icon: FileText, label: t.auth.chipPackages },
+              { icon: Newspaper, label: t.auth.chipShapes },
+              { icon: Sparkles, label: t.auth.chipTheme },
             ].map(({ icon: Icon, label }) => (
               <span
                 key={label}
@@ -187,30 +188,6 @@ const Login = () => {
 
         <div className="flex flex-1 flex-col justify-center px-6 pb-12 pt-6 sm:px-12 sm:py-12 lg:px-14 xl:px-16">
           <div className="mb-8 sm:mb-10">
-            <div className="mb-6 hidden items-center gap-3 lg:flex">
-              <span
-                className="brand-logo-mask inline-block h-9 w-9 shrink-0 bg-ink"
-                style={{
-                  WebkitMaskImage: 'url(/images/logo.svg)',
-                  maskImage: 'url(/images/logo.svg)',
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskPosition: 'center',
-                  maskPosition: 'center',
-                }}
-                aria-hidden="true"
-              />
-              <p
-                className={`text-2xl font-bold text-ink ${
-                  isRtl ? 'font-sans' : 'font-display tracking-tight'
-                }`}
-              >
-                {t.brand}
-              </p>
-            </div>
-
             <h2
               className={`text-3xl font-bold text-ink ${
                 isRtl ? 'font-sans' : 'font-display tracking-tight'
@@ -292,16 +269,16 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="mt-10 max-w-md space-y-3">
-            <p className="inline-flex items-center gap-2 text-xs text-muted">
-              <Shield className="h-3.5 w-3.5 text-accent" />
+          <ul className="mt-10 max-w-md space-y-2.5">
+            <li className="flex items-center gap-2 text-xs text-muted">
+              <Shield className="h-3.5 w-3.5 shrink-0 text-accent" />
               {t.auth.secureNote}
-            </p>
-            <p className="inline-flex items-center gap-2 text-xs text-muted">
-              <Lock className="h-3.5 w-3.5" />
+            </li>
+            <li className="flex items-center gap-2 text-xs text-muted">
+              <Lock className="h-3.5 w-3.5 shrink-0" />
               {t.auth.protected}
-            </p>
-          </div>
+            </li>
+          </ul>
         </div>
       </section>
     </div>
