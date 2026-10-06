@@ -76,6 +76,113 @@ function ShotList({ label, list = [], onChange, aspect, addLabel, altLabel }) {
   );
 }
 
+const EDITIONS = ['enterprise', 'community'];
+const ODOO_VERSIONS = ['16', '17', '18', '19', '20'];
+const newOdoo = () => ({ editions: ['enterprise'], versions: ['19'], demoUrl: '', features: [], screens: [] });
+
+function Toggle({ on, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
+        on ? 'border-accent bg-accent text-white' : 'border-line/15 text-ink hover:border-accent/50'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** Odoo app pages: compatibility, demo link, features with images and every screen. */
+function OdooEditor({ odoo, onChange, P }) {
+  const set = (key, val) => onChange({ ...odoo, [key]: val });
+  const flip = (key, id) => {
+    const list = odoo[key] || [];
+    const next = list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+    set(key, key === 'versions' ? next.sort((a, b) => Number(a) - Number(b)) : next);
+  };
+  const features = odoo.features || [];
+  const screens = odoo.screens || [];
+  const editRow = (key, list, i, patch) => set(key, list.map((row, j) => (j === i ? { ...row, ...patch } : row)));
+  const rowTools = (key, list, i) => (
+    <RowTools
+      onUp={i > 0 ? () => set(key, moveItem(list, i, -1)) : null}
+      onDown={i < list.length - 1 ? () => set(key, moveItem(list, i, 1)) : null}
+      onDelete={() => set(key, list.filter((_, j) => j !== i))}
+    />
+  );
+
+  return (
+    <>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <p className="form-label">{P.editions}</p>
+          <div className="flex flex-wrap gap-2">
+            {EDITIONS.map((id) => (
+              <Toggle key={id} on={(odoo.editions || []).includes(id)} onClick={() => flip('editions', id)}>
+                {P.editionNames[id]}
+              </Toggle>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="form-label">{P.versions}</p>
+          <div className="flex flex-wrap gap-2" dir="ltr">
+            {ODOO_VERSIONS.map((v) => (
+              <Toggle key={v} on={(odoo.versions || []).includes(v)} onClick={() => flip('versions', v)}>
+                {v}
+              </Toggle>
+            ))}
+          </div>
+        </div>
+      </div>
+      <TextField label={P.demoUrl} hint={P.demoUrlHint} dir="ltr" type="url" value={odoo.demoUrl || ''} onChange={(v) => set('demoUrl', v)} placeholder="https://…" />
+
+      <div>
+        <p className="form-label">{P.features}</p>
+        <div className="space-y-3">
+          {features.map((f, i) => (
+            <div key={i} className="rounded-xl border border-line/10 bg-bg/40 p-3">
+              <div className="mb-2 flex justify-end">{rowTools('features', features, i)}</div>
+              <div className="grid gap-4 md:grid-cols-[1fr_16rem]">
+                <div className="space-y-3">
+                  <BiField label={P.featureTitle} value={f.title} onChange={(title) => editRow('features', features, i, { title })} />
+                  <BiField label={P.featureBody} multiline rows={3} value={f.body} onChange={(body) => editRow('features', features, i, { body })} />
+                </div>
+                <ImageField label={P.featureImage} aspect="aspect-[16/10]" value={f.img} onChange={(img) => editRow('features', features, i, { img })} />
+              </div>
+            </div>
+          ))}
+          <button type="button" className="btn-ghost !py-2 text-xs" onClick={() => set('features', [...features, { title: bi(), body: bi(), img: '' }])}>
+            <Plus className="h-3.5 w-3.5" />
+            {P.addFeature}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p className="form-label">{P.screens}</p>
+        <div className="grid gap-3 md:grid-cols-2">
+          {screens.map((shot, i) => (
+            <div key={i} className="rounded-xl border border-line/10 bg-bg/40 p-3">
+              <div className="mb-2 flex justify-end">{rowTools('screens', screens, i)}</div>
+              <ImageField aspect="aspect-[16/10]" value={shot.src} onChange={(src) => editRow('screens', screens, i, { src })} />
+              <div className="mt-3">
+                <BiField label={P.screenTitle} value={shot.title} onChange={(title) => editRow('screens', screens, i, { title })} />
+              </div>
+            </div>
+          ))}
+        </div>
+        <button type="button" className="btn-ghost mt-3 !py-2 text-xs" onClick={() => set('screens', [...screens, { src: '', title: bi() }])}>
+          <Plus className="h-3.5 w-3.5" />
+          {P.addScreen}
+        </button>
+      </div>
+    </>
+  );
+}
+
 function ProjectEditor({ project, industries, services, onChange, onBack }) {
   const { t, lang } = useLanguage();
   const P = t.cms.portfolio;
@@ -161,6 +268,21 @@ function ProjectEditor({ project, industries, services, onChange, onBack }) {
         <BiField label={P.solution} multiline rows={4} value={project.solution} onChange={(v) => set('solution', v)} />
         <BiStringList label={P.results} value={project.results} onChange={(v) => set('results', v)} />
         <StringList label={P.stack} dir="ltr" value={project.stack} onChange={(v) => set('stack', v)} />
+      </FormCard>
+
+      <FormCard title={P.odooApp}>
+        <label className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <input
+            type="checkbox"
+            checked={Boolean(project.odoo)}
+            onChange={(e) => {
+              if (e.target.checked) set('odoo', project.odoo || newOdoo());
+              else if (window.confirm(P.odooOffConfirm)) set('odoo', undefined);
+            }}
+          />
+          {P.isOdooApp}
+        </label>
+        {project.odoo ? <OdooEditor odoo={project.odoo} onChange={(v) => set('odoo', v)} P={P} /> : null}
       </FormCard>
 
       <FormCard title={P.gallery}>

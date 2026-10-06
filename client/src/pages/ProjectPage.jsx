@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { getNextProject, getProjectBySlug } from '../data/projects';
 import { useContent } from '../context/ContentContext';
 import { BrowserFrame, DeviceStack, PhoneCarousel } from '../components/DeviceMockups';
+import { CompatibilityStrip, FeatureRows, Lightbox, ScreenGrid, useLightbox } from '../components/OdooAddon';
 import Seo from '../seo/Seo';
 import { breadcrumbJsonLd, creativeWorkJsonLd } from '../seo/structuredData';
 
@@ -17,6 +18,7 @@ const ProjectPage = () => {
   const rootRef = useRef(null);
   const { projects, industries, loaded } = useContent();
   const project = getProjectBySlug(slug, projects);
+  const lightbox = useLightbox();
 
   useEffect(() => {
     if (!project || !rootRef.current) return undefined;
@@ -70,6 +72,25 @@ const ProjectPage = () => {
         mobile: shots(project.gallery.mobile),
       }
     : null;
+
+  const odoo = project.odoo || null;
+  // Odoo apps: "Get a demo" opens the contact form pre-filled, unless the project links its own demo.
+  const demoHref = odoo
+    ? odoo.demoUrl || `/?demo=${encodeURIComponent(project.title.en || title)}#contact`
+    : null;
+  const demoExternal = Boolean(odoo?.demoUrl);
+  const demoButton = (className) =>
+    demoExternal ? (
+      <a href={demoHref} target="_blank" rel="noreferrer" className={className}>
+        {p.getDemo}
+        <ArrowUpRight className="h-4 w-4" />
+      </a>
+    ) : (
+      <Link to={demoHref} className={className}>
+        {p.getDemo}
+        <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+      </Link>
+    );
 
   const story = [
     { label: p.overview, body: pick(project.overview) },
@@ -137,20 +158,23 @@ const ProjectPage = () => {
           </ul>
 
           <div data-project className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {odoo ? demoButton('btn-primary group !px-6 !py-3.5 text-base') : null}
             {project.liveUrl ? (
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-primary group !px-6 !py-3.5 text-base"
+                className={`${odoo ? 'btn-ghost' : 'btn-primary'} group !px-6 !py-3.5 text-base`}
               >
                 {p.visitLive}
                 <ArrowUpRight className="h-4 w-4 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
             ) : null}
-            <Link to="/#contact" className="btn-ghost !px-6 !py-3.5 text-base">
-              {p.ctaSimilar}
-            </Link>
+            {odoo ? null : (
+              <Link to="/#contact" className="btn-ghost !px-6 !py-3.5 text-base">
+                {p.ctaSimilar}
+              </Link>
+            )}
           </div>
         </div>
 
@@ -197,6 +221,8 @@ const ProjectPage = () => {
         </dl>
       </section>
 
+      {odoo ? <CompatibilityStrip odoo={odoo} labels={p} labelCase={labelCase} /> : null}
+
       {/* The story — numbered editorial rows */}
       <section className="container-site py-16 md:py-24">
         {story.map((row, i) => (
@@ -215,6 +241,13 @@ const ProjectPage = () => {
           </div>
         ))}
       </section>
+
+      {odoo ? (
+        <>
+          <FeatureRows features={odoo.features} pick={pick} labels={p} labelCase={labelCase} onOpen={lightbox.open} />
+          <ScreenGrid screens={odoo.screens} pick={pick} labels={p} labelCase={labelCase} onOpen={lightbox.open} />
+        </>
+      ) : null}
 
       {/* Screens — real screenshots in device frames */}
       {gallery ? (
@@ -323,15 +356,19 @@ const ProjectPage = () => {
             aria-hidden="true"
           />
           <h2 className="relative font-display text-3xl font-bold text-ink md:text-5xl">
-            {p.ctaTitle}
+            {odoo ? p.demoTitle : p.ctaTitle}
           </h2>
           <p className="relative mx-auto mt-4 max-w-xl text-base text-muted md:text-lg">
-            {p.ctaLead}
+            {odoo ? p.demoLead : p.ctaLead}
           </p>
-          <Link to="/#contact" className="btn-primary group relative mt-8 !px-7 !py-4 text-base">
-            {p.ctaSimilar}
-            <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-          </Link>
+          {odoo ? (
+            demoButton('btn-primary group relative mt-8 !px-7 !py-4 text-base')
+          ) : (
+            <Link to="/#contact" className="btn-primary group relative mt-8 !px-7 !py-4 text-base">
+              {p.ctaSimilar}
+              <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+            </Link>
+          )}
         </div>
       </section>
 
@@ -363,6 +400,8 @@ const ProjectPage = () => {
           </div>
         </Link>
       ) : null}
+
+      <Lightbox image={lightbox.image} onClose={lightbox.close} closeLabel={p.closeImage} />
     </article>
   );
 };

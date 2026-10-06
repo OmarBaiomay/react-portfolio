@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MessageCircle, Send, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { publicAPI } from '../services/frontendApi';
@@ -22,6 +23,15 @@ const Contact = () => {
   useEffect(() => {
     if (sameAsPhone) setWhatsapp(phone);
   }, [sameAsPhone, phone]);
+
+  // "Get a demo" on an Odoo app page links here as /?demo=<app name>#contact.
+  const { search } = useLocation();
+  useEffect(() => {
+    const demo = new URLSearchParams(search).get('demo');
+    if (!demo) return;
+    setService('odoo');
+    setMessage((prev) => prev || c.demoMessage.replace('{name}', demo));
+  }, [search, c.demoMessage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
