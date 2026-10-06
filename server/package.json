@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon --watch src --watch ../shared src/index.js",
     "migrate": "node src/db/pg-migrate.js",
     "seed": "node src/scripts/seedData.js",
     "start:prod": "NODE_ENV=production SERVE_CLIENT=true node src/index.js"
@@ -14,6 +14,8 @@
   "author": "B-Code",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
+    "@google/genai": "^2.27.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
@@ -22,8 +24,12 @@
     "express": "^4.21.2",
     "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.2",
+    "lucide-static": "^1.52.0",
+    "openai": "^7.28.0",
     "pg": "^8.16.0",
-    "resend": "^6.18.0"
+    "puppeteer-core": "^25.12.0",
+    "resend": "^6.18.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

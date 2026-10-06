@@ -6,11 +6,11 @@ import { useTheme } from './ThemeContext';
 const BrandContext = createContext(null);
 
 const FALLBACK_PALETTE = {
-  id: 'orange',
-  name: { en: 'Sunset Orange', ar: 'برتقالي الغروب' },
-  dark: { accent: '255 92 26' },
-  light: { accent: '224 74 12' },
-  swatch: '#FF5C1A',
+  id: 'kingy-blue',
+  name: { en: 'Kingy Blue', ar: 'أزرق ملكي' },
+  dark: { accent: '59 130 246' },
+  light: { accent: '37 99 235' },
+  swatch: '#3B82F6',
 };
 
 export function BrandProvider({ children }) {
@@ -67,7 +67,7 @@ export function BrandProvider({ children }) {
   const value = useMemo(
     () => ({
       palette,
-      paletteId: palette?.id || 'orange',
+      paletteId: palette?.id || 'kingy-blue',
       palettes,
       loading,
       refresh,

@@ -60,6 +60,39 @@ export const settingsAPI = {
   updateHeroScene: (sceneId) => api.put('/settings/hero-scene', { sceneId }),
 };
 
+export const contentAPI = {
+  get: () => api.get('/content'),
+  getDefaults: () => api.get('/content/defaults'),
+  save: (part, value) => api.put(`/content/${part}`, { value }),
+  reset: (part) => api.delete(`/content/${part}`),
+};
+
+export const mediaAPI = {
+  list: () => api.get('/media'),
+  upload: (file) =>
+    api.post('/media', file, {
+      headers: { 'Content-Type': file.type, 'X-Filename': encodeURIComponent(file.name || '') },
+    }),
+  remove: (id) => api.delete(`/media/${id}`),
+};
+
+export const blogAPI = {
+  getAll: () => api.get('/blog/admin/all'),
+  create: (data) => api.post('/blog', data),
+  update: (id, data) => api.put(`/blog/${id}`, data),
+  remove: (id) => api.delete(`/blog/${id}`),
+};
+
+export const aiAPI = {
+  getSettings: () => api.get('/ai/settings'),
+  saveSettings: (data) => api.put('/ai/settings', data),
+  test: (provider) => api.post('/ai/test', { provider }),
+  createProject: (data) => api.post('/ai/jobs/project', data),
+  createBlog: (data) => api.post('/ai/jobs/blog', data),
+  getJob: (id) => api.get(`/ai/jobs/${id}`),
+  getJobs: () => api.get('/ai/jobs'),
+};
+
 export const leadsAPI = {
   getAll: (params) => api.get('/leads', { params }),
   getOne: (id) => api.get(`/leads/${id}`),

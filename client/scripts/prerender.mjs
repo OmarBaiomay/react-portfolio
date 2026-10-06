@@ -5,17 +5,18 @@
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import puppeteer from 'puppeteer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '../dist');
-const projectsPath = path.resolve(__dirname, '../src/data/projects.js');
+const projectsPath = path.resolve(__dirname, '../../shared/content/projects.js');
 
-function loadProjectSlugs() {
-  const source = fs.readFileSync(projectsPath, 'utf8');
-  const slugs = [...source.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1]);
-  return [...new Set(slugs)];
+async function loadProjectSlugs() {
+  // Built-in portfolio (shared with the API). Projects added in the dashboard
+  // are rendered client-side and listed in the API-generated sitemap.
+  const { projects } = await import(pathToFileURL(projectsPath).href);
+  return [...new Set(projects.filter((p) => !p.hidden).map((p) => p.slug))];
 }
 
 function contentType(filePath) {
@@ -138,7 +139,7 @@ async function main() {
     process.exit(1);
   }
 
-  const routes = ['/', ...loadProjectSlugs().map((slug) => `/work/${slug}`)];
+  const routes = ['/', '/blog', ...(await loadProjectSlugs()).map((slug) => `/work/${slug}`)];
   const { server, port } = await startStaticServer();
   const baseUrl = `http://127.0.0.1:${port}`;
 

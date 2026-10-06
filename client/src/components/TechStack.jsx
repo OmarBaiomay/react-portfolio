@@ -13,46 +13,23 @@ import {
   Workflow,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useContent } from '../context/ContentContext';
 
-const categories = [
-  {
-    key: 'frontend',
-    items: [
-      { name: 'React', icon: '/images/react.svg' },
-      { name: 'JavaScript', icon: '/images/javascript.svg' },
-      { name: 'TypeScript', Lucide: FileCode2, color: '#3178C6' },
-      { name: 'Vite', Lucide: Triangle, color: '#A855F7' },
-      { name: 'Tailwind CSS', icon: '/images/tailwindcss.svg' },
-      { name: 'CSS3', icon: '/images/css3.svg' },
-      { name: 'GSAP', Lucide: Workflow, color: '#88CE02' },
-      { name: 'Three.js', Lucide: Boxes, color: '#049EF4' },
-    ],
-  },
-  {
-    key: 'backend',
-    items: [
-      { name: 'Node.js', icon: '/images/nodejs.svg' },
-      { name: 'Express', icon: '/images/expressjs.svg' },
-      { name: 'PostgreSQL', Lucide: Database, color: '#336791' },
-      { name: 'MongoDB', icon: '/images/mongodb.svg' },
-      { name: 'Odoo', Lucide: Layers, color: '#714B67' },
-      { name: 'Python', Lucide: Code2, color: '#3776AB' },
-      { name: 'REST APIs', Lucide: Server, color: '#FF5C1A' },
-      { name: 'Docker', Lucide: Container, color: '#2496ED' },
-    ],
-  },
-  {
-    key: 'tools',
-    items: [
-      { name: 'Figma', icon: '/images/figma.svg' },
-      { name: 'Git', Lucide: GitBranch, color: '#F05032' },
-      { name: 'Cloudflare', Lucide: Cloud, color: '#F38020' },
-      { name: 'Linux', Lucide: Server, color: '#FCC624' },
-      { name: 'Nginx', Lucide: Wind, color: '#009639' },
-      { name: 'CI / CD', Lucide: Workflow, color: '#FF5C1A' },
-    ],
-  },
-];
+/** lucide icons the dashboard can pick by name. */
+const LUCIDE = {
+  Boxes,
+  Cloud,
+  Code2,
+  Container,
+  Database,
+  FileCode2,
+  GitBranch,
+  Layers,
+  Server,
+  Triangle,
+  Wind,
+  Workflow,
+};
 
 function ToolIcon({ item }) {
   if (item.icon) {
@@ -68,11 +45,12 @@ function ToolIcon({ item }) {
     );
   }
 
-  const Icon = item.Lucide;
+  const Icon = LUCIDE[item.lucide] || Code2;
+  const color = item.color || 'rgb(var(--c-accent))';
   return (
     <span
       className="grid h-7 w-7 place-items-center rounded-md"
-      style={{ backgroundColor: `${item.color}22`, color: item.color }}
+      style={{ backgroundColor: `color-mix(in srgb, ${color} 14%, transparent)`, color }}
     >
       <Icon className="h-4 w-4" strokeWidth={1.75} />
     </span>
@@ -80,7 +58,8 @@ function ToolIcon({ item }) {
 }
 
 const TechStack = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { techStack } = useContent();
 
   return (
     <section id="tech" className="section bg-elevated/40">
@@ -92,7 +71,7 @@ const TechStack = () => {
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
-          {categories.map((category, index) => (
+          {techStack.map((category, index) => (
             <div
               key={category.key}
               className="glass rounded-2xl p-6 md:p-7"
@@ -100,7 +79,7 @@ const TechStack = () => {
               data-delay={String(index)}
             >
               <h3 className="font-display text-lg font-semibold text-accent md:text-xl">
-                {t.tech[category.key]}
+                {category.title?.[lang] || t.tech[category.key] || category.key}
               </h3>
               <ul className="mt-5 grid grid-cols-2 gap-2.5" data-animate="stagger">
                 {category.items.map((item) => (

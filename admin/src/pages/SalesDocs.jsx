@@ -212,7 +212,7 @@ const SalesDocsPage = ({ kind }) => {
       <div className="grid gap-6 lg:grid-cols-[1.4fr_minmax(0,22rem)] xl:grid-cols-[1.5fr_minmax(0,24rem)]">
         <div className="min-w-0 overflow-hidden rounded-2xl border border-line/10 bg-elevated">
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="table-cards min-w-full text-sm">
               <thead className="border-b border-line/10 bg-surface text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 text-start">{S.cols.number}</th>
@@ -230,7 +230,7 @@ const SalesDocsPage = ({ kind }) => {
                       editingId === doc.id ? 'bg-accent/5' : ''
                     }`}
                   >
-                    <td className="px-4 py-3">
+                    <td data-label={S.cols.number} className="px-4 py-3">
                       <button
                         type="button"
                         onClick={() => openEdit(doc)}
@@ -239,12 +239,12 @@ const SalesDocsPage = ({ kind }) => {
                         {doc.number}
                       </button>
                     </td>
-                    <td className="px-4 py-3">
+                    <td data-label={S.cols.status} className="px-4 py-3">
                       <StatusBadge status={doc.status} labels={statuses} />
                     </td>
-                    <td className="px-4 py-3 text-ink">{formatMoney(doc.total, doc.currency)}</td>
-                    <td className="px-4 py-3 text-muted">{formatDate(doc.issueDate)}</td>
-                    <td className="px-4 py-3">
+                    <td data-label={S.cols.total} className="px-4 py-3 text-ink">{formatMoney(doc.total, doc.currency)}</td>
+                    <td data-label={S.cols.date} className="px-4 py-3 text-muted">{formatDate(doc.issueDate)}</td>
+                    <td data-label={S.cols.actions} className="px-4 py-3">
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"

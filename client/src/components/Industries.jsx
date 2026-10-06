@@ -10,7 +10,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { industries } from '../data/industries';
+import { useContent } from '../context/ContentContext';
 
 const iconMap = {
   Building2,
@@ -25,6 +25,7 @@ const iconMap = {
 
 const Industries = () => {
   const { t, lang } = useLanguage();
+  const { industries } = useContent();
 
   return (
     <section id="industries" className="section relative overflow-hidden">

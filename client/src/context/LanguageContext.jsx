@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { translations } from '../i18n/translations';
+import { useContent } from './ContentContext';
 
 const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
+  const { translations } = useContent();
   const [lang, setLang] = useState(() => {
     if (typeof window === 'undefined') return 'ar';
     return localStorage.getItem('bcode-lang') || 'ar';
@@ -21,11 +22,11 @@ export function LanguageProvider({ children }) {
     () => ({
       lang,
       isRtl: lang === 'ar',
-      t: translations[lang],
+      t: translations[lang] || translations.en,
       toggleLang: () => setLang((l) => (l === 'en' ? 'ar' : 'en')),
       setLang,
     }),
-    [lang]
+    [lang, translations]
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

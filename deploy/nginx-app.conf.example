@@ -1,10 +1,6 @@
 # Admin PWA at app.b-code.tech (same Docker app on 127.0.0.1:3002).
+# Reuses upstream "bcode_app" from deploy/nginx.conf.example — do not redefine it.
 # Issue cert: certbot … -d app.b-code.tech
-
-upstream bcode_app {
-    server 127.0.0.1:3002;
-    keepalive 32;
-}
 
 server {
     listen 80;

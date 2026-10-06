@@ -137,7 +137,7 @@ const Users = () => {
       ) : (
         <div className="overflow-hidden rounded-2xl border border-line/10 bg-elevated">
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="table-cards min-w-full text-sm">
               <thead className="border-b border-line/10 bg-surface/60 text-start text-muted">
                 <tr>
                   <th className="px-4 py-3 font-semibold">{t.users.name}</th>
@@ -150,15 +150,15 @@ const Users = () => {
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id || user._id} className="border-b border-line/5 last:border-0">
-                    <td className="px-4 py-3 font-medium text-ink">{user.fullName}</td>
-                    <td className="px-4 py-3 text-muted">{user.email}</td>
-                    <td className="px-4 py-3">
+                    <td data-label={t.users.name} className="px-4 py-3 font-medium text-ink">{user.fullName}</td>
+                    <td data-label={t.users.email} className="px-4 py-3 text-muted">{user.email}</td>
+                    <td data-label={t.users.role} className="px-4 py-3">
                       <span className="rounded-md bg-accent/15 px-2 py-1 text-xs font-semibold text-accent">
                         {user.role === 'admin' ? t.users.roleAdmin : t.users.roleEditor}
                       </span>
                     </td>
-                    <td className="max-w-xs truncate px-4 py-3 text-muted">{user.details || '—'}</td>
-                    <td className="px-4 py-3">
+                    <td data-label={t.users.details} className="max-w-xs truncate px-4 py-3 text-muted">{user.details || '—'}</td>
+                    <td data-label={t.common.edit} className="px-4 py-3">
                       <div className="flex gap-2">
                         <button type="button" onClick={() => openEdit(user)} className="icon-btn">
                           <Pencil className="h-4 w-4 text-accent" />

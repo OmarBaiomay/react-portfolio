@@ -20,6 +20,12 @@ import leadsRoutes from './routes/leads.route.js';
 import projectsRoutes from './routes/projects.route.js';
 import salesRoutes from './routes/sales.route.js';
 import statsRoutes from './routes/stats.route.js';
+import contentRoutes from './routes/content.route.js';
+import mediaRoutes from './routes/media.route.js';
+import blogRoutes from './routes/blog.route.js';
+import aiRoutes from './routes/ai.route.js';
+import { failInterruptedJobs } from './lib/ai/jobs.js';
+import { sitemapXml } from './lib/sitemap.js';
 
 dotenv.config();
 
@@ -74,6 +80,20 @@ app.use('/api/leads', leadsRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/blog', blogRoutes);
+app.use('/api/ai', aiRoutes);
+
+// Built from the database so new projects and blog posts are listed.
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    res.type('application/xml').send(await sitemapXml());
+  } catch (error) {
+    console.error('sitemap:', error.message);
+    res.status(500).end();
+  }
+});
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -150,7 +170,8 @@ function serveSpas() {
   if (fs.existsSync(clientDist)) {
     app.use((req, res, next) => {
       if (isAdminAppHost(req)) return next();
-      return express.static(clientDist, { index: ['index.html'] })(req, res, next);
+      // redirect: false — serve /blog (not /blog/) via the prerender lookup below
+      return express.static(clientDist, { index: ['index.html'], redirect: false })(req, res, next);
     });
 
     // Prefer prerendered HTML (e.g. /work/slug/index.html) before SPA shell
@@ -192,6 +213,7 @@ async function start() {
   }
 
   await runMigrations();
+  await failInterruptedJobs();
   initFirebase();
   serveSpas();
 

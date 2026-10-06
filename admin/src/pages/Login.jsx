@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Eye, EyeOff, Languages, Lock, Moon, Palette, Package, Shield, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -13,6 +13,7 @@ const Login = () => {
   const { isDark, toggleTheme } = useTheme();
   const { t, lang, toggleLang, isRtl } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,7 +24,8 @@ const Login = () => {
     setLoading(true);
     try {
       await login(formData);
-      navigate('/dashboard');
+      const from = location.state?.from;
+      navigate(from && from !== '/login' ? from : '/dashboard', { replace: true });
     } catch (error) {
       console.error('Login error:', error);
     } finally {
@@ -36,7 +38,7 @@ const Login = () => {
       className={`relative flex min-h-screen flex-col lg:flex-row ${isRtl ? 'lg:flex-row-reverse' : ''}`}
     >
       {/* Brand panel */}
-      <aside className="relative flex min-h-[46vh] flex-col justify-between overflow-hidden bg-accent px-8 py-10 text-white sm:px-12 lg:min-h-screen lg:w-[56%] lg:px-14 lg:py-12 xl:w-[58%]">
+      <aside className="relative flex flex-col justify-between overflow-hidden bg-accent px-6 py-6 text-white sm:px-12 sm:py-10 lg:min-h-screen lg:w-[56%] lg:px-14 lg:py-12 xl:w-[58%]">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-overlay"
           style={{
@@ -107,7 +109,7 @@ const Login = () => {
 
         <div className="relative z-10 flex items-center gap-3 sm:gap-4">
           <span
-            className="inline-block h-14 w-14 shrink-0 bg-white sm:h-20 sm:w-20 lg:h-24 lg:w-24"
+            className="inline-block h-11 w-11 shrink-0 bg-white sm:h-20 sm:w-20 lg:h-24 lg:w-24"
             style={{
               WebkitMaskImage: 'url(/images/logo.svg)',
               maskImage: 'url(/images/logo.svg)',
@@ -132,19 +134,19 @@ const Login = () => {
           </div>
         </div>
 
-        <div className="relative z-10 my-10 max-w-lg lg:my-0">
+        <div className="relative z-10 mt-5 max-w-lg sm:my-10 lg:my-0">
           <h1
-            className={`text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-[3.4rem] ${
+            className={`text-2xl font-bold leading-tight text-white sm:text-5xl lg:text-[3.4rem] ${
               isRtl ? 'font-sans' : 'font-display tracking-tight'
             }`}
           >
             {t.auth.hello}
           </h1>
-          <p className="mt-5 text-base leading-relaxed text-white/88 sm:text-lg lg:max-w-md">
+          <p className="mt-5 hidden text-base leading-relaxed text-white/88 sm:block sm:text-lg lg:max-w-md">
             {t.auth.panelLead}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-8 hidden flex-wrap gap-2 sm:flex">
             {[
               { icon: Package, label: t.auth.chipPackages },
               { icon: Box, label: t.auth.chipShapes },
@@ -161,12 +163,12 @@ const Login = () => {
           </div>
         </div>
 
-        <p className="relative z-10 text-sm text-white/55">{t.auth.copyright}</p>
+        <p className="relative z-10 hidden text-sm text-white/55 lg:block">{t.auth.copyright}</p>
       </aside>
 
       {/* Form panel */}
       <section className="relative flex flex-1 flex-col bg-elevated lg:w-[44%] xl:w-[42%]">
-        <div className="absolute end-4 top-4 z-20 flex items-center gap-2 sm:end-6 sm:top-6">
+        <div className="flex items-center justify-end gap-2 px-6 pt-5 sm:absolute sm:end-6 sm:top-6 sm:z-20 sm:p-0">
           <button
             type="button"
             onClick={toggleLang}
@@ -183,9 +185,9 @@ const Login = () => {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center px-8 py-12 sm:px-12 lg:px-14 xl:px-16">
-          <div className="mb-10">
-            <div className="mb-6 flex items-center gap-3">
+        <div className="flex flex-1 flex-col justify-center px-6 pb-12 pt-6 sm:px-12 sm:py-12 lg:px-14 xl:px-16">
+          <div className="mb-8 sm:mb-10">
+            <div className="mb-6 hidden items-center gap-3 lg:flex">
               <span
                 className="brand-logo-mask inline-block h-9 w-9 shrink-0 bg-ink"
                 style={{

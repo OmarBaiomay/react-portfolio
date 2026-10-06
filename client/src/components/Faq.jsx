@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { faqs } from '../data/faqs';
+import { useContent } from '../context/ContentContext';
 
 const Faq = () => {
   const { t, lang } = useLanguage();
+  const { faqs } = useContent();
   const [open, setOpen] = useState(0);
   const copy = t.faq;
 

@@ -1,15 +1,11 @@
 import { publicAPI } from '../services/frontendApi';
-import {
-  cacheManifesto,
-  cachePalette,
-  cacheSceneId,
-} from './appearanceCache';
+import { cacheManifesto, cachePalette } from './appearanceCache';
 import { buttonColorsFromAccent } from './applyBrandPalette';
 
 let inflight = null;
 
 /**
- * Single shared warm-up for theme / hero-scene / manifesto.
+ * Single shared warm-up for theme / manifesto.
  * Safe to call from main + contexts; only one network round-trip runs.
  */
 export function bootstrapAppearance() {
@@ -24,10 +20,6 @@ export function bootstrapAppearance() {
         (theme === 'light' ? data.palette.light : data.palette.dark)?.accent ||
         data.palette.dark?.accent;
       cachePalette(data.palette, buttonColorsFromAccent(accent));
-      return data;
-    }),
-    publicAPI.getHeroScene().then(({ data }) => {
-      if (data?.sceneId) cacheSceneId(data.sceneId);
       return data;
     }),
     publicAPI.getManifesto().then(({ data }) => {
@@ -47,17 +39,9 @@ export function getBootstrappedTheme() {
   });
 }
 
-export function getBootstrappedHeroScene() {
-  return bootstrapAppearance().then((results) => {
-    const result = results[1];
-    if (result.status === 'fulfilled') return result.value;
-    return null;
-  });
-}
-
 export function getBootstrappedManifesto() {
   return bootstrapAppearance().then((results) => {
-    const result = results[2];
+    const result = results[1];
     if (result.status === 'fulfilled') return result.value;
     return null;
   });

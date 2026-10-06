@@ -12,6 +12,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 COPY client/package.json client/package-lock.json ./
 RUN npm ci
 COPY client/ ./
+COPY shared/ /app/shared/
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 RUN npm run build
@@ -27,12 +28,16 @@ ENV VITE_API_URL=${VITE_API_URL}
 ENV VITE_BASE=${VITE_BASE}
 RUN npm run build
 
-FROM node:20-alpine AS server
+FROM node:20-bookworm-slim AS server
 WORKDIR /app/server
-RUN apk add --no-cache wget
+# Chromium + fonts: the dashboard AI assistant screenshots client sites and renders covers.
+RUN apt-get update   && apt-get install -y --no-install-recommends      chromium fonts-noto-core fonts-noto-color-emoji fonts-liberation ca-certificates wget   && rm -rf /var/lib/apt/lists/*
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV CHROME_PATH=/usr/bin/chromium
 COPY server/package.json server/package-lock.json ./
 RUN npm ci --omit=dev
 COPY server/ ./
+COPY shared/ /app/shared/
 COPY --from=client-build /app/client/dist /app/client/dist
 COPY --from=admin-build /app/admin/dist /app/admin/dist
 

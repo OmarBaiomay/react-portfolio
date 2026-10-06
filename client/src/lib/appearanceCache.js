@@ -1,12 +1,11 @@
 const APPEARANCE_KEY = 'bcode-appearance';
-const HERO_RANDOM_KEY = 'bcode-hero-random-pick';
 
 export const FALLBACK_PALETTE = {
-  id: 'orange',
-  name: { en: 'Sunset Orange', ar: 'برتقالي الغروب' },
-  dark: { accent: '255 92 26' },
-  light: { accent: '224 74 12' },
-  swatch: '#FF5C1A',
+  id: 'kingy-blue',
+  name: { en: 'Kingy Blue', ar: 'أزرق ملكي' },
+  dark: { accent: '59 130 246' },
+  light: { accent: '37 99 235' },
+  swatch: '#3B82F6',
 };
 
 function readStore() {
@@ -41,11 +40,6 @@ export function hasCachedAppearance() {
   return Boolean(store?.palette?.id && store?.palette?.dark?.accent);
 }
 
-export function readCachedSceneId() {
-  const store = readStore();
-  return typeof store?.sceneId === 'string' && store.sceneId ? store.sceneId : null;
-}
-
 export function cachePalette(palette, btnColors) {
   if (!palette?.id) return;
   writeStore({
@@ -53,11 +47,6 @@ export function cachePalette(palette, btnColors) {
     btn: btnColors?.btn,
     on: btnColors?.on,
   });
-}
-
-export function cacheSceneId(sceneId) {
-  if (!sceneId || typeof sceneId !== 'string') return;
-  writeStore({ sceneId });
 }
 
 export function readCachedManifesto() {
@@ -70,20 +59,6 @@ export function readCachedManifesto() {
 export function cacheManifesto(manifesto) {
   if (!manifesto || typeof manifesto !== 'object') return;
   writeStore({ manifesto });
-}
-
-/** Persist a concrete pick when admin setting is "random" so remounts don't swap shapes. */
-export function resolveRandomSceneId(order) {
-  if (typeof window === 'undefined' || !order?.length) return order?.[0] || 'helix';
-  try {
-    const existing = sessionStorage.getItem(HERO_RANDOM_KEY);
-    if (existing && order.includes(existing)) return existing;
-    const pick = order[Math.floor(Math.random() * order.length)];
-    sessionStorage.setItem(HERO_RANDOM_KEY, pick);
-    return pick;
-  } catch {
-    return order[Math.floor(Math.random() * order.length)];
-  }
 }
 
 export function paletteAccentKey(palette, theme) {

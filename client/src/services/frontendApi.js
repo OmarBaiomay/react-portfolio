@@ -14,8 +14,10 @@ export const publicAPI = {
   getMaintenancePlans: () => frontendApi.get('/maintenance'),
   getTheme: () => frontendApi.get('/settings/theme'),
   getManifesto: () => frontendApi.get('/settings/manifesto'),
-  getHeroScene: () => frontendApi.get('/settings/hero-scene'),
   createLead: (data) => frontendApi.post('/leads', data),
+  getContent: () => frontendApi.get('/content'),
+  getBlogPosts: (params) => frontendApi.get('/blog', { params }),
+  getBlogPost: (slug) => frontendApi.get(`/blog/${encodeURIComponent(slug)}`),
 };
 
 export default frontendApi;

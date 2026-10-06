@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
@@ -8,9 +8,18 @@ import Packages from './pages/Packages';
 import Maintenance from './pages/Maintenance';
 import Notifications from './pages/Notifications';
 import Appearance from './pages/Appearance';
-import HeroShapes from './pages/HeroShapes';
 import Manifesto from './pages/Manifesto';
 import Users from './pages/Users';
+import WebsiteContent from './pages/cms/WebsiteContent';
+import Sections from './pages/cms/Sections';
+import Portfolio from './pages/cms/Portfolio';
+import Blog from './pages/cms/Blog';
+import Faqs from './pages/cms/Faqs';
+import Industries from './pages/cms/Industries';
+import TechStackAdmin from './pages/cms/TechStack';
+import SiteInfo from './pages/cms/SiteInfo';
+import AIAssistant from './pages/cms/AIAssistant';
+import AISettings from './pages/cms/AISettings';
 import Settings from './pages/Settings';
 import Leads from './pages/Leads';
 import Projects from './pages/Projects';
@@ -33,8 +42,22 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
+/** Send signed-out visitors to /login, remembering where they were headed. */
+function RedirectToLogin() {
+  const location = useLocation();
+  return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
+}
+
+function FullScreenSpinner() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-bg">
+      <div className="h-12 w-12 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+    </div>
+  );
+}
+
 function App() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { isDark } = useTheme();
 
   return (
@@ -49,7 +72,10 @@ function App() {
           },
         }}
       />
-      {user ? (
+      {loading ? (
+        // Wait for the session check so a refresh keeps the current page.
+        <FullScreenSpinner />
+      ) : user ? (
         <div className="flex h-screen flex-col overflow-hidden bg-bg">
           <Navbar />
           <div className="flex min-h-0 flex-1">
@@ -68,8 +94,17 @@ function App() {
                   <Route path="/maintenance" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
                   <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
                   <Route path="/appearance" element={<PrivateRoute><Appearance /></PrivateRoute>} />
-                  <Route path="/hero-shapes" element={<PrivateRoute><HeroShapes /></PrivateRoute>} />
                   <Route path="/manifesto" element={<PrivateRoute><Manifesto /></PrivateRoute>} />
+                  <Route path="/content" element={<PrivateRoute><WebsiteContent /></PrivateRoute>} />
+                  <Route path="/sections" element={<PrivateRoute><Sections /></PrivateRoute>} />
+                  <Route path="/portfolio" element={<PrivateRoute><Portfolio /></PrivateRoute>} />
+                  <Route path="/blog" element={<PrivateRoute><Blog /></PrivateRoute>} />
+                  <Route path="/faqs" element={<PrivateRoute><Faqs /></PrivateRoute>} />
+                  <Route path="/industries" element={<PrivateRoute><Industries /></PrivateRoute>} />
+                  <Route path="/tech-stack" element={<PrivateRoute><TechStackAdmin /></PrivateRoute>} />
+                  <Route path="/site-info" element={<PrivateRoute><SiteInfo /></PrivateRoute>} />
+                  <Route path="/ai" element={<PrivateRoute><AIAssistant /></PrivateRoute>} />
+                  <Route path="/ai-settings" element={<PrivateRoute><AISettings /></PrivateRoute>} />
                   <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
                   <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
                   <Route path="*" element={<Navigate to="/dashboard" />} />
@@ -81,7 +116,7 @@ function App() {
       ) : (
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<RedirectToLogin />} />
         </Routes>
       )}
     </BrowserRouter>

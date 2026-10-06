@@ -17,7 +17,7 @@ export const SITE = {
   twitterHandle: '',
   description: {
     en: 'B-Code builds modern websites, Odoo ERP systems, and custom software for companies that need reliable technology and clear results.',
-    ar: 'بي‑كود تبني مواقع إلكترونية حديثة وأنظمة أودو وحلولاً برمجية مخصصة للشركات التي تحتاج تقنية موثوقة ونتائج واضحة.',
+    ar: 'B-Code تبني مواقع إلكترونية حديثة وأنظمة أودو وحلولاً برمجية مخصصة للشركات التي تحتاج تقنية موثوقة ونتائج واضحة.',
   },
   tagline: {
     en: 'Web, Odoo & Software Solutions',
@@ -35,7 +35,7 @@ export const SITE = {
       'software agency',
     ],
     ar: [
-      'بي-كود',
+      'B-Code',
       'تطوير مواقع',
       'تطوير أودو',
       'أنظمة ERP',

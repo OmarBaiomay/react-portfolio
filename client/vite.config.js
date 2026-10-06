@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    // Default site content lives in ../shared (also read by the API).
+    fs: { allow: ['..'] },
     proxy: {
       '/api': {
         target: 'http://localhost:5001',
@@ -22,7 +24,6 @@ export default defineConfig({
           if (!id.includes('node_modules')) return undefined;
           // Leaf-heavy deps only. Forcing react-linked packages into custom chunks
           // created circular imports and a TDZ crash in InputSmart (phone input).
-          if (id.includes('three')) return 'three';
           if (/node_modules\/gsap([/]|$)/.test(id)) return 'gsap';
           return undefined;
         },

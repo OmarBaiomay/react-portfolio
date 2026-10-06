@@ -32,7 +32,7 @@ function mixToward(rgb, target, t) {
 }
 
 export function buttonColorsFromAccent(accentRgbString) {
-  const accent = parseRgb(accentRgbString) || [255, 92, 26];
+  const accent = parseRgb(accentRgbString) || [59, 130, 246];
   const white = [255, 255, 255];
   const black = [10, 10, 10];
 
@@ -62,7 +62,7 @@ export function buttonColorsFromAccent(accentRgbString) {
 export function applyBrandPalette(palette, mode = 'dark') {
   if (typeof document === 'undefined' || !palette) return;
   const tones = mode === 'light' ? palette.light : palette.dark;
-  const accent = tones?.accent || palette.dark?.accent || '255 92 26';
+  const accent = tones?.accent || palette.dark?.accent || '59 130 246';
   const { btn, on } = buttonColorsFromAccent(accent);
 
   const root = document.documentElement;
@@ -70,5 +70,5 @@ export function applyBrandPalette(palette, mode = 'dark') {
   root.style.setProperty('--c-accent-soft', accent);
   root.style.setProperty('--c-accent-btn', btn);
   root.style.setProperty('--c-on-accent', on);
-  root.setAttribute('data-palette', palette.id || 'orange');
+  root.setAttribute('data-palette', palette.id || 'kingy-blue');
 }

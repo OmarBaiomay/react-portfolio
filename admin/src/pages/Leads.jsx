@@ -153,7 +153,7 @@ const Leads = () => {
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="overflow-hidden rounded-2xl border border-line/10 bg-elevated">
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="table-cards min-w-full text-sm">
               <thead className="border-b border-line/10 bg-surface text-start text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th className="px-4 py-3 font-semibold">{L.cols.name}</th>
@@ -171,7 +171,7 @@ const Leads = () => {
                       selected === lead.id ? 'bg-accent/5' : ''
                     }`}
                   >
-                    <td className="px-4 py-3">
+                    <td data-label={L.cols.name} className="px-4 py-3">
                       <button
                         type="button"
                         onClick={() => openEdit(lead)}
@@ -181,16 +181,16 @@ const Leads = () => {
                       </button>
                       <p className="text-xs text-muted">{lead.service}</p>
                     </td>
-                    <td className="px-4 py-3 text-muted">
+                    <td data-label={L.cols.contact} className="px-4 py-3 text-muted">
                       <div>{lead.email}</div>
                       <div className="text-xs">{lead.phone}</div>
                       <div className="text-xs">WA: {lead.whatsapp}</div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td data-label={L.cols.status} className="px-4 py-3">
                       <StatusBadge status={lead.status} labels={L.statuses} />
                     </td>
-                    <td className="px-4 py-3 text-muted">{formatDate(lead.createdAt)}</td>
-                    <td className="px-4 py-3">
+                    <td data-label={L.cols.date} className="px-4 py-3 text-muted">{formatDate(lead.createdAt)}</td>
+                    <td data-label={L.cols.actions} className="px-4 py-3">
                       <div className="flex flex-wrap gap-2">
                         {!lead.convertedProjectId ? (
                           <button

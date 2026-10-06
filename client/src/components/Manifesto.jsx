@@ -1,22 +1,8 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { cacheManifesto, readCachedManifesto } from '../lib/appearanceCache';
 import { getBootstrappedManifesto } from '../lib/bootstrapAppearance';
 import { useHeavyVisuals } from '../hooks/useHeavyVisuals';
-
-const FloatingField = lazy(() => import('./FloatingField'));
-
-function DeferredFloatingField({ scrollProgressRef }) {
-  const ready = useHeavyVisuals({ timeoutMs: 12000 });
-  if (!ready) {
-    return <div className="h-full w-full bg-bg" aria-hidden="true" />;
-  }
-  return (
-    <Suspense fallback={<div className="h-full w-full bg-bg" aria-hidden="true" />}>
-      <FloatingField scrollProgressRef={scrollProgressRef} />
-    </Suspense>
-  );
-}
 
 /** Parse "text **glow** more" into plain / accent segments */
 function parseLine(line) {
@@ -52,7 +38,6 @@ export default function Manifesto() {
   const { t, lang, isRtl } = useLanguage();
   const rootRef = useRef(null);
   const contentRef = useRef(null);
-  const scrollProgressRef = useRef(null);
   const [manifesto, setManifesto] = useState(() => readCachedManifesto());
   const visualsReady = useHeavyVisuals({ timeoutMs: 12000 });
 
@@ -85,28 +70,7 @@ export default function Manifesto() {
     return fallback.map(parseLine);
   }, [manifesto, t, lang]);
 
-  // Lightweight scroll progress without GSAP (keeps gsap off the critical path).
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return undefined;
-
-    const onScroll = () => {
-      const rect = root.getBoundingClientRect();
-      const total = rect.height + window.innerHeight;
-      const progress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / total));
-      scrollProgressRef.current?.(progress);
-    };
-
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, [lines.length]);
-
-  // Glow brightness — only after user interaction (same gate as Three).
+  // Glow brightness — only after user interaction (keeps GSAP off the critical path).
   useEffect(() => {
     if (!visualsReady || !lines.length) return undefined;
     let cancelled = false;
@@ -158,7 +122,23 @@ export default function Manifesto() {
       aria-label={kicker || 'Manifesto'}
     >
       <div className="sticky top-0 z-0 h-[100svh] overflow-hidden">
-        <DeferredFloatingField scrollProgressRef={scrollProgressRef} />
+        <div
+          className="absolute inset-0 bg-grid-fade bg-[size:56px_56px] opacity-30"
+          style={{
+            maskImage: 'radial-gradient(ellipse 65% 55% at 50% 50%, black 20%, transparent 75%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 65% 55% at 50% 50%, black 20%, transparent 75%)',
+          }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 55%, rgb(var(--c-accent) / 0.12), transparent 60%)',
+          }}
+          aria-hidden="true"
+        />
         <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[14vh] bg-gradient-to-b from-bg to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[14vh] bg-gradient-to-t from-bg to-transparent" />
       </div>

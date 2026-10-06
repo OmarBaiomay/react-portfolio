@@ -6,7 +6,7 @@ export const THEME_PALETTES = [
   {
     id: 'orange',
     name: { en: 'Sunset Orange', ar: 'برتقالي الغروب' },
-    tagline: { en: 'B-Code classic energy', ar: 'طاقة بي‑كود الكلاسيكية' },
+    tagline: { en: 'B-Code classic energy', ar: 'طاقة B-Code الكلاسيكية' },
     dark: { accent: '255 92 26' },
     light: { accent: '224 74 12' },
     swatch: '#FF5C1A',
@@ -165,7 +165,7 @@ export const THEME_PALETTES = [
   },
 ];
 
-export const DEFAULT_PALETTE_ID = 'orange';
+export const DEFAULT_PALETTE_ID = 'kingy-blue';
 
 export function getPaletteById(id) {
   return THEME_PALETTES.find((p) => p.id === id) || THEME_PALETTES.find((p) => p.id === DEFAULT_PALETTE_ID);

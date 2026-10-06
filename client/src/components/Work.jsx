@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { projects } from '../data/projects';
+import { useContent } from '../context/ContentContext';
 
 const Work = () => {
   const { t, lang } = useLanguage();
+  const { projects } = useContent();
 
   return (
     <section id="portfolio" className="section">

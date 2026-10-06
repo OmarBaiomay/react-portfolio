@@ -3,6 +3,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { ContentProvider } from './context/ContentContext';
 import { BrandProvider } from './context/BrandContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -10,6 +11,8 @@ import HomePage from './pages/HomePage';
 import { scrollToSectionId } from './hooks/useScrollToSection';
 
 const ProjectPage = lazy(() => import('./pages/ProjectPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const LenisBoot = lazy(() => import('./components/LenisBoot'));
 
@@ -115,6 +118,8 @@ function AppShell() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/work/:slug" element={<ProjectPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
@@ -126,11 +131,13 @@ function AppShell() {
 const App = () => (
   <ThemeProvider>
     <BrandProvider>
-      <LanguageProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AppShell />
-        </BrowserRouter>
-      </LanguageProvider>
+      <ContentProvider>
+        <LanguageProvider>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <AppShell />
+          </BrowserRouter>
+        </LanguageProvider>
+      </ContentProvider>
     </BrandProvider>
   </ThemeProvider>
 );

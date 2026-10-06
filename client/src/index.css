@@ -9,9 +9,9 @@
   --c-surface: 22 22 22;
   --c-ink: 250 250 250;
   --c-muted: 163 163 163;
-  --c-accent: 255 92 26;
-  --c-accent-soft: 255 92 26;
-  --c-accent-btn: 204 73 20;
+  --c-accent: 59 130 246;
+  --c-accent-soft: 59 130 246;
+  --c-accent-btn: 51 111 210;
   --c-on-accent: 255 255 255;
   --c-line: 255 255 255;
   --glass: rgba(255, 255, 255, 0.05);
@@ -24,9 +24,9 @@
   --c-surface: 250 250 250;
   --c-ink: 10 10 10;
   --c-muted: 82 82 82;
-  --c-accent: 224 74 12;
-  --c-accent-soft: 224 74 12;
-  --c-accent-btn: 190 62 10;
+  --c-accent: 37 99 235;
+  --c-accent-soft: 37 99 235;
+  --c-accent-btn: 37 99 235;
   --c-on-accent: 255 255 255;
   --c-line: 10 10 10;
   --glass: rgba(255, 255, 255, 0.72);
@@ -57,6 +57,73 @@ body {
 
 ::selection {
   background: rgb(var(--c-accent) / 0.35);
+}
+
+/* Blog article body (rendered Markdown) */
+.prose-post {
+  @apply text-base leading-8 text-ink/85 md:text-lg md:leading-9;
+}
+.prose-post > * + * {
+  @apply mt-5;
+}
+.prose-post h2 {
+  @apply mt-12 font-display text-2xl font-bold text-ink md:text-3xl;
+}
+.prose-post h3 {
+  @apply mt-10 font-display text-xl font-semibold text-ink md:text-2xl;
+}
+.prose-post a {
+  @apply font-medium text-accent underline underline-offset-4;
+}
+.prose-post ul {
+  @apply list-disc space-y-2 ps-6;
+}
+.prose-post ol {
+  @apply list-decimal space-y-2 ps-6;
+}
+.prose-post blockquote {
+  @apply border-s-4 border-accent ps-5 italic text-muted;
+}
+.prose-post img {
+  @apply rounded-2xl border border-line/10;
+}
+.prose-post code {
+  @apply rounded bg-line/10 px-1.5 py-0.5 font-mono text-[0.9em];
+}
+.prose-post pre {
+  @apply overflow-x-auto rounded-2xl border border-line/10 bg-elevated p-5 text-sm;
+}
+.prose-post pre code {
+  @apply bg-transparent p-0;
+}
+.prose-post hr {
+  @apply my-10 border-line/10;
+}
+.prose-post table {
+  @apply w-full text-sm;
+}
+.prose-post th,
+.prose-post td {
+  @apply border border-line/10 px-3 py-2 text-start;
+}
+
+/* Swipe carousels: keep scrolling, hide the native bar. */
+.scroll-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scroll-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Screenshots / device mockups: a long-press or swipe must not select and tint them. */
+.device-shot,
+.device-shot * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .container-site {
@@ -335,10 +402,67 @@ label {
   animation: contact-pulse 2.2s ease-out infinite;
 }
 
+/* Hero — code window builds line by line */
+@keyframes hero-line-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-6px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-chip-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-code-line {
+  opacity: 0;
+  animation: hero-line-in 0.45s ease-out forwards;
+  animation-delay: calc(0.25s + var(--i) * 0.12s);
+}
+
+.hero-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.2em;
+  background: rgb(var(--c-accent));
+  animation: hero-caret-blink 1s steps(1) infinite;
+}
+
+.hero-chip {
+  opacity: 0;
+  animation: hero-chip-in 0.5s ease-out 1.4s forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .contact-orb--a,
   .contact-orb--b,
-  .contact-pulse {
+  .contact-pulse,
+  .hero-caret {
+    animation: none;
+  }
+
+  .hero-code-line,
+  .hero-chip {
+    opacity: 1;
     animation: none;
   }
 }

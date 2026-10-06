@@ -10,7 +10,7 @@ html.dark {
   --c-surface: 22 22 22;
   --c-ink: 250 250 250;
   --c-muted: 163 163 163;
-  --c-accent: 255 92 26;
+  --c-accent: 59 130 246;
   --c-line: 255 255 255;
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -23,7 +23,7 @@ html.light {
   --c-surface: 250 250 250;
   --c-ink: 10 10 10;
   --c-muted: 82 82 82;
-  --c-accent: 224 74 12;
+  --c-accent: 37 99 235;
   --c-line: 10 10 10;
   --glass: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(10, 10, 10, 0.08);
@@ -289,4 +289,83 @@ textarea.input-field {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--c-accent) / 0.7);
+}
+
+/* Data tables become stacked cards on phones (each <td> carries data-label). */
+@media (max-width: 639px) {
+  .table-cards thead {
+    display: none;
+  }
+  .table-cards,
+  .table-cards tbody,
+  .table-cards tr {
+    display: block;
+    width: 100%;
+  }
+  .table-cards tr {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgb(var(--c-line) / 0.08);
+  }
+  .table-cards td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0 !important;
+    max-width: none !important;
+    text-align: end;
+  }
+  .table-cards td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgb(var(--c-muted));
+    text-align: start;
+  }
+  .table-cards td:not([data-label]) {
+    justify-content: center;
+  }
+}
+
+/* Blog editor preview (rendered Markdown) */
+.blog-preview > * + * {
+  margin-top: 0.9em;
+}
+.blog-preview h1,
+.blog-preview h2,
+.blog-preview h3 {
+  @apply font-display font-bold text-ink;
+}
+.blog-preview h1 {
+  @apply text-2xl;
+}
+.blog-preview h2 {
+  @apply mt-6 text-xl;
+}
+.blog-preview h3 {
+  @apply mt-5 text-lg;
+}
+.blog-preview a {
+  @apply text-accent underline;
+}
+.blog-preview ul {
+  @apply list-disc ps-5;
+}
+.blog-preview ol {
+  @apply list-decimal ps-5;
+}
+.blog-preview blockquote {
+  @apply border-s-4 border-accent ps-4 text-muted;
+}
+.blog-preview img {
+  @apply max-w-full rounded-xl;
+}
+.blog-preview code {
+  @apply rounded bg-line/10 px-1 font-mono text-[0.9em];
+}
+.blog-preview pre {
+  @apply overflow-x-auto rounded-xl bg-surface p-3;
 }

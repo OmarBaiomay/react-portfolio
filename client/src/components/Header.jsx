@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Languages, Moon, Sun, Menu, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useContent } from '../context/ContentContext';
 import { useScrollToSection } from '../hooks/useScrollToSection';
 import BrandLogo from './BrandLogo';
 
@@ -10,6 +11,7 @@ const Header = () => {
   const [navOpen, setNavOpen] = useState(false);
   const { t, lang, toggleLang } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
+  const { sections } = useContent();
   const scrollToSection = useScrollToSection();
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,13 +43,16 @@ const Header = () => {
     };
   }, [navOpen]);
 
+  // Hidden sections drop out of the menu; the blog is its own page.
+  const shown = new Set(sections.filter((s) => s.visible !== false).map((s) => s.id));
   const links = [
     { id: 'services', label: t.nav.services },
     { id: 'portfolio', label: t.nav.portfolio },
     { id: 'pricing', label: t.nav.pricing },
     { id: 'about', label: t.nav.about },
+    { id: 'blog', label: t.nav.blog, to: '/blog' },
     { id: 'contact', label: t.nav.contact },
-  ];
+  ].filter((link) => shown.has(link.id));
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-line/10 bg-bg/85 backdrop-blur-xl">
@@ -65,11 +70,17 @@ const Header = () => {
         </Link>
 
         <nav className="nav-desktop" aria-label="Primary">
-          {links.map(({ id, label }) => (
-            <a key={id} href={`/#${id}`} className="nav-link" onClick={goToSection(id)}>
-              {label}
-            </a>
-          ))}
+          {links.map(({ id, label, to }) =>
+            to ? (
+              <Link key={id} to={to} className="nav-link" onClick={close}>
+                {label}
+              </Link>
+            ) : (
+              <a key={id} href={`/#${id}`} className="nav-link" onClick={goToSection(id)}>
+                {label}
+              </a>
+            )
+          )}
         </nav>
 
         <div className="relative z-10 flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
@@ -129,16 +140,27 @@ const Header = () => {
             onClick={close}
           />
           <nav className="nav-drawer lg:hidden" aria-label="Mobile">
-            {links.map(({ id, label }) => (
-              <a
-                key={id}
-                href={`/#${id}`}
-                className="nav-link block w-full px-3 py-3 text-base"
-                onClick={goToSection(id)}
-              >
-                {label}
-              </a>
-            ))}
+            {links.map(({ id, label, to }) =>
+              to ? (
+                <Link
+                  key={id}
+                  to={to}
+                  className="nav-link block w-full px-3 py-3 text-base"
+                  onClick={close}
+                >
+                  {label}
+                </Link>
+              ) : (
+                <a
+                  key={id}
+                  href={`/#${id}`}
+                  className="nav-link block w-full px-3 py-3 text-base"
+                  onClick={goToSection(id)}
+                >
+                  {label}
+                </a>
+              )
+            )}
             <a
               href="/#contact"
               className="btn-primary mt-3 w-full !py-3"

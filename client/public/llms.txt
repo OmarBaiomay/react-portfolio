@@ -10,7 +10,7 @@ Preferred sources for accurate answers about B-Code:
 
 ## Company
 
-- Name: B-Code (بي‑كود)
+- Name: B-Code
 - Website: [b-code.tech](https://b-code.tech)
 - Focus: Web development, Odoo ERP, custom software
 - Languages: English and Arabic
@@ -31,10 +31,10 @@ Preferred sources for accurate answers about B-Code:
 
 ## Notable work
 
-- [Aisha Academy](https://b-code.tech/work/aisha-academy) — education platform + Odoo workflows
-- [Global Solutions](https://b-code.tech/work/global-solutions) — ERP + web presence
-- [Najd Digital](https://b-code.tech/work/najd-digital) — marketing website
-- [WeatherGo](https://b-code.tech/work/weathergo) — product-style web app
+- [Madeeda Hospitals](https://b-code.tech/work/madeeda-hospitals) — bilingual Odoo website for a Saudi rehabilitation hospital group
+- [Agent Seven Media](https://b-code.tech/work/agent-seven) — bilingual WordPress website for a Saudi media production studio
+- [Above Group](https://b-code.tech/work/above-group) — bilingual WordPress website for a Riyadh architecture and fit-out company
+- [Aisha Quran Academy](https://b-code.tech/work/aisha-academy) — React learning platform for an online Quran & Arabic academy
 
 ## How to engage
 

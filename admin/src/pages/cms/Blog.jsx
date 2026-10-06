@@ -1,0 +1,355 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import {
+  ArrowLeft,
+  ExternalLink,
+  Eye,
+  ImagePlus,
+  Loader2,
+  Newspaper,
+  Pencil,
+  Plus,
+  Save,
+  Sparkles,
+  Trash2,
+} from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
+import { blogAPI, mediaAPI } from '../../services/api';
+import { SITE_URL, assetUrl, slugify } from '../../lib/cms';
+import { BiField, CmsLoading, ImageField, StringList, TextField } from '../../components/cms/CmsFields';
+import { FormCard } from '../../components/FormUI';
+
+const bi = () => ({ en: '', ar: '' });
+
+const emptyPost = (author) => ({
+  slug: '',
+  title: bi(),
+  excerpt: bi(),
+  body: bi(),
+  coverUrl: '',
+  tags: [],
+  author: author || '',
+  status: 'draft',
+  publishedAt: null,
+});
+
+const toDateInput = (value) => (value ? new Date(value).toISOString().slice(0, 10) : '');
+
+function MarkdownEditor({ lang, value, onChange, hint, insertLabel }) {
+  const ref = useRef(null);
+  const fileRef = useRef(null);
+  const [tab, setTab] = useState('write');
+  const [busy, setBusy] = useState(false);
+  const { t } = useLanguage();
+  const html = useMemo(
+    () => DOMPurify.sanitize(marked.parse(value || '', { gfm: true, breaks: true })),
+    [value]
+  );
+
+  const insertImage = async (file) => {
+    if (!file) return;
+    setBusy(true);
+    try {
+      const { data } = await mediaAPI.upload(file);
+      const el = ref.current;
+      const at = el ? el.selectionStart : (value || '').length;
+      const snippet = `\n![](${data.url})\n`;
+      onChange((value || '').slice(0, at) + snippet + (value || '').slice(at));
+    } catch (error) {
+      toast.error(error.response?.data?.message || t.cms.uploadFail);
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-line/10">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line/10 px-3 py-2">
+        <span className="text-[10px] font-bold uppercase text-muted">{lang === 'en' ? 'English' : 'العربية'}</span>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className="btn-ghost !px-2.5 !py-1.5 text-xs"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+          >
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
+            {insertLabel}
+          </button>
+          <div className="locale-tabs !p-0.5">
+            {['write', 'preview'].map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setTab(key)}
+                className={`locale-tab !px-2.5 !py-1 text-xs ${tab === key ? 'locale-tab-active' : ''}`}
+              >
+                {key === 'write' ? <Pencil className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      {tab === 'write' ? (
+        <textarea
+          ref={ref}
+          dir={lang === 'ar' ? 'rtl' : 'ltr'}
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          rows={16}
+          className="block w-full resize-y bg-transparent p-3 font-mono text-sm leading-relaxed text-ink outline-none"
+        />
+      ) : (
+        <div
+          dir={lang === 'ar' ? 'rtl' : 'ltr'}
+          className="blog-preview min-h-[16rem] p-4 text-sm leading-7 text-ink"
+          // Sanitized above.
+          dangerouslySetInnerHTML={{ __html: html.replace(/src="\/api\//g, `src="${assetUrl('/api/')}`) }}
+        />
+      )}
+      <p className="border-t border-line/10 px-3 py-2 text-[11px] text-muted">{hint}</p>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+        className="hidden"
+        onChange={(e) => insertImage(e.target.files?.[0])}
+      />
+    </div>
+  );
+}
+
+function PostEditor({ initial, onBack, onSaved }) {
+  const { t } = useLanguage();
+  const B = t.cms.blog;
+  const [post, setPost] = useState(initial);
+  const [saving, setSaving] = useState(false);
+  const isNew = !post.id;
+  const set = (key, val) => setPost((p) => ({ ...p, [key]: val }));
+
+  const save = async (status = post.status) => {
+    const payload = { ...post, status, slug: post.slug || slugify(post.title.en) };
+    setSaving(true);
+    try {
+      const { data } = isNew ? await blogAPI.create(payload) : await blogAPI.update(post.id, payload);
+      setPost(data);
+      toast.success(isNew ? B.created : B.updated);
+      onSaved(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || t.cms.saveError);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="sticky top-0 z-20 -mx-1 flex flex-wrap items-center justify-between gap-2 border-b border-line/10 bg-bg/90 px-1 py-3 backdrop-blur">
+        <button type="button" className="btn-ghost" onClick={onBack}>
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+          {B.title}
+        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {post.id && post.status === 'published' ? (
+            <a className="btn-ghost" href={`${SITE_URL}/blog/${post.slug}`} target="_blank" rel="noreferrer">
+              <ExternalLink className="h-4 w-4" />
+              {t.cms.viewOnSite}
+            </a>
+          ) : null}
+          <button type="button" className="btn-ghost" disabled={saving} onClick={() => save('draft')}>
+            <Save className="h-4 w-4" />
+            {B.draft}
+          </button>
+          <button type="button" className="btn-primary" disabled={saving} onClick={() => save('published')}>
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Newspaper className="h-4 w-4" />}
+            {B.published}
+          </button>
+        </div>
+      </div>
+
+      <FormCard title={isNew ? B.add : B.edit}>
+        <BiField
+          label={B.postTitle}
+          value={post.title}
+          onChange={(v) => setPost((p) => ({ ...p, title: v, slug: p.id || p.slugTouched ? p.slug : slugify(v.en) }))}
+        />
+        <BiField label={B.excerpt} multiline rows={2} value={post.excerpt} onChange={(v) => set('excerpt', v)} />
+        <div className="grid gap-4 sm:grid-cols-3">
+          <TextField
+            label={B.slug}
+            hint={B.slugHint}
+            dir="ltr"
+            value={post.slug}
+            onChange={(v) => setPost((p) => ({ ...p, slug: slugify(v) || v, slugTouched: true }))}
+          />
+          <TextField label={B.author} value={post.author} onChange={(v) => set('author', v)} />
+          <TextField
+            label={B.publishedAt}
+            type="date"
+            dir="ltr"
+            value={toDateInput(post.publishedAt)}
+            onChange={(v) => set('publishedAt', v ? new Date(v).toISOString() : null)}
+          />
+        </div>
+        <ImageField label={B.cover} value={post.coverUrl} onChange={(v) => set('coverUrl', v)} />
+        <StringList label={B.tags} value={post.tags} onChange={(v) => set('tags', v)} />
+      </FormCard>
+
+      <FormCard title={B.body}>
+        <div className="grid gap-4 xl:grid-cols-2">
+          {['en', 'ar'].map((lang) => (
+            <MarkdownEditor
+              key={lang}
+              lang={lang}
+              value={post.body?.[lang]}
+              hint={B.bodyHint}
+              insertLabel={B.insertImage}
+              onChange={(v) => set('body', { ...post.body, [lang]: v })}
+            />
+          ))}
+        </div>
+      </FormCard>
+    </div>
+  );
+}
+
+export default function Blog() {
+  const { t, lang } = useLanguage();
+  const { user } = useAuth();
+  const B = t.cms.blog;
+  const [posts, setPosts] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [params, setParams] = useSearchParams();
+
+  // Open a post directly, e.g. a draft the AI assistant just wrote.
+  useEffect(() => {
+    const id = params.get('edit');
+    if (!id || !posts) return;
+    const post = posts.find((p) => p.id === id);
+    if (post) setEditing(post);
+    setParams({}, { replace: true });
+  }, [params, posts, setParams]);
+
+  const load = async () => {
+    try {
+      const { data } = await blogAPI.getAll();
+      setPosts(data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || t.cms.loadError);
+      setPosts([]);
+    }
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const remove = async (post) => {
+    if (!window.confirm(B.deleteConfirm)) return;
+    try {
+      await blogAPI.remove(post.id);
+      toast.success(B.deleted);
+      setPosts((list) => list.filter((p) => p.id !== post.id));
+    } catch (error) {
+      toast.error(error.response?.data?.message || t.cms.saveError);
+    }
+  };
+
+  if (!posts) return <CmsLoading />;
+
+  if (editing) {
+    return (
+      <div className="mx-auto max-w-6xl pb-16">
+        <PostEditor
+          initial={editing}
+          onBack={() => {
+            setEditing(null);
+            load();
+          }}
+          onSaved={() => load()}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-5xl pb-16">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold text-accent">
+            <Newspaper className="h-3.5 w-3.5" />
+            {t.cms.website}
+          </p>
+          <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">{B.title}</h1>
+          <p className="mt-1 text-sm text-muted">{B.description}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+        <Link to="/ai" className="btn-ghost">
+          <Sparkles className="h-4 w-4" />
+          {t.cms.ai.title}
+        </Link>
+        <button type="button" className="btn-primary" onClick={() => setEditing(emptyPost(user?.fullName))}>
+          <Plus className="h-4 w-4" />
+          {B.add}
+        </button>
+        </div>
+      </div>
+
+      {posts.length ? (
+        <ul className="space-y-3">
+          {posts.map((post) => (
+            <li
+              key={post.id}
+              className="flex flex-wrap items-center gap-3 rounded-2xl border border-line/10 bg-elevated p-3 sm:flex-nowrap"
+            >
+              <button
+                type="button"
+                onClick={() => setEditing(post)}
+                className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-line/10 bg-surface"
+              >
+                {post.coverUrl ? <img src={assetUrl(post.coverUrl)} alt="" className="h-full w-full object-cover" /> : null}
+              </button>
+              <button type="button" onClick={() => setEditing(post)} className="min-w-0 flex-1 text-start">
+                <p className="truncate font-semibold text-ink">
+                  {post.title?.[lang] || post.title?.en || post.title?.ar || post.slug}
+                </p>
+                <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
+                  <span
+                    className={`rounded-full px-2 py-0.5 font-semibold ${
+                      post.status === 'published' ? 'bg-emerald-500/15 text-emerald-500' : 'bg-line/10 text-muted'
+                    }`}
+                  >
+                    {post.status === 'published' ? B.published : B.draft}
+                  </span>
+                  {post.publishedAt ? <span>{new Date(post.publishedAt).toLocaleDateString()}</span> : null}
+                  <span dir="ltr">/blog/{post.slug}</span>
+                </p>
+              </button>
+              <div className="flex w-full justify-end gap-1 sm:w-auto">
+                <button type="button" className="icon-btn" onClick={() => setEditing(post)} aria-label={t.cms.edit}>
+                  <Pencil className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn hover:!border-red-500/50 hover:!text-red-500"
+                  onClick={() => remove(post)}
+                  aria-label={t.common.delete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="rounded-2xl border border-dashed border-line/15 p-10 text-center text-muted">{B.empty}</p>
+      )}
+    </div>
+  );
+}

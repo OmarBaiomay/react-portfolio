@@ -38,6 +38,8 @@ services:
         VITE_API_URL: /api
     container_name: bcode-app
     restart: unless-stopped
+    # Headless Chromium needs more than Docker's 64 MB default /dev/shm.
+    shm_size: '512mb'
     ports:
       - '${APP_PORT:-3002}:3001'
     environment:
@@ -59,6 +61,11 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM: ${RESEND_FROM:-B-Code <notification@b-code.tech>}
       LEAD_NOTIFY_EMAIL: ${LEAD_NOTIFY_EMAIL:-baiomayomar@gmail.com}
+      SITE_URL: ${SITE_URL:-https://b-code.tech}
+      # Optional: AI keys can also be entered in the dashboard (AI Settings).
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

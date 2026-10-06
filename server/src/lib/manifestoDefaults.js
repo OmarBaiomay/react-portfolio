@@ -25,8 +25,8 @@ export const DEFAULT_MANIFESTO = {
       ar: 'ابنِ مرة، و**توسّع** بثقة',
     },
     {
-      en: 'Your vision. Our **code**. Real results.',
-      ar: 'رؤيتك. **تقنيتنا**. نتائج حقيقية.',
+      en: 'From idea to **launch**. Real results.',
+      ar: 'من الفكرة إلى **الإطلاق**. نتائج حقيقية.',
     },
   ],
 };

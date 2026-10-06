@@ -80,7 +80,7 @@ export function BrandProvider({ children }) {
   const value = useMemo(
     () => ({
       palette,
-      paletteId: palette?.id || 'orange',
+      paletteId: palette?.id || 'kingy-blue',
       loading,
       accentKey: paletteAccentKey(palette, theme),
     }),

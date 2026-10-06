@@ -1,0 +1,6 @@
+{
+  "name": "b-code-shared",
+  "private": true,
+  "type": "module",
+  "description": "Default website content shared by the client (fallback) and the API (merge base)."
+}
