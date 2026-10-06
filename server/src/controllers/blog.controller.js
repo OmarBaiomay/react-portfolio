@@ -258,3 +258,76 @@ export async function createCategory(req, res) {
     res.status(500).json({ message: 'Failed to create category' });
   }
 }
+
+/** Admin: rename a category or change its position. */
+export async function updateCategory(req, res) {
+  try {
+    const cur = await query(`SELECT * FROM blog_categories WHERE slug = $1`, [req.params.slug]);
+    if (!cur.rows[0]) return res.status(404).json({ message: 'Category not found' });
+    const name = req.body?.name ? bilingual(req.body.name) : cur.rows[0].name;
+    if (!name.en.trim() && !name.ar.trim()) return res.status(400).json({ message: 'Add a category name' });
+    const sortOrder = Number.isFinite(Number(req.body?.sortOrder)) ? Number(req.body.sortOrder) : cur.rows[0].sort_order;
+    const result = await query(`UPDATE blog_categories SET name = $2, sort_order = $3 WHERE slug = $1 RETURNING *`, [
+      req.params.slug,
+      name,
+      sortOrder,
+    ]);
+    res.json(mapCategory(result.rows[0]));
+  } catch (error) {
+    console.error('updateCategory:', error.message);
+    res.status(500).json({ message: 'Failed to update category' });
+  }
+}
+
+/** Admin: delete a category; its posts become uncategorised. */
+export async function deleteCategory(req, res) {
+  try {
+    await query(`UPDATE blog_posts SET category = '' WHERE category = $1`, [req.params.slug]);
+    const result = await query(`DELETE FROM blog_categories WHERE slug = $1 RETURNING slug`, [req.params.slug]);
+    if (!result.rows[0]) return res.status(404).json({ message: 'Category not found' });
+    res.json({ message: 'Category deleted' });
+  } catch (error) {
+    console.error('deleteCategory:', error.message);
+    res.status(500).json({ message: 'Failed to delete category' });
+  }
+}
+
+const BULK_ACTIONS = ['publish', 'draft', 'delete', 'category'];
+
+/** Admin: apply one action to many posts at once. */
+export async function bulkPosts(req, res) {
+  try {
+    const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(String).slice(0, 500) : [];
+    const action = String(req.body?.action || '');
+    if (!ids.length || !BULK_ACTIONS.includes(action)) {
+      return res.status(400).json({ message: 'Choose posts and an action' });
+    }
+    let result;
+    if (action === 'delete') {
+      result = await query(`DELETE FROM blog_posts WHERE id = ANY($1::uuid[]) RETURNING id`, [ids]);
+    } else if (action === 'publish') {
+      result = await query(
+        `UPDATE blog_posts SET status = 'published', published_at = COALESCE(published_at, CURRENT_TIMESTAMP),
+           updated_at = CURRENT_TIMESTAMP WHERE id = ANY($1::uuid[]) RETURNING id`,
+        [ids]
+      );
+    } else if (action === 'draft') {
+      result = await query(
+        `UPDATE blog_posts SET status = 'draft', updated_at = CURRENT_TIMESTAMP WHERE id = ANY($1::uuid[]) RETURNING id`,
+        [ids]
+      );
+    } else {
+      const category = String(req.body?.category || '');
+      if (category && !SLUG_RE.test(category)) return res.status(400).json({ message: 'Invalid category' });
+      result = await query(
+        `UPDATE blog_posts SET category = $2, updated_at = CURRENT_TIMESTAMP WHERE id = ANY($1::uuid[]) RETURNING id`,
+        [ids, category]
+      );
+    }
+    res.json({ count: result.rowCount });
+  } catch (error) {
+    if (error.code === '22P02') return res.status(400).json({ message: 'Invalid post id' });
+    console.error('bulkPosts:', error.message);
+    res.status(500).json({ message: 'Bulk action failed' });
+  }
+}

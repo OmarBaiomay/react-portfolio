@@ -23,6 +23,7 @@ import { SITE_URL, assetUrl, moveItem, slugify } from '../../lib/cms';
 import { BiField, CmsLoading, ImageField, RowTools, StringList, TextField } from '../../components/cms/CmsFields';
 import { FormCard } from '../../components/FormUI';
 import CategoryPicker from '../../components/cms/CategoryPicker';
+import BlogCategories from '../../components/cms/BlogCategories';
 
 const bi = () => ({ en: '', ar: '' });
 
@@ -269,6 +270,12 @@ export default function Blog() {
   const [posts, setPosts] = useState(null);
   const [editing, setEditing] = useState(null);
   const [params, setParams] = useSearchParams();
+  const [view, setView] = useState('posts');
+  const [categories, setCategories] = useState([]);
+  const [selected, setSelected] = useState(() => new Set());
+  const [filterCat, setFilterCat] = useState('');
+  const [bulkCat, setBulkCat] = useState('');
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   // Open a post directly, e.g. a draft the AI assistant just wrote.
   useEffect(() => {
@@ -291,8 +298,35 @@ export default function Blog() {
 
   useEffect(() => {
     load();
+    blogAPI
+      .categories()
+      .then(({ data }) => setCategories(Array.isArray(data) ? data : []))
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const catName = (slug) => {
+    const c = categories.find((x) => x.slug === slug);
+    return c ? c.name?.[lang] || c.name?.en || c.name?.ar || slug : '';
+  };
+
+  const runBulk = async (action, category) => {
+    const ids = [...selected];
+    if (!ids.length) return;
+    if (action === 'delete' && !window.confirm(B.bulkDeleteConfirm.replace('{n}', ids.length))) return;
+    setBulkBusy(true);
+    try {
+      const { data } = await blogAPI.bulk(ids, action, category);
+      toast.success((action === 'delete' ? B.bulkDeleted : B.bulkDone).replace('{n}', data.count));
+      setSelected(new Set());
+      setBulkCat('');
+      await load();
+    } catch (error) {
+      toast.error(error.response?.data?.message || t.cms.saveError);
+    } finally {
+      setBulkBusy(false);
+    }
+  };
 
   const remove = async (post) => {
     if (!window.confirm(B.deleteConfirm)) return;
@@ -306,6 +340,10 @@ export default function Blog() {
   };
 
   if (!posts) return <CmsLoading />;
+
+  const visible = posts.filter((p) =>
+    !filterCat ? true : filterCat === '__none' ? !p.category : p.category === filterCat
+  );
 
   if (editing) {
     return (
@@ -332,6 +370,23 @@ export default function Blog() {
           </p>
           <h1 className="font-display text-2xl font-bold text-ink sm:text-3xl">{B.title}</h1>
           <p className="mt-1 text-sm text-muted">{B.description}</p>
+          <div className="locale-tabs mt-4 w-fit" role="tablist">
+            {[
+              ['posts', B.postsTab, posts.length],
+              ['categories', B.categoriesTab, categories.length],
+            ].map(([key, label, n]) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={view === key}
+                onClick={() => setView(key)}
+                className={`locale-tab ${view === key ? 'locale-tab-active' : ''}`}
+              >
+                {label} <span className="ms-1 text-xs opacity-70">{n}</span>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
         <Link to="/ai" className="btn-ghost">
@@ -345,52 +400,162 @@ export default function Blog() {
         </div>
       </div>
 
-      {posts.length ? (
-        <ul className="space-y-3">
-          {posts.map((post) => (
-            <li
-              key={post.id}
-              className="flex flex-wrap items-center gap-3 rounded-2xl border border-line/10 bg-elevated p-3 sm:flex-nowrap"
-            >
-              <button
-                type="button"
-                onClick={() => setEditing(post)}
-                className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-line/10 bg-surface"
-              >
-                {post.coverUrl ? <img src={assetUrl(post.coverUrl)} alt="" className="h-full w-full object-cover" /> : null}
-              </button>
-              <button type="button" onClick={() => setEditing(post)} className="min-w-0 flex-1 text-start">
-                <p className="truncate font-semibold text-ink">
-                  {post.title?.[lang] || post.title?.en || post.title?.ar || post.slug}
-                </p>
-                <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
-                  <span
-                    className={`rounded-full px-2 py-0.5 font-semibold ${
-                      post.status === 'published' ? 'bg-emerald-500/15 text-emerald-500' : 'bg-line/10 text-muted'
-                    }`}
-                  >
-                    {post.status === 'published' ? B.published : B.draft}
-                  </span>
-                  {post.publishedAt ? <span>{new Date(post.publishedAt).toLocaleDateString()}</span> : null}
-                  <span dir="ltr">/blog/{post.slug}</span>
-                </p>
-              </button>
-              <div className="flex w-full justify-end gap-1 sm:w-auto">
-                <button type="button" className="icon-btn" onClick={() => setEditing(post)} aria-label={t.cms.edit}>
-                  <Pencil className="h-4 w-4" />
+      {view === 'categories' ? (
+        <BlogCategories categories={categories} setCategories={setCategories} posts={posts} labels={B} t={t} />
+      ) : posts.length ? (
+        <>
+          {/* Toolbar: select all + filter; turns into the bulk bar when posts are selected */}
+          <div className="sticky top-0 z-20 -mx-1 mb-3 flex flex-wrap items-center gap-2 border-b border-line/10 bg-bg/90 px-1 py-3 backdrop-blur">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line/15 px-3 py-2 text-sm font-semibold text-ink">
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-[rgb(var(--c-accent))]"
+                checked={visible.length > 0 && visible.every((p) => selected.has(p.id))}
+                ref={(el) => {
+                  if (el) el.indeterminate = visible.some((p) => selected.has(p.id)) && !visible.every((p) => selected.has(p.id));
+                }}
+                onChange={(e) =>
+                  setSelected((prev) => {
+                    const next = new Set(prev);
+                    visible.forEach((p) => (e.target.checked ? next.add(p.id) : next.delete(p.id)));
+                    return next;
+                  })
+                }
+              />
+              {selected.size ? B.selectedCount.replace('{n}', selected.size) : B.selectAll}
+            </label>
+
+            {selected.size ? (
+              <>
+                <button type="button" className="btn-ghost !py-2 text-sm" disabled={bulkBusy} onClick={() => runBulk('publish')}>
+                  <Newspaper className="h-4 w-4" />
+                  {B.bulkPublish}
                 </button>
+                <button type="button" className="btn-ghost !py-2 text-sm" disabled={bulkBusy} onClick={() => runBulk('draft')}>
+                  <Save className="h-4 w-4" />
+                  {B.bulkDraft}
+                </button>
+                <select
+                  className="field !h-10 !w-auto text-sm"
+                  value={bulkCat}
+                  disabled={bulkBusy}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setBulkCat(v);
+                    if (v) runBulk('category', v === '__none' ? '' : v);
+                  }}
+                  aria-label={B.bulkCategory}
+                >
+                  <option value="">{B.bulkCategory}</option>
+                  {categories.map((c) => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.name?.[lang] || c.name?.en}
+                    </option>
+                  ))}
+                  <option value="__none">{B.noCategory}</option>
+                </select>
                 <button
                   type="button"
-                  className="icon-btn hover:!border-red-500/50 hover:!text-red-500"
-                  onClick={() => remove(post)}
-                  aria-label={t.common.delete}
+                  className="btn-ghost !py-2 text-sm hover:!border-red-500/50 hover:!text-red-500"
+                  disabled={bulkBusy}
+                  onClick={() => runBulk('delete')}
                 >
                   <Trash2 className="h-4 w-4" />
+                  {B.bulkDelete}
                 </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <button type="button" className="text-sm font-semibold text-muted hover:text-ink" onClick={() => setSelected(new Set())}>
+                  {B.clearSelection}
+                </button>
+                {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin text-accent" /> : null}
+              </>
+            ) : (
+              <select
+                className="field !h-10 !w-auto text-sm ms-auto"
+                value={filterCat}
+                onChange={(e) => setFilterCat(e.target.value)}
+                aria-label={B.category}
+              >
+                <option value="">
+                  {B.category}: {B.filterAll}
+                </option>
+                {categories.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name?.[lang] || c.name?.en}
+                  </option>
+                ))}
+                <option value="__none">{B.noCategory}</option>
+              </select>
+            )}
+          </div>
+
+          <ul className="space-y-3">
+            {visible.map((post) => {
+              const isSel = selected.has(post.id);
+              return (
+                <li
+                  key={post.id}
+                  className={`flex flex-wrap items-center gap-3 rounded-2xl border bg-elevated p-3 transition sm:flex-nowrap ${
+                    isSel ? 'border-accent/50 ring-2 ring-accent/15' : 'border-line/10'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 shrink-0 cursor-pointer accent-[rgb(var(--c-accent))]"
+                    checked={isSel}
+                    aria-label={post.title?.[lang] || post.title?.en || post.slug}
+                    onChange={() =>
+                      setSelected((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(post.id)) next.delete(post.id);
+                        else next.add(post.id);
+                        return next;
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditing(post)}
+                    className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-line/10 bg-surface"
+                  >
+                    {post.coverUrl ? <img src={assetUrl(post.coverUrl)} alt="" className="h-full w-full object-cover" /> : null}
+                  </button>
+                  <button type="button" onClick={() => setEditing(post)} className="min-w-0 flex-1 text-start">
+                    <p className="truncate font-semibold text-ink">
+                      {post.title?.[lang] || post.title?.en || post.title?.ar || post.slug}
+                    </p>
+                    <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-semibold ${
+                          post.status === 'published' ? 'bg-emerald-500/15 text-emerald-500' : 'bg-line/10 text-muted'
+                        }`}
+                      >
+                        {post.status === 'published' ? B.published : B.draft}
+                      </span>
+                      {post.category ? (
+                        <span className="rounded-full bg-accent/10 px-2 py-0.5 font-semibold text-accent">{catName(post.category)}</span>
+                      ) : null}
+                      {post.publishedAt ? <span>{new Date(post.publishedAt).toLocaleDateString()}</span> : null}
+                      <span dir="ltr">/blog/{post.slug}</span>
+                    </p>
+                  </button>
+                  <div className="flex w-full justify-end gap-1 sm:w-auto">
+                    <button type="button" className="icon-btn" onClick={() => setEditing(post)} aria-label={t.cms.edit}>
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn hover:!border-red-500/50 hover:!text-red-500"
+                      onClick={() => remove(post)}
+                      aria-label={t.common.delete}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       ) : (
         <p className="rounded-2xl border border-dashed border-line/15 p-10 text-center text-muted">{B.empty}</p>
       )}

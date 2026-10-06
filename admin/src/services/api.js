@@ -83,6 +83,9 @@ export const blogAPI = {
   remove: (id) => api.delete(`/blog/${id}`),
   categories: () => api.get('/blog/categories'),
   createCategory: (name) => api.post('/blog/categories', { name }),
+  updateCategory: (slug, data) => api.put(`/blog/categories/${slug}`, data),
+  deleteCategory: (slug) => api.delete(`/blog/categories/${slug}`),
+  bulk: (ids, action, category) => api.post('/blog/bulk', { ids, action, category }),
 };
 
 export const aiAPI = {
